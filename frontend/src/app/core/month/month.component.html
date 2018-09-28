@@ -1,0 +1,33 @@
+<div *ngIf="dataModel">
+<h2>{{ getMonthName(dataModel.month) }} {{ pageYear }}</h2>
+<mat-accordion>
+  <div *ngIf="dataModel.expenses && dataModel.expenses.length > 0" >
+    <app-expense *ngFor="let expense of dataModel.expenses" [dataModel]="expense" [currentLang]="this.currentLang"></app-expense>
+  </div>
+  <mat-expansion-panel *ngIf="dataModel.subtotal" color="accent">
+    <mat-expansion-panel-header>Subtotal</mat-expansion-panel-header>
+    <app-entry [dataModel]="this.dataModel.subtotal" [currentLang]="this.currentLang"></app-entry>
+  </mat-expansion-panel>
+  <mat-expansion-panel *ngIf="dataModel.otherAdjustments">
+    <mat-expansion-panel-header>Other Adjustments</mat-expansion-panel-header>
+    <app-entry [dataModel]="this.dataModel.otherAdjustments" [currentLang]="this.currentLang"></app-entry>
+  </mat-expansion-panel>
+  <mat-expansion-panel *ngIf="dataModel.finalBalance">
+    <mat-expansion-panel-header>Final Balance</mat-expansion-panel-header>
+    <app-entry [dataModel]="this.dataModel.finalBalance" [currentLang]="this.currentLang"></app-entry>
+  </mat-expansion-panel>
+  <mat-expansion-panel *ngIf="dataModel.signOff">
+    <mat-expansion-panel-header>Signoff</mat-expansion-panel-header>
+    <p *ngIf="currentLang == 'en' && dataModel.signOff.declaration">{{ dataModel.signOff.declaration.english }}</p>
+    <p *ngIf="currentLang == 'es' && dataModel.signOff.declaration">{{ dataModel.signOff.declaration.spanish }}</p>
+    <strong>Signed: </strong>
+    <ul>
+      <li *ngFor="let person of dataModel.signOff.signatories">
+        <span>{{person.fullName}}</span><br/>
+        <span *ngIf="currentLang=='en' && person.position">{{person.position.english}}</span>
+        <span *ngIf="currentLang=='es' && person.position">{{person.position.spanish}}</span>
+      </li>
+    </ul>
+  </mat-expansion-panel>
+</mat-accordion>
+</div>

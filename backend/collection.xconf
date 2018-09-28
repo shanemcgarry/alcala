@@ -1,0 +1,17 @@
+<collection xmlns="http://exist-db.org/collection-config/1.0">
+    <index>
+        <!-- Full text index based on Lucene -->
+        <lucene>
+            <text qname="textContent" />
+            <text qname="typeOfAbove" />
+            <text qname="positionDescription" />
+        </lucene>
+        
+        <!-- Range indexes -->
+        <range>
+            <create qname="pageID" type="xs:string" case="no"/>
+            <create qname="@yearID" type="xs:integer"/>
+            <create qname="@monthID" type="xs:integer"/>
+        </range>
+    </index>
+</collection>

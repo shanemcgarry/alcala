@@ -1,0 +1,33 @@
+<mat-expansion-panel *ngIf="dataModel">
+  <mat-expansion-panel-header>{{dataModel.entryType}}</mat-expansion-panel-header>
+  <h3 *ngIf="currentLang == 'en' && dataModel.title">{{dataModel.title.english}}</h3>
+  <h3 *ngIf="currentLang == 'es' && dataModel.title">{{dataModel.title.spanish}}</h3>
+  <p *ngIf="currentLang == 'en' && dataModel.description">{{dataModel.description.english}}</p>
+  <p *ngIf="currentLang == 'es' && dataModel.description">{{dataModel.description.spanish}}</p>
+
+
+  <mat-table [dataSource]="tableEntries">
+    <ng-container matColumnDef="type">
+      <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+      <mat-cell *matCellDef="let entry">{{ entry.Type }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="rowclass">
+      <mat-header-cell *matHeaderCellDef> RowClass </mat-header-cell>
+      <mat-cell *matCellDef="let entry">{{ entry.RowClass }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <mat-header-cell *matHeaderCellDef fxFlex="80%" class="flex-lalign"> Description </mat-header-cell>
+      <mat-cell *matCellDef="let entry" fxFlex="80%" class="flex-lalign">{{ entry.Description }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="reales">
+      <mat-header-cell *matHeaderCellDef class="flex-ralign"> Rs. </mat-header-cell>
+      <mat-cell *matCellDef="let entry" class="flex-ralign">{{ entry.Reales }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="maravedises">
+      <mat-header-cell *matHeaderCellDef class="flex-ralign"> Mvs. </mat-header-cell>
+      <mat-cell *matCellDef="let entry" class="flex-ralign">{{ entry.Maravedises }}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columnsToDisplay" [class]="row.RowClass"></mat-row>
+  </mat-table>
+</mat-expansion-panel>

@@ -1,0 +1,67 @@
+<div class="search-fields page-content">
+  <mat-form-field appearance="outline" disabled="false">
+    <mat-label>Keyword(s)</mat-label>
+    <input #txtSearch matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchPhrase" (keyup.enter)="onSearchClick()">
+    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="this.searchPhrase=''">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="onSearchClick()">Search</button>
+</div>
+
+<div *ngIf="dataModel" class="container page-content">
+  <div class="full-width">
+    <mat-button-toggle-group value="false">
+      <mat-button-toggle selected="true" value="false" (change)="onToggleClick($event.value)" matTooltip="View List">
+        <mat-icon>view_list</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="true" (change)="onToggleClick($event.value)" matTooltip="View Tiles">
+        <mat-icon>view_comfy</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <span class="query-info">Showing {{ getBeginHits() }} - {{ getEndHits() }} of {{ this.dataModel.totalHits }} results </span>
+  <div *ngIf="!isTile" class="result-detail">
+    <div *ngFor="let page of dataModel.pages">
+      <div class="full-width">
+        <h3><a href="{{ '/page/' + page.id.trim() }}">{{ page.title }}</a></h3>
+      </div>
+      <div class="full-width matches-detail">
+        <span>{{ page.matchesString }}</span>
+      </div>
+      <div class="full-width result-snippet" [innerHTML]="page.textSnippet">
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isTile">
+    <mat-grid-list cols="5">
+      <mat-grid-tile *ngFor="let page of dataModel.pages" [colspan]="1" [rowspan]="1">
+        <mat-card >
+          <mat-card-header>
+            <mat-card-title><strong>{{ page.title }}</strong></mat-card-title>
+          </mat-card-header>
+          <img mat-card-image src="{{ this.imageBase + page.id.trim() + '.jpg' }}" alt="Photo of page" />
+          <mat-card-content>
+            <ul>
+              <li *ngFor="let s of page.matchesArray">{{ s }}</li>
+            </ul>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" routerLink="{{ '/page/' + page.id.trim() }}">VIEW</button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <div class="align-center">
+    <button mat-icon-button [disabled]="this.currentIndex == 1" (click)="onNavClick(this.currentIndex - 1)" >
+      <mat-icon aria-label="Previous">navigate_before</mat-icon>
+    </button>
+    <ng-container *ngFor="let item of this.getPageArray(); let i = index;">
+      <button mat-mini-fab color="primary" (click)="onNavClick(i + 1)">{{ i + 1 }}</button>
+    </ng-container>
+    <button mat-icon-button [disabled]="this.currentIndex == this.dataModel.totalPageResults" (click)="onNavClick(this.currentIndex + 1)">
+      <mat-icon aria-label="Next">navigate_next</mat-icon>
+    </button>
+  </div>
+</div>

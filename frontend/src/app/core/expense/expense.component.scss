@@ -1,0 +1,49 @@
+@import "../../../styles/variables";
+
+.mat-column-description {
+  word-wrap: break-word !important;
+  white-space: pre-wrap !important;
+}
+
+table {
+  width: 100%;
+}
+
+.flex-lalign {
+  justify-content: flex-start !important;
+}
+
+.flex-ralign {
+  justify-content: flex-end !important;
+}
+
+.entryrow-sum {
+  background-color: $base-red;
+  color: $base-white;
+  mat-cell {
+    color: $base-white;
+  }
+}
+
+.entryrow-adj {
+  background-color: $base-brown-light;
+  color: $base-dark-grey;
+  mat-cell {
+    color: $base-dark-grey;
+  }
+}
+
+mat-cell:first-child,
+mat-header-cell:first-child {
+  padding-left: 0px !important;
+}
+
+mat-cell {
+  margin-left: 10px;
+}
+
+mat-header-cell {
+  display:flex;
+  justify-content:center;
+}
+

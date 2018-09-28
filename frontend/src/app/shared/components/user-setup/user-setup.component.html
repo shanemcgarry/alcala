@@ -1,0 +1,58 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title><h3>Choose Keyword Search</h3></mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <youtube-player [videoId]="searchVideo" width="100%"></youtube-player>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sit amet dui sem. Curabitur facilisis mi nec
+      congue blandit. Duis auctor nec risus finibus rhoncus. Pellentesque habitant morbi tristique senectus et netus et
+      malesuada fames ac turpis egestas. Phasellus viverra tellus quis purus fermentum, ut tempor massa tempor. Vivamus
+      porttitor scelerisque est. Integer semper finibus purus eu facilisis. Vestibulum ultrices consectetur est, ut
+      imperdiet augue ornare quis. Nullam iaculis erat mi, ut accumsan sem mattis ut. Orci varius natoque penatibus et
+      magnis dis parturient montes, nascetur ridiculus mus.
+    </p>
+    <p>
+      Quisque cursus ornare pellentesque. Quisque vulputate rhoncus quam vel faucibus. Vestibulum sit amet egestas eros.
+      Vivamus suscipit dui quis posuere cursus. Donec quis scelerisque dui. Aenean fringilla nibh nec finibus ornare.
+      Nulla eget orci consequat, ultricies quam vehicula, accumsan metus. Vestibulum tincidunt, dolor id luctus posuere,
+      leo mi semper metus, in tincidunt libero elit nec nulla. Nam malesuada odio id ipsum condimentum viverra.
+      Suspendisse potenti. Nulla feugiat tincidunt ipsum, nec placerat massa elementum accumsan. Donec et quam viverra,
+      condimentum orci a, imperdiet felis. Cras eget sem eleifend erat hendrerit dapibus at a diam.
+    </p>
+  </mat-card-content>
+  <mat-card-footer>
+    <mat-card-actions align="middle">
+      <button mat-raised-button color="primary" (click)="setSelection(false)">Choose Keyword Search</button>
+    </mat-card-actions>
+  </mat-card-footer>
+</mat-card>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title><h3>Choose Visualisation Search</h3></mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <youtube-player [videoId]="dashboardVideo" width="100%"></youtube-player>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sit amet dui sem. Curabitur facilisis mi nec
+      congue blandit. Duis auctor nec risus finibus rhoncus. Pellentesque habitant morbi tristique senectus et netus et
+      malesuada fames ac turpis egestas. Phasellus viverra tellus quis purus fermentum, ut tempor massa tempor. Vivamus
+      porttitor scelerisque est. Integer semper finibus purus eu facilisis. Vestibulum ultrices consectetur est, ut
+      imperdiet augue ornare quis. Nullam iaculis erat mi, ut accumsan sem mattis ut. Orci varius natoque penatibus et
+      magnis dis parturient montes, nascetur ridiculus mus.
+    </p>
+    <p>
+      Quisque cursus ornare pellentesque. Quisque vulputate rhoncus quam vel faucibus. Vestibulum sit amet egestas eros.
+      Vivamus suscipit dui quis posuere cursus. Donec quis scelerisque dui. Aenean fringilla nibh nec finibus ornare.
+      Nulla eget orci consequat, ultricies quam vehicula, accumsan metus. Vestibulum tincidunt, dolor id luctus posuere,
+      leo mi semper metus, in tincidunt libero elit nec nulla. Nam malesuada odio id ipsum condimentum viverra.
+      Suspendisse potenti. Nulla feugiat tincidunt ipsum, nec placerat massa elementum accumsan. Donec et quam viverra,
+      condimentum orci a, imperdiet felis. Cras eget sem eleifend erat hendrerit dapibus at a diam.
+    </p>
+  </mat-card-content>
+  <mat-card-footer>
+    <mat-card-actions align="middle">
+      <button mat-raised-button color="primary" (click)="setSelection(true)">Choose Visualisation Search</button>
+    </mat-card-actions>
+  </mat-card-footer>
+</mat-card>

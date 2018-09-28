@@ -1,0 +1,19 @@
+<div *ngIf="dataModel" class="container, page-content" fxLayout="row" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="left">
+  <div fxFlex="60%">
+    <mat-tab-group>
+      <mat-tab label="English">
+        <div *ngFor="let month of dataModel.months">
+          <app-month [dataModel]="month" currentLang="en" [pageYear]="dataModel.year"></app-month>
+        </div>
+      </mat-tab>
+      <mat-tab label="Spanish">
+        <div *ngFor="let month of dataModel.months">
+          <app-month [dataModel]="month" currentLang="es" [pageYear]="dataModel.year"></app-month>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div #imageViewerParent class="image-viewer" fxFlex="40%">
+    <ngx-imageviewer #imageViewer [src]="this.imageUrl" [width]="this.viewerWidth"></ngx-imageviewer>
+  </div>
+</div>

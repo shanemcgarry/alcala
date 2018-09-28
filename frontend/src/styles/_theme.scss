@@ -1,0 +1,75 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$alcala-red: (
+  50 : #eae7e7,
+  100 : #cbc4c4,
+  200 : #a99d9d,
+  300 : #877575,
+  400 : #6d5858,
+  500 : #533a3a,
+  600 : #4c3434,
+  700 : #422c2c,
+  800 : #392525,
+  900 : #291818,
+  A100 : #ff6e6e,
+  A200 : #ff3b3b,
+  A400 : #ff0808,
+  A700 : #ee0000,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #ffffff,
+    A400 : #ffffff,
+    A700 : #ffffff,
+  )
+);
+
+$alcala-brown: (
+  50 : #f0eeec,
+  100 : #d9d4d1,
+  200 : #c0b8b2,
+  300 : #a69b93,
+  400 : #93857b,
+  500 : #807064,
+  600 : #78685c,
+  700 : #6d5d52,
+  800 : #635348,
+  900 : #504136,
+  A100 : #ffc8a4,
+  A200 : #ffaa71,
+  A400 : #ff8b3e,
+  A700 : #ff7c25,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #000000,
+    400 : #000000,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #000000,
+    A700 : #000000,
+  )
+);
+
+$alcala-palette-primary: mat-palette($alcala-red);
+$alcala-palette-secondary: mat-palette($alcala-brown);
+$alcala-palette-warn: mat-palette($mat-deep-orange);
+
+$alcala-theme: mat-light-theme($alcala-palette-primary, $alcala-palette-secondary);
+@include  angular-material-theme($alcala-theme);

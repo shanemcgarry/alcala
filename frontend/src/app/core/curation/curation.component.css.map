@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,aAAc;EACZ,KAAK,EAAE,GAAG;EACV,WAAW,EAAE,MAAM;EACnB,SAAS,EAAE,UAAU;;AAGvB,cAAe;EACb,KAAK,EAAE,GAAG;;AAGZ,IAAK;EACH,KAAK,EAAE,GAAG;;AAGZ,IAAK;EACH,KAAK,EAAE,GAAG;;AAGZ,GAAI;EACF,KAAK,EAAE,EAAE;;AAGX,QAAS;EACP,KAAK,EAAE,KAAK",
+"sources": ["curation.component.scss"],
+"names": [],
+"file": "curation.component.css"
+}

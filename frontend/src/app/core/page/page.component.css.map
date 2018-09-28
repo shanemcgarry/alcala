@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,aAAc;EACZ,WAAW,EAAE,IAAI;EACjB,cAAc,EAAE,IAAI",
+"sources": ["page.component.scss"],
+"names": [],
+"file": "page.component.css"
+}

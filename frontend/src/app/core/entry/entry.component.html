@@ -1,0 +1,19 @@
+<div *ngIf="dataModel" class="container" fxLayout="row" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="left">
+  <div fxFlex="70%">
+    <p *ngIf="currentLang == 'en'">
+      {{dataModel.description.english}}
+    </p>
+    <p *ngIf="currentLang == 'es'">
+      {{dataModel.description.spanish}}
+    </p>
+  </div>
+  <div  fxFlex="15%">
+    <span>Reales: </span>
+    <span>{{dataModel.amount.reales}}</span>
+  </div>
+  <div  fxFlex="15%">
+    <span>Maravedises: </span>
+    <span>{{dataModel.amount.maravedises}}</span>
+  </div>
+</div>
+<mat-divider></mat-divider>

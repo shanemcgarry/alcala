@@ -1,0 +1,70 @@
+/* You can add global styles to this file, and also import other style files */
+@import "variables";
+
+body {
+  background-color: $background-color;
+}
+.app-content {
+  //margin: 25px 17px 20px 17px;
+  background-color: $page-color;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.page-content {
+  padding-left: 20px;
+  padding-bottom: 20px;
+}
+
+.right-align {
+  float: right;
+}
+
+.logo {
+  width: 27%;
+  margin-left: -.75em;
+}
+
+#header {
+  width: 10%;
+  background-color:  $header-color;
+  display: inline-block;
+
+  img {
+    margin: 0 auto;
+  }
+}
+
+#footer {
+  background-color: $footer-color;
+
+  div {
+    color: $base-white;
+    font-family: Roboto;
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  img {
+    display: inline-block;
+    margin-left: 40px;
+    vertical-align: middle;
+    margin-top: -10px;
+  }
+
+  img.mu {
+    max-width: 200px;
+  }
+
+  img.irc {
+    max-width: 300px;
+  }
+}
+.nav-item {
+  text-decoration: none;
+  color: black;
+}

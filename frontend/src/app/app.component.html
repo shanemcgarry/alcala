@@ -1,0 +1,28 @@
+<div class="app-content">
+  <mat-toolbar color="primary" align="end">
+    <img src="assets/alcala-logo-white.png" class="logo" />
+    <span class="nav-spacer"></span>
+    <a mat-button href="/">Home</a>
+    <a mat-button href="/search">Search</a>
+    <a mat-button href="/visualise/dashboard">Visualise</a>
+    <a *ngIf="this.isAdminUser()" mat-button href="/admin/curation">Data Curation</a>
+    <a *ngIf="this.userService.getLoggedInUser()" mat-icon-button href="/logout">
+      <mat-icon>account_circle</mat-icon>
+    </a>
+    <a *ngIf="!this.userService.getLoggedInUser()" mat-icon-button href="/login">
+      Login
+    </a>
+  </mat-toolbar>
+  <router-outlet></router-outlet>
+  <section id="footer">
+    <div>Copyright &copy; 2018, Maynooth University. All Rights Reserved.</div>
+    <div>
+      <a href="http://www.maynoothuniversity.ie/">
+        <img class="mu" src="assets/mu-logo.png" />
+      </a>
+      <a href="http://www.research.ie/">
+        <img class="irc" src="assets/irc-logo.png" />
+      </a>
+    </div>
+  </section>
+</div>
