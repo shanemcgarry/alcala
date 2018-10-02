@@ -3,8 +3,9 @@ import { TrainingData } from '../../shared/models/training-data.model';
 import { UserService } from '../../shared/services/user.service';
 import { AdminService } from '../../shared/services/admin.service';
 import { SiteUser } from '../../shared/models/site-user.model';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import {MatTableDataSource, MatPaginator, MatDialog} from '@angular/material';
 import { SpinnerService } from '../../shared/services/spinner.service';
+import {EditComponent} from './edit/edit.component';
 
 @Component({
   selector: 'app-curation',
@@ -19,10 +20,10 @@ export class CurationComponent implements OnInit, AfterViewInit {
 
   @ViewChild('dataPaginator') paginator: MatPaginator;
 
-  constructor(private userService: UserService, private adminService: AdminService, private spinnerService: SpinnerService) { }
+  constructor(private userService: UserService, private adminService: AdminService, private spinnerService: SpinnerService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.spinnerService.show('curationSpinner')
+    this.spinnerService.show('curationSpinner');
     this.currUser = this.userService.getLoggedInUser();
   }
 
@@ -41,8 +42,11 @@ export class CurationComponent implements OnInit, AfterViewInit {
       );
   }
 
-  onSave() {
-    console.log(this.dataModel.data[0].categories);
+  editData(data: TrainingData) {
+    const dialogRef = this.dialog.open(EditComponent, { data: {dataModel: data} });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+    });
   }
 
   getDateInfo(month: number, year: number) {

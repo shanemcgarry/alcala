@@ -1,4 +1,4 @@
-import pyexistdb.db as edb
+from pyexistdb import db as edb
 from pyexistdb.exceptions import ExistDBException
 from models.alcalaPage import AlcalaPage
 from models.alcalaEntry import AlcalaEntry, AlcalaAdjustment, AlcalaOtherAdjustments
@@ -82,12 +82,15 @@ class ExistData:
 
     def get_page(self, pageid, pageIndex=1, limit=50):
         xquery = 'for $x in doc("alcala/books/ledger.xml")//pages/page where $x/pageID="%s" return $x' % pageid
-        qr = self.db.query(xquery, pageIndex, limit)
-        if qr.hits > 1:
-            raise ExistDBException(Exception(str.format(self.EXCEPTIONS_PAGEID_TOOMANYRESULTS, pageid)))
+        try:
+            qr = self.db.query(xquery, pageIndex, limit)
+            if qr.hits > 1:
+                raise ExistDBException(Exception(str.format(self.EXCEPTIONS_PAGEID_TOOMANYRESULTS, pageid)))
 
-        page = AlcalaPage(etree.XML(tostring(qr.results[0])))
-        return page
+            page = AlcalaPage(etree.XML(tostring(qr.results[0])))
+            return page
+        except ExistDBException as dberr:
+            print(dberr.message())
 
     def get_pages_by_keyword(self, keyword, pageIndex=1, limit=50):
         xquery = 'for $x in doc("alcala/books/ledger.xml")//pages/page where $x//textContent[ft:query(., "%s")] return util:expand($x)' % keyword

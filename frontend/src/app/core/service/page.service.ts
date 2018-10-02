@@ -20,7 +20,7 @@ const httpOptions = {
 @Injectable()
 export class PageService {
   pageServiceUrl: string;
-  private handleError: HandleError
+  private handleError: HandleError;
 
   constructor(private http: HttpClient, private httpErrorHandler: HttpErrorHandler) {
     this.pageServiceUrl = environment.apiUrl;

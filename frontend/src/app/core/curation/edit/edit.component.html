@@ -1,0 +1,28 @@
+<div class="edit-container">
+  <h3 mat-dialog-title>Editing Categories for: {{ this.getDateInfo() }}</h3>
+  <form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm">
+    <div>
+      <label>Page: </label><a href="/page/{{ this.dataModel.pageid }}">{{ this.dataModel.pageid }}</a>
+    </div>
+    <div>
+      <label>Value: </label><span>{{ this.dataModel.reales }}r {{ this.dataModel.maravedises }}m</span>
+    </div>
+    <div>
+      <label>Entry Words:</label>
+      <p>{{ this.dataModel.words.join(' ') }}</p>
+    </div>
+    <div>
+      <label>Categories:</label>
+      <mat-chip-list #categoryList>
+        <mat-chip *ngFor="let c of this.dataModel.categories" color="primary" [removable]="true" (removed)="removeCategory(c)">
+          {{ c }}
+        </mat-chip>
+      </mat-chip-list>
+      <input [matChipInputFor]="categoryList">
+    </div>
+    <div class="form-buttons">
+      <button mat-raised-button color="primary" [type]="submit" >Save</button>
+      <button mat-raised-button color="primary" (click)="cancelChanges()">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -1,7 +1,7 @@
 EXISTDB_CONFIG = {
-    'host': 'http://localhost:8081/exist',
+    'host': 'http://localhost:8080/exist',
     'username': 'admin',
-    'password': '@sam1416'
+    'password': ''
 }
 
 NLP_CONFIG = {

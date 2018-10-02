@@ -22,6 +22,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -59,6 +60,7 @@ import { TagCloudModule } from 'angular-tag-cloud-module';
 import { SiteService } from './shared/services/site.service';
 import { LocalStorageService } from 'ngx-store';
 import { CurationComponent } from './core/curation/curation.component';
+import { EditComponent } from './core/curation/edit/edit.component';
 
 
 @NgModule({
@@ -78,7 +80,8 @@ import { CurationComponent } from './core/curation/curation.component';
     UserSetupComponent,
     LogoutComponent,
     ChartComponent,
-    CurationComponent
+    CurationComponent,
+    EditComponent
   ],
   imports: [
     routing,
@@ -95,6 +98,7 @@ import { CurationComponent } from './core/curation/curation.component';
     MatListModule,
     MatPaginatorModule,
     MatTabsModule,
+    MatChipsModule,
     MatIconModule,
     MatMenuModule,
     MatButtonModule,

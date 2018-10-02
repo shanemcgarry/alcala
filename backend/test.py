@@ -71,6 +71,6 @@ mdb = MongoData()
 #
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
-results = mdb.get_training_data_by_user(user_id='3929aac966b941e59964e38a4c781450')
-print(len(results))
+page = edb.get_page('f001-02')
+print(page.toJson())
 

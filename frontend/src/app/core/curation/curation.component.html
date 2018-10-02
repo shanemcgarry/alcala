@@ -41,11 +41,15 @@
     <!--categories Column-->
     <ng-container matColumnDef="categories">
       <th mat-header-cell *matHeaderCellDef>Categories</th>
-      <td mat-cell *matCellDef="let row" class="w20">
-        <mat-form-field>
-          <input matInput placeholder="Categories" value="{{ row.categories.join(', ') }}" />
-        </mat-form-field>
-      </td>
+      <td mat-cell *matCellDef="let row" class="categories-column mr5 ml5">{{ row.categories.join(', ') }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-cell *matCellDef="let row;">
+        <button mat-icon-button color="primary" (click)="editData(row)">
+          <mat-icon aria-label="Edit">edit</mat-icon>
+        </button>
+      </mat-cell>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="this.displayColumns"></tr>
@@ -53,8 +57,8 @@
   </table>
   <!--<mat-paginator #dataPaginator [pageSizeOptions]="this.pageSizeOptions" [length]="this.dataModel.data.length"></mat-paginator>-->
   </mat-card-content>
-  <mat-card-actions align="right">
-    <button mat-raised-button color="primary" (click)="this.onSave()">Save</button>
-  </mat-card-actions>
+  <!--<mat-card-actions align="right">-->
+    <!--<button mat-raised-button color="primary" (click)="this.onSave()">Save</button>-->
+  <!--</mat-card-actions>-->
 </mat-card>
 
