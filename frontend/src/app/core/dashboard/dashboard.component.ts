@@ -7,7 +7,7 @@ import { cloneDeep, map, orderBy } from 'lodash';
 import { VisualisationService } from '../service/visualisation.service';
 import { SpinnerService } from '../../shared/services/spinner.service';
 import { CategoryData, MonthYearPivotItem } from '../../shared/models/pivot-data.model';
-import {SiteService} from '../../shared/services/site.service';
+import { SiteService } from '../../shared/services/site.service';
 
 
 @Component({

@@ -1,4 +1,4 @@
-<mat-expansion-panel *ngIf="dataModel">
+<mat-expansion-panel *ngIf="dataModel" [expanded]="true">
   <mat-expansion-panel-header>{{dataModel.entryType}}</mat-expansion-panel-header>
   <h3 *ngIf="currentLang == 'en' && dataModel.title">{{dataModel.title.english}}</h3>
   <h3 *ngIf="currentLang == 'es' && dataModel.title">{{dataModel.title.spanish}}</h3>

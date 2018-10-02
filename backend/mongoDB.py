@@ -48,6 +48,12 @@ class MongoData:
 
         bulk.execute()
 
+    def update_training_data(self, id, categories):
+        db_result = self.db.curated_training.update_one({'_id': id}, {'$set': {'categories': categories}}, upsert=False)
+        query = self.db.curated_training.find({'_id': id})
+        return AnalysisUserItem(**query[0])
+
+
     def get_word_frequency_summary(self, year=None):
         pipeline = []
         pipeline.append({"$unwind": "$words"})

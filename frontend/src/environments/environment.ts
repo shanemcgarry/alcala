@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:5000/',
-  imageUrl: 'http://localhost:8088/images/'
+  //imageUrl: 'http://localhost:8088/images/'
+  imageUrl: 'http://jkeatingsrv.cs.nuim.ie:8070/'
 };
 
 /*

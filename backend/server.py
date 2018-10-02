@@ -174,6 +174,18 @@ def get_raw_data(year):
     return response
 
 
+@app.route("/admin/training_data/update", methods=['GET', 'POST'])
+def update_training_data():
+    mdb = MongoData()
+    json_req = request.get_json()
+    result = mdb.update_training_data(json_req['_id'], json_req['categories'])
+    response = app.response_class(
+        status=200,
+        response=result.toJson(),
+        mimetype='application/json'
+    )
+    return response
+
 @app.route("/admin/training_data/<user_id>")
 def get_training_data(user_id):
     mdb = MongoData()

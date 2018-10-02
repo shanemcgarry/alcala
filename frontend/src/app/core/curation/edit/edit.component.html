@@ -1,28 +1,36 @@
 <div class="edit-container">
-  <h3 mat-dialog-title>Editing Categories for: {{ this.getDateInfo() }}</h3>
-  <form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm">
+  <h3 mat-dialog-title>{{ this.getDateInfo() }}</h3>
+  <form class="mat-dialog-content" #formControl="ngForm">
     <div>
-      <label>Page: </label><a href="/page/{{ this.dataModel.pageid }}">{{ this.dataModel.pageid }}</a>
+      <label>Page: </label><a target="_blank" href="/page/{{ this.dataModel.pageid }}">{{ this.dataModel.pageid }}</a>
     </div>
     <div>
-      <label>Value: </label><span>{{ this.dataModel.reales }}r {{ this.dataModel.maravedises }}m</span>
+      <label>Value: </label><span>{{ getAmountInfo() }}</span>
     </div>
-    <div>
+    <div class="mt10">
       <label>Entry Words:</label>
       <p>{{ this.dataModel.words.join(' ') }}</p>
     </div>
     <div>
-      <label>Categories:</label>
-      <mat-chip-list #categoryList>
+      <label class="mb5">Categories:</label>
+      <mat-chip-list #categoryList class="mt5 mb5">
         <mat-chip *ngFor="let c of this.dataModel.categories" color="primary" [removable]="true" (removed)="removeCategory(c)">
           {{ c }}
+          <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
       </mat-chip-list>
-      <input [matChipInputFor]="categoryList">
+      <mat-form-field>
+        <input matInput
+               [matChipInputFor]="categoryList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [matChipInputAddOnBlur]="false"
+               (matChipInputTokenEnd)="addChip($event)">
+      </mat-form-field>
+
     </div>
-    <div class="form-buttons">
-      <button mat-raised-button color="primary" [type]="submit" >Save</button>
-      <button mat-raised-button color="primary" (click)="cancelChanges()">Cancel</button>
+    <div class="form-buttons mt10">
+      <button mat-raised-button color="primary" (click)="saveChanges()" class="mr5">Save</button>
+      <button mat-raised-button color="accent" (click)="cancelChanges()" class="ml5">Cancel</button>
     </div>
   </form>
 </div>

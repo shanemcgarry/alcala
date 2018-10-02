@@ -14,6 +14,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonToggleModule } from '@angular/material';
@@ -96,6 +97,7 @@ import { EditComponent } from './core/curation/edit/edit.component';
     BrowserAnimationsModule,
     MatExpansionModule,
     MatListModule,
+    MatDialogModule,
     MatPaginatorModule,
     MatTabsModule,
     MatChipsModule,
@@ -116,6 +118,7 @@ import { EditComponent } from './core/curation/edit/edit.component';
     FlexLayoutModule,
     HttpClientModule
   ],
+  entryComponents: [ EditComponent ],
   providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, SpinnerService, UserService, AuthGuard, SiteService, LocalStorageService],
   bootstrap: [AppComponent]
 })

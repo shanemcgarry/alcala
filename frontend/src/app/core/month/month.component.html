@@ -1,6 +1,6 @@
 <div *ngIf="dataModel">
 <h2>{{ getMonthName(dataModel.month) }} {{ pageYear }}</h2>
-<mat-accordion>
+<mat-accordion [multi]="true">
   <div *ngIf="dataModel.expenses && dataModel.expenses.length > 0" >
     <app-expense *ngFor="let expense of dataModel.expenses" [dataModel]="expense" [currentLang]="this.currentLang"></app-expense>
   </div>

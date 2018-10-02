@@ -5,10 +5,11 @@
     <p>
       For each record, you can review the amounts and the primary words that make up each transaction. There is also a link
       to the actual page in the archive that will allow you to read the full transaction within the context of the other transactions
-      on the page. In the "Categories" column, please provide a comma-delimited list of categories for the transaction. For
-      example, if you wish to apply two categories to an item (e.g. "travel" and "food"), simply enter travel,food into the
-      text box under "Categories" for that row. When you are finished, please click the "Save" button. NOTE:
-      please try to keep the total number of categories limited as too many categories becomes difficult to visualise.
+      on the page. Next to the "Categories" column is a button (looks like a pencil) that will allow you to edit the
+      categories (add new categories or remove existing ones) on the entry. To add new ones, simply type into the box in
+      the popup form followed by either a comma or by pressing the [ENTER] key. To remove an item, click the "x" next to
+      it's chip. When you are finished, please click the "Save" button on the popup form. NOTE: please try to keep the
+      total number of categories limited as too many categories becomes difficult to visualise.
     </p>
   </mat-card-header>
   <mat-card-content>
@@ -45,11 +46,12 @@
     </ng-container>
 
     <ng-container matColumnDef="actions">
-      <mat-cell *matCellDef="let row;">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let row">
         <button mat-icon-button color="primary" (click)="editData(row)">
-          <mat-icon aria-label="Edit">edit</mat-icon>
+          <mat-icon>edit</mat-icon>
         </button>
-      </mat-cell>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="this.displayColumns"></tr>

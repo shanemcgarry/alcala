@@ -6,6 +6,7 @@ import { SiteUser } from '../../shared/models/site-user.model';
 import {MatTableDataSource, MatPaginator, MatDialog} from '@angular/material';
 import { SpinnerService } from '../../shared/services/spinner.service';
 import {EditComponent} from './edit/edit.component';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'app-curation',
@@ -16,7 +17,7 @@ export class CurationComponent implements OnInit, AfterViewInit {
   dataModel: MatTableDataSource<TrainingData>;
   currUser: SiteUser;
   pageSizeOptions: number[] = [10, 25, 50, 100];
-  displayColumns: string[] = ['pageid', 'month', 'words', 'reales', 'maravedises', 'categories'];
+  displayColumns: string[] = ['pageid', 'month', 'words', 'reales', 'maravedises', 'categories', 'actions'];
 
   @ViewChild('dataPaginator') paginator: MatPaginator;
 
@@ -42,10 +43,16 @@ export class CurationComponent implements OnInit, AfterViewInit {
       );
   }
 
-  editData(data: TrainingData) {
-    const dialogRef = this.dialog.open(EditComponent, { data: {dataModel: data} });
+  editData(rowData: TrainingData) {
+    const dialogRef = this.dialog.open(EditComponent, { data: cloneDeep(rowData) });
+    const origCategories = cloneDeep(rowData.categories);
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
+      if (!result) {
+        rowData.categories = origCategories;
+      } else {
+        const updateData = this.dataModel.data.filter(x => x._id === result._id)[0];
+        updateData.categories = result.categories;
+      }
     });
   }
 

@@ -6,4 +6,5 @@ export interface TrainingData {
   reales: number;
   words: string[];
   year: number;
+  _id: string;
 }
