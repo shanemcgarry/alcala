@@ -6,6 +6,17 @@ import inspect
 
 
 class JsonSerializable(object):
+    def __getitem__(self, item):
+        result = None
+        for attr, value in inspect.getmembers(self):
+            if attr == item:
+                result = value
+
+        if result is None:
+            raise Exception('{item} not found')
+        else:
+            return result
+
     def __getstate__(self):
         temp = dict()
         for attr, value in inspect.getmembers(self):

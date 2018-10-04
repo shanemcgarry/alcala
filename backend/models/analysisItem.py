@@ -15,6 +15,44 @@ class CategoryData(JsonSerializable):
         self.colour = colour
 
 
+class TimeSummary(JsonSerializable):
+    def __init__(self, timeValue=None, timeType=None, reales=None, maravedises=None, totalAmount=None, transactionCount=None, *args, **kwargs):
+        self.timeValue = timeValue
+        self.timeType = timeType
+        self.reales = reales
+        self.maravedises = maravedises
+        self.totalAmount = totalAmount
+        self.transactionCount = transactionCount
+
+
+class DataPackage(JsonSerializable):
+    def __init__(self, reales=None, maravedises=None, grandTotal=None, totalTransactions=None, timeSummary=None, data=None, *args, **kwargs):
+        self.summary = SummaryInfo(reales=reales, maravedises=maravedises, grandTotal=grandTotal, totalTransactions=totalTransactions, timeSummary=timeSummary, *args, **kwargs)
+        self.data = data
+
+
+class SummaryInfo(JsonSerializable):
+    def __init__(self, reales=None, maravedises=None, grandTotal=None, totalTransactions=None, timeSummary=None, *args, **kwargs):
+        self.reales = reales
+        self.maravedises = maravedises
+        self.grandTotal = grandTotal
+        self.totalTransactions = totalTransactions
+        self.timeSummary = timeSummary
+
+class TimeSeriesData(JsonSerializable):
+    def __init__(self, timeValue=None, timeType=None, totalAmount=None, transactionCount=None, *args, **kwargs):
+        self.timeValue = timeValue
+        self.timeType = timeType
+        self.totalAmount = totalAmount
+        self.transactionCount = transactionCount
+
+
+class KeyTimePivotData(JsonSerializable):
+    def __init__(self, key=None, timeSeries=None, *args, **kwargs):
+        self.key = key
+        self.timeSeries = timeSeries
+
+
 class AnalysisSummary(JsonSerializable):
     def __init__(self, category_grouping=None, month_grouping=None, freq_dict=None, transaction_list=None):
         self.categoryBreakdown = category_grouping

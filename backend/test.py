@@ -71,6 +71,6 @@ mdb = MongoData()
 #
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
-result = mdb.update_training_data('002b06c872514388b4bd6dba9eb0067e', ['church', 'supplies'])
-print(result.toJson())
+result = mdb.get_category_time_data(year=None)
+print(result.data[9].toJson())
 
