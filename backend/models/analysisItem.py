@@ -1,6 +1,7 @@
 from models.serializable import JsonSerializable
 import math
 
+
 class AnalysisResultList(JsonSerializable):
     def __init__(self, hits, search_phrase=None, items=None, summary=None):
         self.hits = hits,
@@ -38,6 +39,7 @@ class SummaryInfo(JsonSerializable):
         self.grandTotal = grandTotal
         self.totalTransactions = totalTransactions
         self.timeSummary = timeSummary
+
 
 class TimeSeriesData(JsonSerializable):
     def __init__(self, timeValue=None, timeType=None, totalAmount=None, transactionCount=None, *args, **kwargs):

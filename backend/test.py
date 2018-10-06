@@ -2,6 +2,7 @@ from existDB import ExistData
 from mongoDB import MongoData
 from tools import Tools
 from analysis.classification import DocumentClassifier
+from analysis.frequency import FrequencyDistribution
 from analysis.utilities import Utilities
 from models.analysisItem import AnalysisItem, AnalysisSummary
 from eulxml import xmlmap
@@ -71,6 +72,9 @@ mdb = MongoData()
 #
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
-result = mdb.get_category_time_data(year=None)
-print(result.data[9].toJson())
+transactions = mdb.get_transactions(use_training=False, year=None)
+freq = FrequencyDistribution(transactions, year=None)
+results = freq.get_word_freq_graph_data()
+print(results.data[len(results.data) - 1].toJson())
+
 

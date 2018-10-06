@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
-import { AnalysisSummary, AnalysisItem } from '../../shared/models/analysis-result';
+import {AnalysisSummary, AnalysisItem, DataSummaryPackage} from '../../shared/models/analysis-result';
 import { ActivatedRoute } from '@angular/router';
 
 import { cloneDeep, map, orderBy } from 'lodash';
@@ -41,7 +41,6 @@ export class DashboardComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    //this.siteService.clearCache();
     this.getCategoryData();
     this.getSummary(null);
     this.getRawData(null);
@@ -103,7 +102,7 @@ export class DashboardComponent implements OnInit, OnChanges {
   }
 
   getSummary(year: any): void {
-    this.spinnerService.show('dashboardSpinner')
+    this.spinnerService.show('dashboardSpinner');
     this.visService.getDashboardSummary(year)
       .subscribe(
         data => {
@@ -117,7 +116,7 @@ export class DashboardComponent implements OnInit, OnChanges {
 
   getCategoryTimeData(year: any): void {
     this.dateFormat = year ? '%b' : '%Y';
-    this.spinnerService.show('dashboardSpinner')
+    this.spinnerService.show('dashboardSpinner');
     this.visService.getCategoryTimeData(year)
       .subscribe(
         data => {
@@ -128,7 +127,7 @@ export class DashboardComponent implements OnInit, OnChanges {
       );
   }
 
-  populateCategoryTimeCharts(data: any): void {
+  populateCategoryTimeCharts(data: DataSummaryPackage): void {
     this.summaryData = data.summary;
     this.formatStackAreaData(cloneDeep(data));
     this.formatCumulativeLineData(cloneDeep(data));
@@ -202,13 +201,13 @@ export class DashboardComponent implements OnInit, OnChanges {
     this.discreteBarData = tempData;
   }
 
-  formatMultiBarData(data: any): void {
+  formatMultiBarData(data: DataSummaryPackage): void {
     for (let x = 0; x < data.data.length; ++x) {
-      const data_values = data.data[x].values;
-      const summary_data = data.summary.timeGroup;
+      const data_values = data.data[x].timeSeries;
+      const summary_data = data.summary.timeSummary;
       data.data[x]['color'] = this.getColour(data.data[x].key);
       for (let y = 0; y < data_values.length; ++y) {
-        const time_summary = summary_data.filter(t => t.key === data_values[y][0])[0];
+        const time_summary = summary_data.filter(t => t.timeValue === data_values[y][0])[0];
         data_values[y][0] = this.formatForTimeTicks(data_values[y][0]);
         //data_values[y][1] = data_values[y][1] / time_summary.totalAmount;
       }
@@ -216,9 +215,9 @@ export class DashboardComponent implements OnInit, OnChanges {
     this.multiBarData = data.data;
   }
 
-  formatStackAreaData(data: any): void {
+  formatStackAreaData(data: DataSummaryPackage): void {
     for (let x = 0; x < data.data.length; ++x) {
-      const data_values = data.data[x].values;
+      const data_values = data.data[x].timeSeries;
       data.data[x]['color'] = this.getColour(data.data[x].key);
       for (let y = 0; y < data_values.length; ++y) {
         data_values[y][0] = this.formatForTimeTicks(data_values[y][0]);
@@ -227,9 +226,9 @@ export class DashboardComponent implements OnInit, OnChanges {
     this.stackAreaData = data.data;
   }
 
-  formatLineData(data: any): void {
+  formatLineData(data: DataSummaryPackage): void {
     for (let x = 0; x < data.data.length; ++x) {
-      const data_values = data.data[x].values;
+      const data_values = data.data[x].timeSeries;
       data.data[x]['color'] = this.getColour(data.data[x].key);
       for (let y = 0; y < data_values.length; ++y) {
         data_values[y][0] = this.formatForTimeTicks(data_values[y][0]);
@@ -238,13 +237,13 @@ export class DashboardComponent implements OnInit, OnChanges {
     this.lineData = data.data;
   }
 
-  formatCumulativeLineData(data: any): void {
+  formatCumulativeLineData(data: DataSummaryPackage): void {
     for (let x = 0; x < data.data.length; ++x) {
-      const data_values = data.data[x].values;
-      const summary_data = data.summary.timeGroup;
+      const data_values = data.data[x].timeSeries;
+      const summary_data = data.summary.timeSummary;
       data.data[x]['color'] = this.getColour(data.data[x].key);
       for (let y = 0; y < data_values.length; ++y) {
-        const time_summary = summary_data.filter(t => t.key === data_values[y][0])[0];
+        const time_summary = summary_data.filter(t => t.timeValue === data_values[y][0])[0];
         data_values[y][0] = this.formatForTimeTicks(data_values[y][0]);
         if (time_summary && time_summary.totalAmount > 0) {
           data_values[y][1] = data_values[y][1] / time_summary.totalAmount;

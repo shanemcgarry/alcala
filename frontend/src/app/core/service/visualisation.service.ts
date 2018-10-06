@@ -4,7 +4,7 @@ import { HttpErrorHandler, HandleError } from '../../shared/services/http-error-
 import { environment } from '../../../environments/environment';
 import { Observable, from } from 'rxjs';
 import { catchError, groupBy, map, mergeMap, tap, toArray } from 'rxjs/operators';
-import {AnalysisItem, AnalysisSummary, AnalysisUserItem} from '../../shared/models/analysis-result';
+import {AnalysisItem, AnalysisSummary, AnalysisUserItem, DataSummaryPackage} from '../../shared/models/analysis-result';
 import {CategoryData, CategoryMonthPivotItem} from '../../shared/models/pivot-data.model';
 
 const httpOptions = {
@@ -58,8 +58,8 @@ export class VisualisationService {
       );
   }
 
-  getCategoryTimeData(year: any): Observable<any[]> {
-    return this.httpClient.get<any[]>( `${this.serviceUrl}category_time_data/${year}`)
+  getCategoryTimeData(year: any): Observable<DataSummaryPackage> {
+    return this.httpClient.get<DataSummaryPackage>( `${this.serviceUrl}category_time_data/${year}`)
       .pipe(
         catchError(this.handleError('Stack Area Data fetch', null))
       );

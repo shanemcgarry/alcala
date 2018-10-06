@@ -18,6 +18,40 @@ export interface AnalysisItem {
   words: string[];
 }
 
+export interface TimeSummary {
+  timeValue: number;
+  timeType: string;
+  reales: number;
+  maravedises: number;
+  totalAmount: number;
+  transactionCount: number;
+}
+
+export interface SummaryInfo {
+  reales: number;
+  maravedises: number;
+  grandTotal: number;
+  totalTransactions: number;
+  timeSummary: TimeSummary[];
+}
+
+export interface DataSummaryPackage {
+  summary: SummaryInfo;
+  data: KeyTimePivotData[];
+}
+
+export interface TimeSeriesData {
+  timeValue: number;
+  timeType: string;
+  totalAmount: number;
+  transactionCount: number;
+}
+
+export interface KeyTimePivotData {
+  key: string;
+  timeSeries: TimeSeriesData[];
+}
+
 export interface AnalysisUserItem {
   categories: string[];
   maravedises: number;
