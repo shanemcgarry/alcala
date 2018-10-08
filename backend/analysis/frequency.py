@@ -16,17 +16,18 @@ class FrequencyDistribution:
     def get_word_freq_graph_data(self):
         """Creates a DataPackage object used to display timeseries data for word frequency"""
         mdb = MongoData()
-        word_freq_data = self.build_word_freq_info()
-        time_series_data = mdb.get_time_series_data('word', word_freq_data, 'y' if self.year is None else 'm')
+        #word_freq_data = self.build_word_freq_info()
+        temp_data = mdb.get_word_by_year_summary() if self.year is None else mdb.get_word_by_month_summary(self.year)
+        time_series_data = mdb.get_time_series_data('word', temp_data, 'y' if self.year is None else 'm')
 
         # The time series data is meant to only have a key plus the time series. We also want to add frequency.
         for t in time_series_data:
-            word_info = next(filter(lambda fd: fd.word == t.key, word_freq_data))
-            t.frequency = word_info.frequency
+            word_info = next(filter(lambda fd: fd[0] == t.key, self.freq_dist.items()))
+            t.frequency = word_info[1]
 
         if self.year is not None:
             time_summary = mdb.get_month_summary(self.year)
-            timeKey = 'monthNum'
+            timeKey = 'month'
             timeType = 'm'
         else:
             time_summary = mdb.get_year_summary()

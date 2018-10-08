@@ -1,6 +1,8 @@
 from pymongo import MongoClient
-from models.analysisItem import AnalysisItem, CategoryData, AnalysisUserItem, TimeSeriesData, KeyTimePivotData, TimeSummary, DataPackage
-from models.pivotData import CategoryMonthPivotItem, CategoryYearPivotItem, MonthYearPivotItem, AllPointsPivotItem, WordFreqPivotItem, CategoryPivotItem, YearPivotItem
+from models.analysisItem import AnalysisItem, CategoryData, AnalysisUserItem, TimeSeriesData, KeyTimePivotData, \
+    TimeSummary, DataPackage
+from models.pivotData import CategoryMonthPivotItem, CategoryYearPivotItem, MonthYearPivotItem, AllPointsPivotItem, \
+    WordFreqPivotItem, CategoryPivotItem, YearPivotItem, WordFreqMonthPivotItem, WordFreqYearPivotItem
 from models.users import SiteUser
 from tools import Tools
 import config
@@ -70,7 +72,7 @@ class MongoData:
         query = self.db.curated_training.find({'_id': id})
         return AnalysisUserItem(**query[0])
 
-    def get_word_frequency_summary(self, year=None):
+    def get_word_summary(self, year=None):
         """
         Returns a list of WordFreqPivotItem objects that provides aggregates of amounts for each word in the system.
         NOTE: Can be filtered by year.
@@ -270,92 +272,6 @@ class MongoData:
                            totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results)
 
 
-
-    # def get_category_time_data(self, year=None):
-    #
-    #     results = []
-    #     curr_category = None
-    #     line_data = []
-    #     checks = []
-    #
-    #     if year is not None:
-    #         temp_data = self.get_category_by_month_summary(year=year)
-    #         temp_data = sorted(temp_data, key=lambda x: (x.category, x.monthNum))
-    #         prev_key = 0
-    #
-    #         for item in temp_data:
-    #             if curr_category != item.category and curr_category is not None:
-    #                 for i in range(12 - prev_key -1, -1, -1):
-    #                     line_data.append([12-i, 0])
-    #                 results.append({ 'key': curr_category, 'values': line_data })
-    #                 line_data = []
-    #                 curr_category = item.category
-    #                 prev_key = 0
-    #             elif curr_category is None:
-    #                 curr_category = item.category
-    #
-    #             for i in range(item.monthNum - prev_key - 1):
-    #                 line_data.append([prev_key + i + 1, 0])
-    #             line_data.append([item.monthNum, item.totalAmount])
-    #             prev_key = item.monthNum
-    #
-    #     else:
-    #         temp_data = self.get_category_by_year_summary()
-    #         temp_data = sorted(temp_data, key=lambda x: (x.category, x.year))
-    #         prev_key = 1773
-    #
-    #         for item in temp_data:
-    #             if curr_category != item.category and curr_category is not None:
-    #                 for i in range(1781 - prev_key - 1):
-    #                     if prev_key + i + 1 == 1780:
-    #                         line_data.append([prev_key + i + 2, 0]) #The +2 is a hack because we need to skip the year 1780
-    #                     else:
-    #                         line_data.append([prev_key + i + 1, 0])
-    #                 results.append({ 'key': curr_category, 'values': line_data })
-    #                 line_data = []
-    #                 checks = []
-    #                 curr_category = item.category
-    #                 prev_key = 1773
-    #             elif curr_category is None:
-    #                 curr_category = item.category
-    #
-    #             for i in range(item.year - prev_key - 1):
-    #                 if prev_key != 1779 and item.year != 1781:
-    #                     line_data.append([prev_key + i + 1, 0])
-    #                 elif item.year == 1781 and prev_key != 1779 and i < 6:
-    #                     line_data.append([prev_key + i + 1, 0])
-    #             line_data.append([item.year, item.totalAmount])
-    #             prev_key = item.year
-    #             checks.append(item.year)
-    #
-    #     summary_info = self.get_total_spent(year)
-    #     grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + ((summary_info['maravedises'] % 34) / 100)
-    #
-    #     if year is not None:
-    #         time_summary = self.get_month_summary(year=year)
-    #     else:
-    #         time_summary = self.get_year_summary(year=year)
-    #
-    #     time_results = list()
-    #     for t in time_summary:
-    #         if year is not None:
-    #             time_results.append({'key': t.month, 'totalAmount': t.totalAmount, 'transactionCount': t.transactionCount,
-    #                                  'reales': t.reales, 'maravedises': t.maravedises})
-    #         else:
-    #             time_results.append({'key': t.year, 'totalAmount': t.totalAmount, 'transactionCount': t.transactionCount,
-    #                                  'reales': t.reales, 'maravedises': t.maravedises})
-    #
-    #
-    #     return { 'summary': {
-    #                 'reales': summary_info['reales'],
-    #                 'maravedises': summary_info['maravedises'],
-    #                 'grandTotal': grand_total,
-    #                 'totalTransactions': summary_info['transaction_count'],
-    #                 'timeGroup': time_results
-    #                 },
-    #              'data': results }
-
-
     def get_total_spent(self, year=None):
         pipeline = []
         pipeline.append({"$unwind": "$categories"})
@@ -371,6 +287,53 @@ class MongoData:
 
         json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
         return json_list['cursor']['firstBatch'][0]
+
+    def get_word_by_year_summary(self, year=None):
+        pipeline=[]
+        pipeline.append({"$unwind": "$words"})
+        if year is not None:
+            pipeline.append({"$match": {"year": year}})
+        pipeline.append({"$group": {
+            "_id": {
+                "year": "$year",
+                "word": "$words"
+            },
+            "reales": {"$sum": "$reales"},
+            "maravedises": {"$sum": "$maravedises"},
+            "transaction_count": {"$sum": 1}
+        }})
+
+        json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
+        results = list()
+        for j in json_list['cursor']['firstBatch']:
+            results.append(WordFreqYearPivotItem(year=j['_id']['year'], word=j['_id']['word'], **j))
+        if len(results) == 0:
+            results = None
+        return results
+
+    def get_word_by_month_summary(self, year=None):
+        pipeline=[]
+        pipeline.append({"$unwind": "$words"})
+        if year is not None:
+            pipeline.append({"$match": {"year": year}})
+        pipeline.append({"$group": {
+            "_id": {
+                "month": "$month",
+                "word": "$words"
+            },
+            "reales": {"$sum": "$reales"},
+            "maravedises": {"$sum": "$maravedises"},
+            "transaction_count": {"$sum": 1}
+        }})
+
+        json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
+        results = list()
+        for j in json_list['cursor']['firstBatch']:
+            results.append(WordFreqMonthPivotItem(monthNum=j['_id']['month'], word=j['_id']['word'], **j))
+        if len(results) == 0:
+            results = None
+        return results
+
 
     def get_category_by_year_summary(self, year=None):
         pipeline = []

@@ -23,9 +23,9 @@ class WordFreqPivotItem(BasePivotItem):
 
 
 class WordFreqMonthPivotItem(WordFreqPivotItem):
-    def __init__(self, reales=None, maravedises=None, transaction_count=None, word=None, frequency=None, month=None, *args, **kwargs):
+    def __init__(self, reales=None, maravedises=None, transaction_count=None, word=None, frequency=None, monthNum=None, *args, **kwargs):
         super().__init__(reales=reales, maravedises=maravedises, transaction_count=transaction_count, word=word, frequency=frequency, *args, **kwargs)
-        self.monthNum = month
+        self.monthNum = monthNum
 
 
 class WordFreqYearPivotItem(WordFreqPivotItem):

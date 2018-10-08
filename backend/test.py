@@ -72,9 +72,10 @@ mdb = MongoData()
 #
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
-transactions = mdb.get_transactions(use_training=False, year=None)
-freq = FrequencyDistribution(transactions, year=None)
+transactions = mdb.get_transactions(use_training=False, year=1774)
+freq = FrequencyDistribution(transactions, year=1774)
 results = freq.get_word_freq_graph_data()
-print(results.data[len(results.data) - 1].toJson())
+results.data = sorted(results.data, key=lambda x: x.frequency, reverse=True)
+print(results.data[0].toJson())
 
 
