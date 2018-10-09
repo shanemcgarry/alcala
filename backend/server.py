@@ -5,6 +5,7 @@ from flask_cors import CORS
 import base64
 from models.pageSearch import PageSearch
 from models.analysisItem import AnalysisItem, AnalysisResultList, AnalysisSummary
+from models.visSearch import VisSearchParams
 from analysis.frequency import FrequencyDistribution
 from models.users import SiteUser
 from models.flaskErrors import ApplicationError
@@ -232,6 +233,26 @@ def get_categories(year):
     response = app.response_class(
         status=200,
         response=Tools.serialise_list(results),
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/visualise/search", methods=['POST'])
+def do_vis_search():
+    searchParams = VisSearchParams(**request.get_json())
+    if searchParams.groupBy == 'categories':
+        # do category search
+        results = []
+    elif searchParams.groupBy == 'words':
+        # do word search
+        results = []
+    else:
+        raise ApplicationError('Invalid groupBy setting')
+
+    response = app.response_class(
+        status=200,
+        response=Tools.serialise_list(results), # may need to be fixed depending on structure of search
         mimetype='application/json'
     )
     return response
