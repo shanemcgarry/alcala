@@ -13,9 +13,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSidenavModule } from '@angular/material/sidenav/';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@angular/material';
+import { MatCheckboxModule, MatRadioModule, MatSelectModule } from '@angular/material';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonToggleModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
@@ -62,6 +64,7 @@ import { SiteService } from './shared/services/site.service';
 import { LocalStorageService } from 'ngx-store';
 import { CurationComponent } from './core/curation/curation.component';
 import { EditComponent } from './core/curation/edit/edit.component';
+import { VizsearchComponent } from './core/vizsearch/vizsearch.component';
 
 
 @NgModule({
@@ -82,7 +85,8 @@ import { EditComponent } from './core/curation/edit/edit.component';
     LogoutComponent,
     ChartComponent,
     CurationComponent,
-    EditComponent
+    EditComponent,
+    VizsearchComponent
   ],
   imports: [
     routing,
@@ -99,6 +103,8 @@ import { EditComponent } from './core/curation/edit/edit.component';
     MatListModule,
     MatDialogModule,
     MatPaginatorModule,
+    MatSidenavModule,
+    MatRadioModule,
     MatTabsModule,
     MatChipsModule,
     MatIconModule,
@@ -110,6 +116,8 @@ import { EditComponent } from './core/curation/edit/edit.component';
     MatCardModule,
     MatInputModule,
     MatSelectModule,
+    MatCheckboxModule,
+    MatSliderModule,
     MatGridListModule,
     FormsModule,
     ReactiveFormsModule,

@@ -9,6 +9,7 @@ import { PageComponent } from './core/page/page.component';
 import { UserSetupComponent } from './shared/components/user-setup/user-setup.component';
 import { DashboardComponent } from './core/dashboard/dashboard.component';
 import { CurationComponent } from './core/curation/curation.component';
+import {VizsearchComponent} from './core/vizsearch/vizsearch.component';
 
 
 const appRoutes: Routes = [
@@ -16,6 +17,7 @@ const appRoutes: Routes = [
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'search/:phrase', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'visualise/dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'visualise/search', component: VizsearchComponent },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'setup', component: UserSetupComponent, canActivate: [AuthGuard] },

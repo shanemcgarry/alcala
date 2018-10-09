@@ -5,6 +5,7 @@ from flask_cors import CORS
 import base64
 from models.pageSearch import PageSearch
 from models.analysisItem import AnalysisItem, AnalysisResultList, AnalysisSummary
+from analysis.frequency import FrequencyDistribution
 from models.users import SiteUser
 from models.flaskErrors import ApplicationError
 import json as Json
@@ -19,11 +20,13 @@ import uuid
 app = Flask(__name__)
 CORS(app)
 
+
 @app.errorhandler(ApplicationError)
 def handle_application_error(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
 
 @app.route("/")
 def index():
@@ -141,6 +144,24 @@ def update_user():
         return db_user.toJson(), 200
 
 
+@app.route("/visualise/wordfreq/time_data/<year>")
+def get_wordfreq_time_data(year):
+    mdb = MongoData()
+    if year == 'null' or year == 'undefined':
+        year = None
+    else:
+        year = int(year)
+    transactions = mdb.get_transactions(year=year)
+    freq = FrequencyDistribution(transactions, year=year)
+    results = freq.get_word_freq_graph_data()
+    response = app.response_class(
+        status=200,
+        response=results.toJson(),
+        mimetype='application/json'
+    )
+    return response
+
+
 @app.route("/visualise/category_time_data/<year>")
 def get_category_time_data(year):
     mdb = MongoData()
@@ -185,6 +206,7 @@ def update_training_data():
         mimetype='application/json'
     )
     return response
+
 
 @app.route("/admin/training_data/<user_id>")
 def get_training_data(user_id):

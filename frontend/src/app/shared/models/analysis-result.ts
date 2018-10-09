@@ -49,6 +49,7 @@ export interface TimeSeriesData {
 
 export interface KeyTimePivotData {
   key: string;
+  frequency: number;
   timeSeries: TimeSeriesData[];
 }
 

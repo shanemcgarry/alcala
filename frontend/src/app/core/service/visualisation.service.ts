@@ -5,7 +5,8 @@ import { environment } from '../../../environments/environment';
 import { Observable, from } from 'rxjs';
 import { catchError, groupBy, map, mergeMap, tap, toArray } from 'rxjs/operators';
 import {AnalysisItem, AnalysisSummary, AnalysisUserItem, DataSummaryPackage} from '../../shared/models/analysis-result';
-import {CategoryData, CategoryMonthPivotItem} from '../../shared/models/pivot-data.model';
+import {CategoryData, CategoryMonthPivotItem } from '../../shared/models/pivot-data.model';
+import { VisSearchParams } from '../../shared/models/vis-search-model';
 
 const httpOptions = {
   headers: new HttpHeaders( {
@@ -55,6 +56,20 @@ export class VisualisationService {
     return this.httpClient.get<AnalysisItem[]>(`${this.serviceUrl}get_raw_data/${year}`)
       .pipe(
         catchError(this.handleError('Raw Data Fetch', null))
+      );
+  }
+
+  generateSearch(searchParams: VisSearchParams): Observable<any> {
+    return this.httpClient.post<any>(`${this.serviceUrl}search`, JSON.stringify(searchParams), {responseType: 'json'})
+      .pipe(
+        catchError(this.handleError('generateSearch', null))
+      );
+  }
+
+  getWordFrequencyTimeData(year: any): Observable<DataSummaryPackage> {
+    return this.httpClient.get<DataSummaryPackage>(`${this.serviceUrl}wordfreq/time_data/${year}`)
+      .pipe(
+        catchError(this.handleError('getWordFrequencyTimeData', null))
       );
   }
 

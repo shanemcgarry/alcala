@@ -271,6 +271,9 @@ class MongoData:
         return DataPackage(reales=summary_info['reales'], maravedises=summary_info['maravedises'], grandTotal=grand_total,
                            totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results)
 
+    def get_categories(self):
+        json_list = self.db.transactions.distinct('categories')
+        return json_list
 
     def get_total_spent(self, year=None):
         pipeline = []
