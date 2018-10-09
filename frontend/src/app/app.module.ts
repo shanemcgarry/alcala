@@ -30,6 +30,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { SwiperModule, SWIPER_CONFIG, SwiperConfigInterface } from 'ngx-swiper-wrapper';
+
 import { ImageViewerModule } from '@hallysonh/ngx-imageviewer';
 import { ImageZoomModule } from 'angular2-image-zoom';
 import { YoutubePlayerModule } from 'ngx-youtube-player';
@@ -66,6 +68,10 @@ import { CurationComponent } from './core/curation/curation.component';
 import { EditComponent } from './core/curation/edit/edit.component';
 import { VizsearchComponent } from './core/vizsearch/vizsearch.component';
 
+const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
+  direction: 'horizontal',
+  slidesPerView: 'auto'
+};
 
 @NgModule({
   declarations: [
@@ -119,6 +125,7 @@ import { VizsearchComponent } from './core/vizsearch/vizsearch.component';
     MatCheckboxModule,
     MatSliderModule,
     MatGridListModule,
+    SwiperModule,
     FormsModule,
     ReactiveFormsModule,
     ImageViewerModule,
@@ -127,7 +134,7 @@ import { VizsearchComponent } from './core/vizsearch/vizsearch.component';
     HttpClientModule
   ],
   entryComponents: [ EditComponent ],
-  providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, SpinnerService, UserService, AuthGuard, SiteService, LocalStorageService],
+  providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, SpinnerService, UserService, AuthGuard, SiteService, LocalStorageService, { provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

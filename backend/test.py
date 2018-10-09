@@ -72,7 +72,9 @@ mdb = MongoData()
 #
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
-results = mdb.get_categories()
-print(results)
+import random
+all_pages = edb.get_all_pages()
+results = random.sample(all_pages, 10)
+print(Tools.serialise_list(results))
 
 

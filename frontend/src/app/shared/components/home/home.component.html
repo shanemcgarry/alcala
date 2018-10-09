@@ -1,3 +1,27 @@
+<swiper *ngIf="this.sampleData" class="swiper-container" [config]="this.swiperConfig">
+  <div *ngFor="let d of this.sampleData" class="swiper-slide">
+    <mat-card>
+      <mat-card-title>{{ this.getCardTitle(d) }}</mat-card-title>
+      <mat-card-subtitle>{{ this.getCardSubtitle(d) }}</mat-card-subtitle>
+      <mat-card-content>
+        <img [src]="this.getImageUrl(d)" alt='{{ this.getCardTitle(d) }} image' />
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="onViewClick(d.id)">View</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</swiper>
+<div class="text-container">
 <p>
-  home works!
+  Welcome to the Alcalá Record Books. The Alcalá Record Books are a digitisation of an 18th century books of accounts
+  from the Royal Irish College in Alcalá de Henares, Spain. Established in 1649, the college served as training for
+  Catholic Priests from Ireland (Catholicism being outlawed in Ireland at the time). It existed until 1785 when it was
+  absorbed into the Royal Irish College in Salamanca, Spain.
 </p>
+<p>
+  The records here specifically deal with the monetary accounts as recorded by the rector of the college from 1774 to 1781
+  (excluding 1780 which is missing from the original manuscript). The original manuscript is currently on display in the
+  Russell Library at Maynooth University in Maynooth, Co. Kildare, Ireland.
+</p>
+</div>

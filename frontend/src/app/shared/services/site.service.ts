@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { LocalStorageService } from 'ngx-store';
+import { AlcalaPage } from '../models/alcala-page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,13 @@ export class SiteService {
     this.handleError = httpError.createHandleError('SiteService');
   }
 
+  getSampleData(size: number): Observable<AlcalaPage[]> {
+    return this.httpClient.get<AlcalaPage[]>(`${this.serviceUrl}home/sample_data/${size}`)
+      .pipe(
+        catchError(this.handleError('getSampleData', null))
+      );
+  }
+
   private getColourPaletteFromServer(numColours: number): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.serviceUrl}colour_palette/${numColours}`)
       .pipe(
@@ -26,7 +34,7 @@ export class SiteService {
   }
 
   getColourPalette(numColours: number): any[] {
-    const key = `cPalette[${numColours}]`
+    const key = `cPalette[${numColours}]`;
     let palette = this.localStorage.get(key);
     if (!palette) {
       palette = this.calculateColourPalette(3, false);

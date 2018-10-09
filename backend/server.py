@@ -16,6 +16,7 @@ from analysis.utilities import Utilities
 from tools import Tools
 import json
 import uuid
+import random
 
 #app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app = Flask(__name__)
@@ -37,6 +38,20 @@ def index():
 @app.route('/static/<path:path>')
 def send_js(path):
     return send_from_directory('static', path)
+
+
+@app.route("/home/sample_data/<size>")
+def get_sample_data(size):
+    edb = ExistData()
+    size = int(size)
+    all_pages = [p for p in edb.get_all_pages() if p.months]
+    results = random.sample(all_pages, size)
+    response = app.response_class(
+        response=Tools.serialise_list(results),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 @app.route("/pages/search/<query>")
