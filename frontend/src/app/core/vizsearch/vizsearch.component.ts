@@ -126,7 +126,7 @@ onGraphTypeChange(e: MatSelectChange) {
       .subscribe(
         data => this.graphData = data,
         err => console.log(err),
-        () => console.log(this.graphData)
+        () => console.log('Graph Data loaded')
       );
   }
 
