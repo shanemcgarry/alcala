@@ -17,7 +17,7 @@ const appRoutes: Routes = [
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'search/:phrase', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'visualise/dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'visualise/search', component: VizsearchComponent },
+  { path: 'visualise/search/:graph', component: VizsearchComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'setup', component: UserSetupComponent, canActivate: [AuthGuard] },

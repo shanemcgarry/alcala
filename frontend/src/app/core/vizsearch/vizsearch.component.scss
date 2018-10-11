@@ -33,6 +33,23 @@ mat-card {
   margin-left: 8%;
 }
 
+.features {
+  width: 90%;
+  mat-select {
+    width: 90%;
+    margin-right: 1%
+  }
+}
+
+.two-column {
+  width: 45%;
+  margin-right: 2%
+}
+
+.tooltip-info {
+  width: 16px;
+}
+
 mat-form-field.word-num {
   margin-top: -20px;
   margin-bottom: -20px;
@@ -51,7 +68,7 @@ mat-slider {
 .filter {
   margin-top: 5px;
   margin-bottom: 15px;
-  span {
+  span, mat-form-field {
     margin-left: 2%;
   }
 }

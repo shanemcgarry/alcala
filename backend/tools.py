@@ -1,10 +1,42 @@
 import random
+from models.visSearch import VisSearchParams
 
 class Tools:
     @staticmethod
     def serialise_list(list_obj):
         str_result = '[' + ','.join(x.toJson() for x in list_obj) + ']'
         return str_result
+
+    @staticmethod
+    def check_search_params(searchParams: VisSearchParams):
+        if searchParams is not None:
+            if Tools.check_for_empty_value(searchParams.year):
+                searchParams.year = None
+            else:
+                searchParams.year = int(searchParams.year)
+            if Tools.check_for_empty_value(searchParams.topWords):
+                searchParams.topWords = None
+            else:
+                searchParams.topWords = int(searchParams.topWords)
+            if Tools.check_for_empty_value(searchParams.bottomWords):
+                searchParams.bottomWords = None
+            else:
+                searchParams.bottomWords = int(searchParams.bottomWords)
+            if Tools.check_for_empty_value(searchParams.keywords):
+                searchParams.keywords = None
+            if Tools.check_for_empty_value(searchParams.filteredCategories):
+                searchParams.filteredCategories = None
+            elif isinstance(searchParams.filteredCategories, list) and len(searchParams.filteredCategories) == 0:
+                searchParams.filteredCategories = None
+
+        return searchParams
+
+    @staticmethod
+    def check_for_empty_value(value):
+        if value is None or value == 'null' or value == 'undefined' or value == '':
+            return True
+        else:
+            return False
 
     @staticmethod
     def calculate_color_list(numItems, baseHSL, useRandom=True):

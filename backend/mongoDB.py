@@ -100,7 +100,7 @@ class MongoData:
             results = None
         return results
 
-    def get_full_summary(self, year=None):
+    def get_full_summary(self, filters=None):
         """
         Returns a list of AllPointsPivotItem objects that provides aggregates of amounts for each category in the system
         broken down by year and month.
@@ -108,9 +108,15 @@ class MongoData:
         """
 
         pipeline = []
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
+
         pipeline.append({"$unwind": "$categories"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
         pipeline.append({"$group": {
                                 "_id": {
                                     "year": "$year",
@@ -130,16 +136,22 @@ class MongoData:
             results = None
         return results
 
-    def get_category_summary(self, year=None):
+    def get_category_summary(self, filters=None):
         """
         Returns a list of CaetegoryPivotItem objects that provides aggregates of amounts for each category in the system
         NOTE: Can be filtered by year.
         """
 
         pipeline = []
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
+
         pipeline.append({"$unwind": "$categories"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
         pipeline.append({"$group":  {
                                 "_id": "$categories",
                                 "reales": { "$sum": "$reales"},
@@ -152,37 +164,6 @@ class MongoData:
         results = list()
         for j in json_list['cursor']['firstBatch']:
             results.append(CategoryPivotItem(category=j['_id'], **j))
-        if len(results) == 0:
-            results = None
-        return results
-
-    def get_category_by_month_summary(self, year=None):
-        """
-        Returns a list of CategoryMonthPivotItem objects that provides aggregates of amounts for each category in the system
-        broken down by month.
-        NOTE: Can be filtered by year.
-        """
-
-        pipeline = []
-        pipeline.append({"$unwind": "$categories"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
-
-        pipeline.append({"$group": {
-                            "_id": {
-                                "category": "$categories",
-                                "month": "$month"
-                            },
-                            "reales": {"$sum": "$reales"},
-                            "maravedises": {"$sum": "$maravedises"},
-                            "transaction_count": {"$sum": 1}
-                         }})
-
-        json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
-        results = list()
-        for j in json_list['cursor']['firstBatch']:
-            results.append(CategoryMonthPivotItem(month_name=self.get_month_name(j['_id']['month']), month=j['_id']['month'],
-                                                  category=j['_id']['category'], **j))
         if len(results) == 0:
             results = None
         return results
@@ -237,28 +218,62 @@ class MongoData:
             prevTime = item[timeAttr]
         return results
 
-    def get_category_time_data(self, year=None):
+    def get_word_time_data(self, searchParams=None):
+        """
+        :param year: Specify a year if you wish to see a monthly breakdown. Set to None if you wish to see a yearly breakdown
+        :return: A DataPackage object which contains overall summary information plus a breakdown of timeseries data for each
+        word.
+        """
+
+        if searchParams is not None and searchParams.year is not None:
+            temp_data = self.get_word_by_month_summary(filters=searchParams)
+            temp_data = sorted(temp_data, key=lambda x: (x.word, x.monthNum))
+            time_summary = self.get_month_summary(filters=searchParams)
+            timeType = 'm'
+            timeKey = 'month'
+        else:
+            temp_data = self.get_word_by_year_summary(filters=searchParams)
+            temp_data = sorted(temp_data, key=lambda x: (x.word, x.year))
+            time_summary = self.get_year_summary(filters=searchParams)
+            timeType = 'y'
+            timeKey = 'year'
+
+        results = self.get_time_series_data(keyName='word', timeType=timeType, listData=temp_data)
+        summary_info = self.get_total_spent(filters=searchParams)
+        grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + (
+                    (summary_info['maravedises'] % 34) / 100)
+
+        time_results = list()
+        for t in time_summary:
+            time_results.append(TimeSummary(timeValue=t[timeKey], timeType=timeType, reales=t.reales,
+                                            maravedises=t.maravedises, totalAmount=t.totalAmount,
+                                            transactionCount=t.transactionCount))
+
+        return DataPackage(reales=summary_info['reales'], maravedises=summary_info['maravedises'], grandTotal=grand_total,
+                           totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results)
+
+    def get_category_time_data(self, searchParams=None):
         """
         :param year: Specify a year if you wish to see a monthly breakdown. Set to None if you wish to see a yearly breakdown
         :return: A DataPackage object which contains overall summary information plus a breakdown of timeseries data for each
         category.
         """
 
-        if year is not None:
-            temp_data = self.get_category_by_month_summary(year=year)
+        if searchParams is not None and searchParams.year is not None:
+            temp_data = self.get_category_by_month_summary(filters=searchParams)
             temp_data = sorted(temp_data, key=lambda x: (x.category, x.monthNum))
-            time_summary = self.get_month_summary(year=year)
+            time_summary = self.get_month_summary(filters=searchParams)
             timeType = 'm'
             timeKey = 'month'
         else:
-            temp_data = self.get_category_by_year_summary()
+            temp_data = self.get_category_by_year_summary(filters=searchParams)
             temp_data = sorted(temp_data, key=lambda x: (x.category, x.year))
-            time_summary = self.get_year_summary(year=year)
+            time_summary = self.get_year_summary(filters=searchParams)
             timeType = 'y'
             timeKey = 'year'
 
         results = self.get_time_series_data(keyName='category', timeType=timeType, listData=temp_data)
-        summary_info = self.get_total_spent(year)
+        summary_info = self.get_total_spent(filters=searchParams)
         grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + (
                     (summary_info['maravedises'] % 34) / 100)
 
@@ -275,12 +290,17 @@ class MongoData:
         json_list = self.db.transactions.distinct('categories')
         return json_list
 
-    def get_total_spent(self, year=None):
+    def get_total_spent(self, filters=None):
         pipeline = []
-        pipeline.append({"$unwind": "$categories"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
 
+        # pipeline.append({"$unwind": "$categories"})
         pipeline.append({"$group": {
             "_id": None,
             "reales": {"$sum": "$reales"},
@@ -291,11 +311,17 @@ class MongoData:
         json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
         return json_list['cursor']['firstBatch'][0]
 
-    def get_word_by_year_summary(self, year=None):
-        pipeline=[]
+    def get_word_by_year_summary(self, filters=None):
+        pipeline = []
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
+
         pipeline.append({"$unwind": "$words"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
         pipeline.append({"$group": {
             "_id": {
                 "year": "$year",
@@ -306,6 +332,8 @@ class MongoData:
             "transaction_count": {"$sum": 1}
         }})
 
+        print(pipeline)
+
         json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
         results = list()
         for j in json_list['cursor']['firstBatch']:
@@ -314,11 +342,17 @@ class MongoData:
             results = None
         return results
 
-    def get_word_by_month_summary(self, year=None):
-        pipeline=[]
+    def get_word_by_month_summary(self, filters=None):
+        pipeline = []
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
+
         pipeline.append({"$unwind": "$words"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
         pipeline.append({"$group": {
             "_id": {
                 "month": "$month",
@@ -337,12 +371,17 @@ class MongoData:
             results = None
         return results
 
-
-    def get_category_by_year_summary(self, year=None):
+    def get_category_by_year_summary(self, filters=None):
         pipeline = []
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
+
         pipeline.append({"$unwind": "$categories"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
         pipeline.append({"$group": {
                             "_id": {
                                 "year": "$year",
@@ -362,11 +401,54 @@ class MongoData:
             results = None
         return results
 
-    def get_month_summary(self, year=None):
+    def get_category_by_month_summary(self, filters=None):
+        """
+        Returns a list of CategoryMonthPivotItem objects that provides aggregates of amounts for each category in the system
+        broken down by month.
+        NOTE: Can be filtered by year.
+        """
+
         pipeline = []
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
+
         pipeline.append({"$unwind": "$categories"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
+        pipeline.append({"$group": {
+                            "_id": {
+                                "category": "$categories",
+                                "month": "$month"
+                            },
+                            "reales": {"$sum": "$reales"},
+                            "maravedises": {"$sum": "$maravedises"},
+                            "transaction_count": {"$sum": 1}
+                         }})
+
+        json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
+        results = list()
+        for j in json_list['cursor']['firstBatch']:
+            results.append(CategoryMonthPivotItem(month_name=self.get_month_name(j['_id']['month']), month=j['_id']['month'],
+                                                  category=j['_id']['category'], **j))
+        if len(results) == 0:
+            results = None
+        return results
+
+    def get_month_summary(self, filters=None):
+        pipeline = []
+
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
+
+        # pipeline.append({"$unwind": "$categories"})
         pipeline.append({"$group": {
                                 "_id": {
                                     "year": "$year",
@@ -386,11 +468,17 @@ class MongoData:
             results = None
         return results
 
-    def get_year_summary(self, year=None):
+    def get_year_summary(self, filters=None):
         pipeline = []
-        pipeline.append({"$unwind": "$categories"})
-        if year is not None:
-            pipeline.append({"$match": {"year": year}})
+        if filters is not None:
+            if filters.keywords is not None:
+                pipeline.append({"$match":{"$text": {"$search": filters.keywords}}})
+            if filters.year is not None:
+                pipeline.append({"$match": {"year": filters.year}})
+            if filters.filteredCategories is not None:
+                pipeline.append({"$match": {"categories": {"$in": filters.filteredCategories}}})
+
+        # pipeline.append({"$unwind": "$categories"})
         pipeline.append({"$group": {
                                 "_id": {
                                     "year": "$year"
@@ -467,6 +555,29 @@ class MongoData:
     def update_user(self, user):
         result = self.db.user_info.update_one({'_id': user._id}, {'$set': user.get_properties()}, upsert=False)
         return result
+
+    def search_transactions(self, searchParams=None):
+        filters = []
+        if searchParams is not None:
+            if searchParams.year is not None:
+                filters.append({'year': searchParams.year})
+            if searchParams.keywords is not None:
+                filters.append({'$text': {'$search': searchParams.keywords}})
+            if searchParams.filteredCategories is not None:
+                filters.append({'categories': {'$in': searchParams.filteredCategories}})
+
+        if len(filters) > 0:
+            query = {'$and': filters}
+        else:
+            query = None
+
+        json_list = self.db.transactions.find(query)
+        results = list()
+        for j in json_list:
+            results.append(AnalysisItem(**j))
+        if len(results) == 0:
+            results = None
+        return results
 
     def get_transactions(self, use_training=False, year=None):
         if use_training:

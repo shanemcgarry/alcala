@@ -255,19 +255,39 @@ def get_categories(year):
 
 @app.route("/visualise/search", methods=['POST'])
 def do_vis_search():
-    searchParams = VisSearchParams(**request.get_json())
-    if searchParams.groupBy == 'categories':
+    json_req = request.get_json()
+    req_params = VisSearchParams(**json_req)
+    searchParams = Tools.check_search_params(searchParams=req_params)
+    mdb = MongoData()
+
+    raw_data = mdb.search_transactions(searchParams=searchParams)
+    fdist = sorted(FrequencyDistribution(raw_data).freq_dist.items(), key=lambda x: x[1], reverse=True)
+
+    if searchParams.topWords is not None:
+        if searchParams.keywords is None:
+            searchParams.keywords = ''
+        for w in fdist[0:searchParams.topWords]:
+            searchParams.keywords += w[0] + ' '
+
+    if searchParams.bottomWords is not None:
+        bWords = [x for x in fdist if x[1] <= searchParams.bottomWords]
+        if searchParams.keywords is None:
+            searchParams.keywords = ''
+        for w in bWords:
+            searchParams.keywords += w[0] + ' '
+
+    if searchParams.groupBy == 'category':
         # do category search
-        results = []
-    elif searchParams.groupBy == 'words':
+        results = mdb.get_category_time_data(searchParams=searchParams)
+    elif searchParams.groupBy == 'word':
         # do word search
-        results = []
+        results = mdb.get_word_time_data(searchParams=searchParams)
     else:
         raise ApplicationError('Invalid groupBy setting')
 
     response = app.response_class(
         status=200,
-        response=Tools.serialise_list(results), # may need to be fixed depending on structure of search
+        response=results.toJson(),
         mimetype='application/json'
     )
     return response

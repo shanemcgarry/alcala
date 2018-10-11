@@ -59,8 +59,8 @@ export class VisualisationService {
       );
   }
 
-  generateSearch(searchParams: VisSearchParams): Observable<any> {
-    return this.httpClient.post<any>(`${this.serviceUrl}search`, JSON.stringify(searchParams), {responseType: 'json'})
+  generateSearch(searchParams: VisSearchParams): Observable<DataSummaryPackage> {
+    return this.httpClient.post<any>(`${this.serviceUrl}search`, searchParams, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('generateSearch', null))
       );

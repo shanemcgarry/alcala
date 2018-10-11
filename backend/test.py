@@ -5,6 +5,7 @@ from analysis.classification import DocumentClassifier
 from analysis.frequency import FrequencyDistribution
 from analysis.utilities import Utilities
 from models.analysisItem import AnalysisItem, AnalysisSummary
+from models.visSearch import VisSearchParams
 from eulxml import xmlmap
 import json
 import re
@@ -72,9 +73,31 @@ mdb = MongoData()
 #
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
-import random
-all_pages = edb.get_all_pages()
-results = random.sample(all_pages, 10)
-print(Tools.serialise_list(results))
 
+searchParams = VisSearchParams(year=None, filteredCategories=['bread', 'wine', 'meat'], bottomWords=None, topWords=5, groupBy='word')
+
+raw_data = mdb.search_transactions(searchParams=searchParams)
+fdist = sorted(FrequencyDistribution(raw_data).freq_dist.items(), key=lambda x: x[1], reverse=True)
+
+if searchParams.topWords is not None:
+    if searchParams.keywords is None:
+        searchParams.keywords = ''
+    for w in fdist[0:searchParams.topWords]:
+        searchParams.keywords += w[0] + ' '
+
+if searchParams.bottomWords is not None:
+    bWords = [x for x in fdist if x[1] <= searchParams.bottomWords]
+    if searchParams.keywords is None:
+        searchParams.keywords = ''
+    for w in bWords:
+        searchParams.keywords += w[0] + ' '
+
+if searchParams.groupBy == 'category':
+    # do category search
+    results = mdb.get_category_time_data(searchParams=searchParams)
+else:
+    # do word search
+    results = mdb.get_word_time_data(searchParams=searchParams)
+
+print(results.data[0].toJson())
 

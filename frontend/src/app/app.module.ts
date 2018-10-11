@@ -16,6 +16,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav/';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxModule, MatRadioModule, MatSelectModule } from '@angular/material';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -112,6 +113,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     MatSidenavModule,
     MatRadioModule,
     MatTabsModule,
+    MatTooltipModule,
     MatChipsModule,
     MatIconModule,
     MatMenuModule,

@@ -1,28 +1,65 @@
 <mat-drawer-container>
   <mat-drawer mode="side" opened>
     <mat-card>
+      <mat-card-subtitle>View Options</mat-card-subtitle>
+      <mat-card-content>
+        <mat-form-field class="features">
+          <mat-select placeholder="Select a mode of visualisation" [(ngModel)]="this.features.graphType" (selectionChange)="onGraphTypeChange($event)">
+            <mat-option *ngFor="let sg of this.supportedGraphs" [value]="sg">{{ sg.charAt(0).toUpperCase() + sg.slice(1)}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-icon class="tooltip-info"
+                  matTooltip="For a demonstration of each graph type, please see your dashboard.">help_outline</mat-icon>
+        <mat-form-field class="two-column">
+          <mat-select placeholder="X Axis" [(ngModel)]="this.features.xField">
+            <mat-option *ngFor="let sf of this.supportedFields" [value]="sf.value">{{ sf.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="two-column">
+          <mat-select placeholder="Y Axis" [(ngModel)]="this.features.yField">
+            <mat-option *ngFor="let sf of this.supportedFields" [value]="sf.value">{{ sf.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="two-column">
+          <mat-select placeholder="Size determined by..." [(ngModel)]="this.features.sizeField" [disabled]="!this.enableSizeField">
+            <mat-option *ngFor="let sf of this.supportedFields" [value]="sf.value">{{ sf.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-icon class="tooltip-info"
+                  matTooltip="This option is only valid for scatter visualisations">help_outline</mat-icon>
+      </mat-card-content>
+      <mat-card-actions align="end" *ngIf="this.graphData">
+        <button mat-raised-button color="primary" (click)="onRefresh()"
+                matTooltip="This does not change the underlying data; it merely updates the visualisation parameters
+                specified above. If you wish to filter the data, rerun the search.">Refresh View</button>
+      </mat-card-actions>
+    </mat-card>
+    <mat-card>
+      <mat-card-subtitle>Search Options</mat-card-subtitle>
       <mat-card-content>
         <label>Group By</label>
         <div #groupBy class="filter">
           <mat-radio-group [required]="true" [(ngModel)]="this.dataModel.groupBy">
-            <mat-radio-button value="categories">Categories</mat-radio-button>
-            <mat-radio-button value="words">Words</mat-radio-button>
+            <mat-radio-button *ngFor="let sg of this.supportedGroups" value="{{ sg }}" (change)="onGroupChange($event)">{{ sg.charAt(0).toUpperCase() + sg.slice(1) }}</mat-radio-button>
           </mat-radio-group>
         </div>
         <div #filters>
           <h4>Filters</h4>
           <div #yearFilter class="filter">
-            <mat-checkbox [(ngModel)]="this.filters.yearEnabled">Filter by Year</mat-checkbox>
-            <div class="filter">
-              <mat-slider [disabled]="!this.filters.yearEnabled"
+            <mat-checkbox [(ngModel)]="this.filters.yearEnabled" (change)="onYearChecked($event)"></mat-checkbox>
+              <!--<mat-slider [disabled]="!this.filters.yearEnabled"
                           [min]="1774"
                           [max]="1781"
                           [step]="1"
                           [thumbLabel]="true"
                           [tickInterval]="1"
                           [(ngModel)]="this.dataModel.year">
-              </mat-slider>
-            </div>
+              </mat-slider>-->
+            <mat-form-field>
+              <mat-select placeholder="Filter by Year" [(ngModel)]="this.dataModel.year" [disabled]="!this.filters.yearEnabled">
+                <mat-option *ngFor="let y of this.validYears" [value]="y">{{ y }}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
           <div #topWordsFilter class="filter">
             <mat-checkbox [(ngModel)]="this.filters.topWordsEnabled"></mat-checkbox>
