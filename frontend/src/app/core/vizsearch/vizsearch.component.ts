@@ -78,11 +78,8 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       );
     this.route.params.subscribe(params => {
       this.features.graphType = params['graph'];
-      this.features.xField = 'year';
-      this.features.yField = 'totalAmount';
-      this.features.sizeField = this.features.graphType === 'scatter' ? 'transactionCount' : undefined;
-      this.enableSizeField = this.features.graphType === 'scatter';
       this.setValidFields();
+      this.setFieldDefaults();
     });
     this.searchParams.userID = this.userService.getLoggedInUser()._id;
     // set defaults
@@ -98,42 +95,43 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     this.supportedYFields = [];
     this.supportedSizeFields = [];
     const chartInfo = this.chartFactory.createChart({type: this.features.graphType});
-    console.log(chartInfo.allowableXFields);
     chartInfo.allowableXFields.forEach(x => {
-      let lv;
-      if (x === 'time') {
-        lv = this.getValidTimeField();
-      } else {
-        lv = this.supportedFields.find(y => y.value === x);
-      }
-      this.supportedXFields.push(lv);
+      this.supportedXFields.push(this.getLabelValueItem(x));
     });
     chartInfo.allowableYFields.forEach(x => {
-      let lv;
-      if (x === 'time') {
-        lv = this.getValidTimeField();
-      } else {
-        lv = this.supportedFields.find(y => y.value === x);
-      }
-      this.supportedYFields.push(lv);
+      this.supportedYFields.push(this.getLabelValueItem(x));
     });
     chartInfo.allowableSizeFields.forEach(x => {
-      let lv;
-      if (x === 'time') {
-        lv = this.getValidTimeField();
-      } else {
-        lv = this.supportedFields.find(y => y.value === x);
-      }
-      this.supportedSizeFields.push(lv);
+      this.supportedSizeFields.push(this.getLabelValueItem(x));
     });
+  }
 
-    console.log(this.supportedXFields);
+  getLabelValueItem(fieldName: string): LabelValue {
+    let lv: LabelValue;
+    switch (fieldName) {
+      case 'time':
+        lv = this.getValidTimeField();
+        break;
+      case 'key':
+        lv = this.supportedFields.find( y => y.value === this.searchParams.groupBy);
+        break;
+      default:
+        lv = this.supportedFields.find( y => y.value === fieldName);
+        break;
+    }
+    return lv;
   }
 
   resetFeatures(): void {
-    this.features.sizeField = undefined;
-    this.features.xField = undefined;
-    this.features.yField = undefined;
+    this.setValidFields();
+    this.setFieldDefaults();
+  }
+
+  setFieldDefaults() {
+    this.features.xField = this.supportedXFields[0] ? this.supportedXFields[0].value : undefined;
+    this.features.yField = this.supportedYFields[0] ? this.supportedYFields[0].value : undefined;
+    this.features.sizeField = this.supportedSizeFields[0] && this.features.graphType === 'scatter' ? this.supportedSizeFields[0].value : undefined;
+    this.enableSizeField = this.features.graphType === 'scatter';
   }
 
   onGroupChange(e: MatRadioChange) {
@@ -178,12 +176,12 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     if (!e.checked) {
       this.searchParams.filteredCategories = [];
     }
-}
+  }
 
-onGraphTypeChange(e: MatSelectChange) {
-    this.enableSizeField = e.value === 'scatter';
-    this.setValidFields();
-}
+  onGraphTypeChange(e: MatSelectChange) {
+      this.enableSizeField = e.value === 'scatter';
+      this.setValidFields();
+  }
 
   onSearch(): void {
     console.log(JSON.stringify(this.searchParams));

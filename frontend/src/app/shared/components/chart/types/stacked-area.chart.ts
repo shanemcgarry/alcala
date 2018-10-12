@@ -9,7 +9,7 @@ export class StackedAreaChart extends BaseChart {
     super(xField, yField, height, width);
   }
 
-  formatData(chartData: DataSummaryPackage) {
+  formatData(chartData: DataSummaryPackage): any {
     const results = [];
     const self = this;
     chartData.data.forEach(x => {
@@ -31,11 +31,10 @@ export class StackedAreaChart extends BaseChart {
       });
       results.push({'key': x.key, 'values': plot_values});
     });
-    console.log(results);
     return results;
   }
 
-  createOptions(dateFormat: string) {
+  createOptions(): any {
     const self = this;
     const options = {
       chart: {

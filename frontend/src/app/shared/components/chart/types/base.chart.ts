@@ -4,7 +4,7 @@ export abstract class BaseChart {
   abstract allowableXFields: string[];
   abstract allowableYFields: string[];
   abstract allowableSizeFields: string[];
-  abstract createOptions(dateFormat?: string): void;
+  abstract createOptions(dateFormat?: string): any;
   abstract formatData(chartData: DataSummaryPackage): any;
   protected constructor(public xField: string, public yField: string, public height: number, public width: number, public sizeField?: string, ) {}
 
