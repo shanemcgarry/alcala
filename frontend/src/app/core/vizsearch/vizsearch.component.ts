@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild, AfterViewInit} from '@angular/core';
 import { VisSearchParams } from '../../shared/models/vis-search-model';
 import {VisualisationService} from '../service/visualisation.service';
 import {CategoryData} from '../../shared/models/pivot-data.model';
-import {MatCheckboxChange, MatRadioChange, MatSelectChange} from '@angular/material';
+import {MatCheckboxChange, MatDrawerContent, MatRadioChange, MatSelectChange} from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import {UserService} from '../../shared/services/user.service';
+import {ChartComponent} from '../../shared/components/chart/chart.component';
+import {DataSummaryPackage} from '../../shared/models/analysis-result';
+import { ChartFactory } from '../../shared/components/chart/chart.factory';
 
 export class VisFilter {
   yearEnabled: boolean;
@@ -37,13 +40,20 @@ export class LabelValue {
   styleUrls: ['./vizsearch.component.scss']
 })
 
-export class VizsearchComponent implements OnInit {
-  dataModel: VisSearchParams = new VisSearchParams();
-  graphData: any;
+export class VizsearchComponent implements OnInit, AfterViewInit {
+  @ViewChild('appChart') appChart: ChartComponent;
+  @ViewChild('drawerContent') drawerContainer: ElementRef;
+  chartFactory: ChartFactory = new ChartFactory();
+  searchParams: VisSearchParams = new VisSearchParams();
+  graphData: DataSummaryPackage;
+  graphWidth = 800;
   categoryData: CategoryData[];
   supportedGraphs: string[] = ['line', 'multiBar', 'stackedArea', 'pie', 'discreteBar', 'scatter'];
   supportedGroups: string[] = ['category', 'word'];
   supportedFields: LabelValue[] = [];
+  supportedXFields: LabelValue[] = [];
+  supportedYFields: LabelValue[] = [];
+  supportedSizeFields: LabelValue[] = [];
   filters: VisFilter = new VisFilter();
   features: VisFeatures = new VisFeatures();
   enableSizeField = false;
@@ -53,6 +63,10 @@ export class VizsearchComponent implements OnInit {
     this.supportedFields.push(new LabelValue('Total Spent', 'totalAmount'));
     this.supportedFields.push(new LabelValue('# of Occurrences', 'transactionCount'));
     this.supportedFields.push(new LabelValue('Year', 'year'));
+    this.supportedFields.push(new LabelValue('Month', 'monthNum'));
+    this.supportedGroups.forEach(x => {
+      this.supportedFields.push(new LabelValue(x.charAt(0).toUpperCase() + x.slice(1), x));
+    });
   }
 
   ngOnInit() {
@@ -68,12 +82,52 @@ export class VizsearchComponent implements OnInit {
       this.features.yField = 'totalAmount';
       this.features.sizeField = this.features.graphType === 'scatter' ? 'transactionCount' : undefined;
       this.enableSizeField = this.features.graphType === 'scatter';
+      this.setValidFields();
     });
-    this.dataModel.userID = this.userService.getLoggedInUser()._id;
+    this.searchParams.userID = this.userService.getLoggedInUser()._id;
     // set defaults
-    const defaultGroup = this.supportedGroups[0];
-    this.dataModel.groupBy = defaultGroup;
-    this.supportedFields.push(new LabelValue(defaultGroup.charAt(0).toUpperCase() + defaultGroup.slice(1), defaultGroup));
+    this.searchParams.groupBy = this.supportedGroups[0];
+  }
+
+  ngAfterViewInit() {
+    this.graphWidth = this.drawerContainer.nativeElement ? this.drawerContainer.nativeElement.width : this.graphWidth;
+  }
+
+  setValidFields() {
+    this.supportedXFields = [];
+    this.supportedYFields = [];
+    this.supportedSizeFields = [];
+    const chartInfo = this.chartFactory.createChart({type: this.features.graphType});
+    console.log(chartInfo.allowableXFields);
+    chartInfo.allowableXFields.forEach(x => {
+      let lv;
+      if (x === 'time') {
+        lv = this.getValidTimeField();
+      } else {
+        lv = this.supportedFields.find(y => y.value === x);
+      }
+      this.supportedXFields.push(lv);
+    });
+    chartInfo.allowableYFields.forEach(x => {
+      let lv;
+      if (x === 'time') {
+        lv = this.getValidTimeField();
+      } else {
+        lv = this.supportedFields.find(y => y.value === x);
+      }
+      this.supportedYFields.push(lv);
+    });
+    chartInfo.allowableSizeFields.forEach(x => {
+      let lv;
+      if (x === 'time') {
+        lv = this.getValidTimeField();
+      } else {
+        lv = this.supportedFields.find(y => y.value === x);
+      }
+      this.supportedSizeFields.push(lv);
+    });
+
+    console.log(this.supportedXFields);
   }
 
   resetFeatures(): void {
@@ -106,23 +160,34 @@ export class VizsearchComponent implements OnInit {
       const monthIndex = this.supportedFields.findIndex(x => x.value === 'monthNum');
       this.supportedFields.splice(monthIndex, 1);
       this.supportedFields.push(new LabelValue('Year', 'year'));
-      this.dataModel.year = undefined;
+      this.searchParams.year = undefined;
     }
+  }
+
+  getValidTimeField(): LabelValue {
+    let result;
+    if (this.filters.yearEnabled) {
+      result =  this.supportedFields.find(x => x.value === 'monthNum');
+    } else {
+      result =  this.supportedFields.find(x => x.value === 'year');
+    }
+    return result;
   }
 
   onEnableCategories(e: MatCheckboxChange): void {
     if (!e.checked) {
-      this.dataModel.filteredCategories = [];
+      this.searchParams.filteredCategories = [];
     }
 }
 
 onGraphTypeChange(e: MatSelectChange) {
     this.enableSizeField = e.value === 'scatter';
+    this.setValidFields();
 }
 
   onSearch(): void {
-    console.log(JSON.stringify(this.dataModel));
-    this.visService.generateSearch(this.dataModel)
+    console.log(JSON.stringify(this.searchParams));
+    this.visService.generateSearch(this.searchParams)
       .subscribe(
         data => this.graphData = data,
         err => console.log(err),
@@ -135,13 +200,13 @@ onGraphTypeChange(e: MatSelectChange) {
   }
 
   onCategoryCheck(category: string): void {
-    const catIndex = this.dataModel.filteredCategories.indexOf(category);
+    const catIndex = this.searchParams.filteredCategories.indexOf(category);
     if ( catIndex > -1) {
-      this.dataModel.filteredCategories.splice(catIndex, 1);
+      this.searchParams.filteredCategories.splice(catIndex, 1);
     } else {
-      this.dataModel.filteredCategories.push(category);
+      this.searchParams.filteredCategories.push(category);
     }
-    console.log(this.dataModel.filteredCategories);
+    console.log(this.searchParams.filteredCategories);
   }
 
 }

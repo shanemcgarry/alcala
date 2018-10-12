@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import {CumulativeLineOptions} from './options/cumulative-line-options';
 import {LineOptions} from './options/line-options';
 import {MultiBarOptions} from './options/multi-bar-options';
@@ -9,6 +9,7 @@ import {ScatterOptions} from './options/scatter-options';
 import { BaseChart } from './types/base.chart';
 import {StackedAreaChart} from './types/stacked-area.chart';
 import {DataSummaryPackage} from '../../models/analysis-result';
+import {ChartFactory} from './chart.factory';
 
 @Component({
   selector: 'app-chart',
@@ -21,31 +22,27 @@ export class ChartComponent implements OnInit, OnChanges {
   @Input() xField: string;
   @Input() yField: string;
   @Input() sizeField: string;
-  @Input() height: number = 300;
-  @Input() width: number = 600;
+  @Input() height = 300;
+  @Input() width = 600;
   @Input() dateFormat: string;
   chartInfo: BaseChart;
+  formattedData: any;
   options: any;
   constructor() { }
 
   ngOnInit() {
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.chartType.currentValue !== changes.chartType.previousValue) {
-      this.setChartInfo(changes.chartType.currentValue);
-    }
-    this.chartInfo.xField = changes.xField.currentValue;
-    this.chartInfo.yField = changes.yField.currentValue;
-    this.chartInfo.sizeField = changes.sizeField.currentValue;
+  ngOnChanges() {
+    this.setChartInfo(this.chartType);
   }
 
   setChartInfo(chartType: string): void {
-    switch (chartType) {
-      case 'stackedArea':
-        this.chartInfo = new StackedAreaChart(this.xField, this.yField, this.height, this.width);
-        break;
-    }
+    const chartFactory = new ChartFactory();
+    this.chartInfo = chartFactory.createChart({type: chartType, xField: this.xField, yField: this.yField, height: this.height, width: this.width, sizeField: this.sizeField});
+    this.options = this.chartInfo.createOptions();
+    this.formattedData = this.chartInfo.formatData(this.data);
+    console.log(this.formattedData);
   }
 
   /*createOptions() {

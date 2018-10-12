@@ -12,34 +12,34 @@
                   matTooltip="For a demonstration of each graph type, please see your dashboard.">help_outline</mat-icon>
         <mat-form-field class="two-column">
           <mat-select placeholder="X Axis" [(ngModel)]="this.features.xField">
-            <mat-option *ngFor="let sf of this.supportedFields" [value]="sf.value">{{ sf.label }}</mat-option>
+            <mat-option *ngFor="let sf of this.supportedXFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field class="two-column">
           <mat-select placeholder="Y Axis" [(ngModel)]="this.features.yField">
-            <mat-option *ngFor="let sf of this.supportedFields" [value]="sf.value">{{ sf.label }}</mat-option>
+            <mat-option *ngFor="let sf of this.supportedYFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field class="two-column">
           <mat-select placeholder="Size determined by..." [(ngModel)]="this.features.sizeField" [disabled]="!this.enableSizeField">
-            <mat-option *ngFor="let sf of this.supportedFields" [value]="sf.value">{{ sf.label }}</mat-option>
+            <mat-option *ngFor="let sf of this.supportedSizeFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-icon class="tooltip-info"
                   matTooltip="This option is only valid for scatter visualisations">help_outline</mat-icon>
       </mat-card-content>
-      <mat-card-actions align="end" *ngIf="this.graphData">
+<!--      <mat-card-actions align="end" *ngIf="this.graphData">
         <button mat-raised-button color="primary" (click)="onRefresh()"
                 matTooltip="This does not change the underlying data; it merely updates the visualisation parameters
                 specified above. If you wish to filter the data, rerun the search.">Refresh View</button>
-      </mat-card-actions>
+      </mat-card-actions>-->
     </mat-card>
     <mat-card>
       <mat-card-subtitle>Search Options</mat-card-subtitle>
       <mat-card-content>
         <label>Group By</label>
         <div #groupBy class="filter">
-          <mat-radio-group [required]="true" [(ngModel)]="this.dataModel.groupBy">
+          <mat-radio-group [required]="true" [(ngModel)]="this.searchParams.groupBy">
             <mat-radio-button *ngFor="let sg of this.supportedGroups" value="{{ sg }}" (change)="onGroupChange($event)">{{ sg.charAt(0).toUpperCase() + sg.slice(1) }}</mat-radio-button>
           </mat-radio-group>
         </div>
@@ -53,39 +53,39 @@
                           [step]="1"
                           [thumbLabel]="true"
                           [tickInterval]="1"
-                          [(ngModel)]="this.dataModel.year">
+                          [(ngModel)]="this.searchParams.year">
               </mat-slider>-->
             <mat-form-field>
-              <mat-select placeholder="Filter by Year" [(ngModel)]="this.dataModel.year" [disabled]="!this.filters.yearEnabled">
+              <mat-select placeholder="Filter by Year" [(ngModel)]="this.searchParams.year" [disabled]="!this.filters.yearEnabled">
                 <mat-option *ngFor="let y of this.validYears" [value]="y">{{ y }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
           <div #topWordsFilter class="filter">
             <mat-checkbox [(ngModel)]="this.filters.topWordsEnabled"></mat-checkbox>
-            <span>Top </span><mat-form-field class="word-num"><input matInput [(ngModel)]="this.dataModel.topWords" [disabled]="!this.filters.topWordsEnabled" ></mat-form-field><span>words</span>
+            <span>Top </span><mat-form-field class="word-num"><input matInput [(ngModel)]="this.searchParams.topWords" [disabled]="!this.filters.topWordsEnabled" ></mat-form-field><span>words</span>
           </div>
           <div #bottomWordsFilter class="filter">
             <mat-checkbox [(ngModel)]="this.filters.bottomWordsEnabled"></mat-checkbox>
-            <span>Words that appear less than </span><mat-form-field class="word-num"><input matInput [(ngModel)]="this.dataModel.bottomWords" [disabled]="!this.filters.bottomWordsEnabled" ></mat-form-field><span>times</span>
+            <span>Words that appear less than </span><mat-form-field class="word-num"><input matInput [(ngModel)]="this.searchParams.bottomWords" [disabled]="!this.filters.bottomWordsEnabled" ></mat-form-field><span>times</span>
           </div>
           <div #keywordsFilter class="filter">
             <mat-checkbox [(ngModel)]="this.filters.keywordsEnabled">Only include entries with the follow keyword(s)</mat-checkbox>
             <mat-form-field class="keyword-filter">
-              <input matInput placeholder="Keyword(s)" [(ngModel)]="this.dataModel.keywords" [disabled]="!this.filters.keywordsEnabled">
+              <input matInput placeholder="Keyword(s)" [(ngModel)]="this.searchParams.keywords" [disabled]="!this.filters.keywordsEnabled">
             </mat-form-field>
           </div>
           <div #categoriesFilter class="filter">
             <mat-checkbox [(ngModel)]="this.filters.categoriesEnabled" (change)="onEnableCategories($event)">Only include the following categories</mat-checkbox>
             <mat-form-field *ngIf="this.categoryData" class="category-list">
-              <mat-select placeholder="Selected Categories" [(ngModel)]="this.dataModel.filteredCategories"
+              <mat-select placeholder="Selected Categories" [(ngModel)]="this.searchParams.filteredCategories"
                           [disabled]="!this.filters.categoriesEnabled" multiple>
                 <mat-option *ngFor="let c of this.categoryData" [value]="c.category">{{ c.category }}</mat-option>
               </mat-select>
             </mat-form-field>
             <!--<div *ngIf="this.categoryData" class="category-list">
               <mat-checkbox *ngFor="let c of this.categoryData" (change)="onCategoryCheck(c.category)"
-                            [checked]="this.dataModel.filteredCategories.indexOf(c.category) > -1"
+                            [checked]="this.searchParams.filteredCategories.indexOf(c.category) > -1"
                             [value]="c.category" [disabled]="!this.filters.categoriesEnabled">{{ c.category }}</mat-checkbox>
             </div>-->
           </div>
@@ -96,7 +96,10 @@
       </mat-card-actions>
     </mat-card>
   </mat-drawer>
-  <mat-drawer-content>
-    vis goes here
+  <mat-drawer-content #drawerContent>
+    <app-chart #appChart *ngIf="this.graphData" [height]="800" [width]="this.graphWidth"
+               [chartType]="this.features.graphType" [xField]="this.features.xField"
+               [yField]="this.features.yField" [sizeField]="this.features.sizeField"
+               [data]="this.graphData"></app-chart>
   </mat-drawer-content>
 </mat-drawer-container>

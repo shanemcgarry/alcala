@@ -15,21 +15,21 @@ export class StackedAreaChart extends BaseChart {
     chartData.data.forEach(x => {
       const plot_values = [];
       x.timeSeries.forEach(y => {
-        const xValue = self.formatTimeTicks(y.timeValue, y.timeType);
-        let yValue = 0;
+        const timeDataValues = [];
+        timeDataValues.push(self.formatTimeTicks(y.timeValue, y.timeType));
         switch (self.yField) {
           case 'totalAmount':
-            yValue = y.totalAmount;
+            timeDataValues.push(y.totalAmount);
             break;
           case 'transactionCount':
-            yValue = y.transactionCount;
+            timeDataValues.push(y.transactionCount);
             break;
           default:
             throw new Error(`The stacked area chart does not allow ${self.yField} for the yAxis.`);
         }
-        plot_values.push({xValue, yValue});
+        plot_values.push(timeDataValues);
       });
-      results.push({x, plot_values});
+      results.push({'key': x.key, 'values': plot_values});
     });
     console.log(results);
     return results;
