@@ -8,31 +8,8 @@ import {UserService} from '../../shared/services/user.service';
 import {ChartComponent} from '../../shared/components/chart/chart.component';
 import {DataSummaryPackage} from '../../shared/models/analysis-result';
 import { ChartFactory } from '../../shared/components/chart/chart.factory';
+import { VisFeatures, LabelValue, VisFilter} from '../../shared/models/visualisation.models';
 
-export class VisFilter {
-  yearEnabled: boolean;
-  topWordsEnabled: boolean;
-  bottomWordsEnabled: boolean;
-  keywordsEnabled: boolean;
-  categoriesEnabled: boolean;
-}
-
-export class VisFeatures {
-  graphType: string;
-  xField: string;
-  yField: string;
-  sizeField: string;
-}
-
-export class LabelValue {
-  label: string;
-  value: string;
-
-  constructor(labelName: string, valueName: string) {
-    this.label = labelName;
-    this.value = valueName;
-  }
-}
 
 @Component({
   selector: 'app-vizsearch',
@@ -43,12 +20,11 @@ export class LabelValue {
 export class VizsearchComponent implements OnInit, AfterViewInit {
   @ViewChild('appChart') appChart: ChartComponent;
   @ViewChild('drawerContent') drawerContainer: ElementRef;
-  chartFactory: ChartFactory = new ChartFactory();
   searchParams: VisSearchParams = new VisSearchParams();
   graphData: DataSummaryPackage;
   graphWidth = 800;
   categoryData: CategoryData[];
-  supportedGraphs: string[] = ['line', 'multiBar', 'stackedArea', 'pie', 'discreteBar', 'scatter'];
+  supportedGraphs: LabelValue[] = ChartFactory.getAllowableCharts();
   supportedGroups: string[] = ['category', 'word'];
   supportedFields: LabelValue[] = [];
   supportedXFields: LabelValue[] = [];
@@ -94,7 +70,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     this.supportedXFields = [];
     this.supportedYFields = [];
     this.supportedSizeFields = [];
-    const chartInfo = this.chartFactory.createChart({type: this.features.graphType});
+    const chartInfo = ChartFactory.createChart({type: this.features.graphType});
     chartInfo.allowableXFields.forEach(x => {
       this.supportedXFields.push(this.getLabelValueItem(x));
     });
@@ -184,17 +160,12 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   onSearch(): void {
-    console.log(JSON.stringify(this.searchParams));
     this.visService.generateSearch(this.searchParams)
       .subscribe(
         data => this.graphData = data,
         err => console.log(err),
         () => console.log('Graph Data loaded')
       );
-  }
-
-  onRefresh(): void {
-
   }
 
   onCategoryCheck(category: string): void {
@@ -204,7 +175,6 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     } else {
       this.searchParams.filteredCategories.push(category);
     }
-    console.log(this.searchParams.filteredCategories);
   }
 
 }

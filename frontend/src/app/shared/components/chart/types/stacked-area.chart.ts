@@ -5,6 +5,8 @@ export class StackedAreaChart extends BaseChart {
   allowableXFields: string[] = ['time'];
   allowableYFields: string[] = ['totalAmount', 'transactionCount'];
   allowableSizeFields: string[] = [];
+  allowableGroupFields: string[] = [];
+
   constructor(xField: string, yField: string, height: number, width: number) {
     super(xField, yField, height, width);
   }

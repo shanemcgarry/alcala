@@ -1,7 +1,8 @@
-import {BaseChart} from './base.chart';
-import {DataSummaryPackage} from '../../../models/analysis-result';
+import { BaseChart } from './base.chart';
+import { DataSummaryPackage } from '../../../models/analysis-result';
 
-export class DiscreteBarChart extends BaseChart {
+
+export class PieChart extends BaseChart {
   allowableXFields: string[] = ['time', 'key'];
   allowableYFields: string[] = ['totalAmount', 'transactionCount'];
   allowableSizeFields: string[] = [];
@@ -58,37 +59,27 @@ export class DiscreteBarChart extends BaseChart {
         });
         break;
     }
-    const dataLabel = `${this.xField.charAt(0).toUpperCase() + this.xField.slice(1)} Breakdown`;
-    const results = [];
-    results.push({'key': dataLabel, 'values': baseData});
-    return results;
+    return baseData;
   }
-
   createOptions(): any {
     const self = this;
     const options = {
       chart: {
-        type: 'discreteBarChart',
+        type: 'pieChart',
         height: this.height,
-        margin: {
-          top: 20,
-          right: 20,
-          bottom: 50,
-          left: 55
-        },
         x: function(d) { return d.key; },
-        y: function(d) { return d.value; },
-        showValues: true,
-        valueFormat: function(d) {
-          return self.formatAxisData(self.yField, d);
-        },
+        y: function(d) { return self.formatAxisData(self.yField, d.value); },
+        showLabels: false,
         duration: 500,
-        xAxis: {
-          axisLabel: this.getAxisLabel(this.xField)
-        },
-        yAxis: {
-          axisLabel: this.getAxisLabel(this.yField),
-          axisLabelDistance: -10
+        labelThreshold: 0.01,
+        labelSunbeamLayout: true,
+        legend: {
+          margin: {
+            top: 5,
+            right: 35,
+            bottom: 5,
+            left: 0
+          }
         }
       }
     };

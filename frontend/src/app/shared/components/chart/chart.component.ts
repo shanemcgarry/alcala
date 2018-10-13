@@ -38,8 +38,7 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   setChartInfo(chartType: string): void {
-    const chartFactory = new ChartFactory();
-    this.chartInfo = chartFactory.createChart({type: chartType, xField: this.xField, yField: this.yField, height: this.height, width: this.width, sizeField: this.sizeField});
+    this.chartInfo = ChartFactory.createChart({type: chartType, xField: this.xField, yField: this.yField, height: this.height, width: this.width, sizeField: this.sizeField});
     this.options = this.chartInfo.createOptions();
     this.formattedData = this.chartInfo.formatData(this.data);
     console.log(this.formattedData);

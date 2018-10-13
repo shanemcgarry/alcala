@@ -5,7 +5,7 @@
       <mat-card-content>
         <mat-form-field class="features">
           <mat-select placeholder="Select a mode of visualisation" [(ngModel)]="this.features.graphType" (selectionChange)="onGraphTypeChange($event)">
-            <mat-option *ngFor="let sg of this.supportedGraphs" [value]="sg">{{ sg.charAt(0).toUpperCase() + sg.slice(1)}}</mat-option>
+            <mat-option *ngFor="let sg of this.supportedGraphs" [value]="sg.value">{{ sg.label }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-icon class="tooltip-info"
@@ -28,11 +28,6 @@
         <mat-icon class="tooltip-info"
                   matTooltip="This option is only valid for scatter visualisations">help_outline</mat-icon>
       </mat-card-content>
-<!--      <mat-card-actions align="end" *ngIf="this.graphData">
-        <button mat-raised-button color="primary" (click)="onRefresh()"
-                matTooltip="This does not change the underlying data; it merely updates the visualisation parameters
-                specified above. If you wish to filter the data, rerun the search.">Refresh View</button>
-      </mat-card-actions>-->
     </mat-card>
     <mat-card>
       <mat-card-subtitle>Search Options</mat-card-subtitle>
