@@ -37,7 +37,7 @@ export class ChartFactory {
       case 'pie':
         return new PieChart(chartOptions.xField, chartOptions.yField, chartOptions.height, chartOptions.width);
       case 'multiBar':
-        return new MultiBarChart(chartOptions.xField, chartOptions.yField, chartOptions.height, chartOptions.width, 'key ');
+        return new MultiBarChart(chartOptions.xField, chartOptions.yField, chartOptions.height, chartOptions.width, 'key');
       case 'line':
         return new LineChart(chartOptions.xField, chartOptions.yField, chartOptions.height, chartOptions.width);
       default:

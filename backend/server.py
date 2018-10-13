@@ -102,10 +102,11 @@ def get_dashboard_data(year):
         year = None
     else:
         year = int(year)
+    searchParams = VisSearchParams(year=year, filteredCategories=[])
     results = mdb.get_transactions(year=year)
     fdist = FreqDist([w.lower() for w in Utilities.build_word_list(results)])
-    categoryResults = mdb.get_category_summary(year=year)
-    monthResults = mdb.get_month_summary(year=year)
+    categoryResults = mdb.get_category_summary(searchParams)
+    monthResults = mdb.get_month_summary(searchParams)
     summaryResult = AnalysisSummary(category_grouping=categoryResults, month_grouping=monthResults, freq_dict=fdist, transaction_list=results)
     response = app.response_class(
         response=summaryResult.toJson(),
