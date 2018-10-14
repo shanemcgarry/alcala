@@ -7,6 +7,7 @@ import { catchError, groupBy, map, mergeMap, tap, toArray } from 'rxjs/operators
 import {AnalysisItem, AnalysisSummary, AnalysisUserItem, DataSummaryPackage} from '../../shared/models/analysis-result';
 import {CategoryData, CategoryMonthPivotItem } from '../../shared/models/pivot-data.model';
 import { VisSearchParams } from '../../shared/models/vis-search-model';
+import {VisFeatures} from '../../shared/models/visualisation.models';
 
 const httpOptions = {
   headers: new HttpHeaders( {
@@ -49,6 +50,13 @@ export class VisualisationService {
     return this.httpClient.get<CategoryData[]>(`${this.serviceUrl}category_data`)
       .pipe(
         catchError(this.handleError('Category Data', null))
+      );
+  }
+
+  logSearchFeatures(visFeatures: VisFeatures): Observable<any> {
+    return this.httpClient.post<any>(`${this.serviceUrl}features`, visFeatures, {responseType: 'json'})
+      .pipe(
+        catchError(this.handleError('Log Search Features', null))
       );
   }
 

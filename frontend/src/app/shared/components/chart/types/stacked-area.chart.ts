@@ -54,7 +54,12 @@ export class StackedAreaChart extends BaseChart {
         useVoronoi: false,
         clipEdge: true,
         duration: 100,
-        useInteractiveGuideline: true,
+        useInteractiveGuideline: false,
+        callback: function(chart) {
+          chart.stacked.dispatch.on('elementClick', function(e) {
+            self._onElementDblClick.dispatch(self, e);
+          });
+        },
         xAxis: {
           axisLabel: super.getAxisLabel(this.xField),
           showMaxMin: false,

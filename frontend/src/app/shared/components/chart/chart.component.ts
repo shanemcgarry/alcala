@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input, Output } from '@angular/core';
+import {Component, OnInit, OnChanges, Input, Output, EventEmitter} from '@angular/core';
 import { BaseChart } from './types/base.chart';
 import {DataSummaryPackage} from '../../models/analysis-result';
 import {ChartFactory} from './chart.factory';
@@ -16,8 +16,7 @@ export class ChartComponent implements OnInit, OnChanges {
   @Input() sizeField: string;
   @Input() height = 300;
   @Input() width = 600;
-  @Output() selectedData: any[];
-  //@Input() dateFormat: string;
+  @Output() elementDbClick = new EventEmitter<any>();
   chartInfo: BaseChart;
   formattedData: any;
   options: any;
@@ -34,7 +33,9 @@ export class ChartComponent implements OnInit, OnChanges {
     this.chartInfo = ChartFactory.createChart({type: chartType, xField: this.xField, yField: this.yField, height: this.height, width: this.width, sizeField: this.sizeField});
     this.options = this.chartInfo.createOptions();
     this.formattedData = this.chartInfo.formatData(this.data);
-    this.selectedData = this.chartInfo.selectedData;
+    this.chartInfo.onElementDblClick.subscribe((sender, e) => {
+      this.elementDbClick.emit(e);
+    });
   }
 
   /*createOptions() {

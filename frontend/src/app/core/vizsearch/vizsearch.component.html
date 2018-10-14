@@ -4,29 +4,29 @@
       <mat-card-subtitle>View Options</mat-card-subtitle>
       <mat-card-content>
         <mat-form-field class="features">
-          <mat-select placeholder="Select a mode of visualisation" [(ngModel)]="this.features.graphType" (selectionChange)="onGraphTypeChange($event)">
+          <mat-select placeholder="Select a mode of visualisation" [(ngModel)]="this.features.graphType"
+                      (selectionChange)="onGraphTypeChange($event)"
+                      matTooltip="For a demonstration of each graph type, please see your dashboard.">
             <mat-option *ngFor="let sg of this.supportedGraphs" [value]="sg.value">{{ sg.label }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-icon class="tooltip-info"
-                  matTooltip="For a demonstration of each graph type, please see your dashboard.">help_outline</mat-icon>
         <mat-form-field class="two-column">
-          <mat-select placeholder="X Axis" [(ngModel)]="this.features.xField">
+          <mat-select placeholder="X Axis" [(ngModel)]="this.features.xField" (selectionChange)="this.onFieldInfoChange($event)">
             <mat-option *ngFor="let sf of this.supportedXFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field class="two-column">
-          <mat-select placeholder="Y Axis" [(ngModel)]="this.features.yField">
+          <mat-select placeholder="Y Axis" [(ngModel)]="this.features.yField" (selectionChange)="this.onFieldInfoChange($event)">
             <mat-option *ngFor="let sf of this.supportedYFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field class="two-column">
-          <mat-select placeholder="Size determined by..." [(ngModel)]="this.features.sizeField" [disabled]="!this.enableSizeField">
+          <mat-select placeholder="Size determined by..." [(ngModel)]="this.features.sizeField" [disabled]="!this.enableSizeField"
+                      (selectionChange)="this.onFieldInfoChange($event)"
+                      matTooltip="This option is only valid for scatter visualisations">
             <mat-option *ngFor="let sf of this.supportedSizeFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-icon class="tooltip-info"
-                  matTooltip="This option is only valid for scatter visualisations">help_outline</mat-icon>
       </mat-card-content>
     </mat-card>
     <mat-card>
@@ -97,9 +97,47 @@
         <app-chart #appChart *ngIf="this.graphData" [height]="750" [width]="this.graphWidth"
                    [chartType]="this.features.graphType" [xField]="this.features.xField"
                    [yField]="this.features.yField" [sizeField]="this.features.sizeField"
-                   [data]="this.graphData"></app-chart>
+                   [data]="this.graphData" (elementDbClick)="this.onElementDblClick($event)"></app-chart>
       </mat-tab>
-      <mat-tab label="Details">To be implemented</mat-tab>
+      <mat-tab label="Details">
+        <table mat-table [dataSource]="this.detailData">
+          <ng-container matColumnDef="categories">
+            <th mat-header-cell *matHeaderCellDef>Categories</th>
+            <td mat-cell *matCellDef="let d" class="w20">{{ d.categories.join(', ') }}</td>
+          </ng-container>
+          <ng-container matColumnDef="words">
+            <th mat-header-cell *matHeaderCellDef>Words</th>
+            <td mat-cell *matCellDef="let d" class="words-column">{{ d.words.join(' ') }}</td>
+          </ng-container>
+          <ng-container matColumnDef="reales">
+            <th mat-header-cell *matHeaderCellDef>R.</th>
+            <td mat-cell *matCellDef="let d" class="w5">{{ d.reales }}</td>
+          </ng-container>
+          <ng-container matColumnDef="maravedises">
+            <th mat-header-cell *matHeaderCellDef>M.</th>
+            <td mat-cell *matCellDef="let d" class="5">{{ d.maravedises }}</td>
+          </ng-container>
+          <ng-container matColumnDef="year">
+            <th mat-header-cell *matHeaderCellDef>Year</th>
+            <td mat-cell *matCellDef="let d" class="w5">{{ d.year }}</td>
+          </ng-container>
+          <ng-container matColumnDef="monthName">
+            <th mat-header-cell *matHeaderCellDef>Month</th>
+            <td mat-cell *matCellDef="let d" class="w10">{{ d.monthName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="pageid">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let d" class="w5">
+              <a target="_blank" href="/page/{{ d.pageid }}">
+                <mat-icon color="primary">remove_red_eye</mat-icon>
+              </a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayColumns;"></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+      </mat-tab>
     </mat-tab-group>
   </mat-drawer-content>
 </mat-drawer-container>

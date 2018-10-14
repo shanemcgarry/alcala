@@ -65,8 +65,9 @@ export class MultiBarChart extends BaseChart {
           left: 60
         },
         callback: function(chart) {
-          chart.multibar.dispatch.on('elementDblClick', function(e) {
+          chart.multibar.dispatch.on('elementClick', function(e) {
             self.selectedData = e;
+            self._onElementDblClick.dispatch(self, e);
           });
         },
         x: function(d) { return d.x; },

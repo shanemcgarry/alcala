@@ -67,6 +67,11 @@ export class PieChart extends BaseChart {
       chart: {
         type: 'pieChart',
         height: this.height,
+        callback: function(chart) {
+          chart.pie.dispatch.on('elementClick', function(e) {
+            self._onElementDblClick.dispatch(self, e);
+          });
+        },
         x: function(d) { return d.key; },
         y: function(d) { return self.formatAxisData(self.yField, d.value); },
         showLabels: false,

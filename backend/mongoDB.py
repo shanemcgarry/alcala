@@ -37,6 +37,22 @@ class MongoData:
         # This class only works with alcala data. Although the constructor could be expanded to work with other datasets
         self.db = self.client.alcala
 
+    def log_search(self, searchParams, searchType):
+        """Logs the search and returns a valid search id"""
+        if searchParams.userID is not None:
+            search_obj = { 'userID': searchParams.userID, 'type': searchType, 'params': searchParams.get_properties() }
+            search_id = self.db.search_log.insert_one(search_obj)
+        else:
+            search_id = None
+
+        return str(search_id.inserted_id)
+
+    def log_features(self, visFeatures, searchType='visualisation'):
+        """Logs the features of visualisation search for reproduction"""
+        features_obj = {'searchID': visFeatures.searchID, 'type': searchType, 'features': visFeatures.get_properties() }
+        feature_id = self.db.search_feature.insert_one(features_obj)
+        return str(feature_id.inserted_id)
+
     def insert_one_transaction(self, transaction, use_training=False):
         """Inserts a single transaction (AnalysisItem object) into either the transaction or training collection."""
         if use_training:
@@ -239,6 +255,7 @@ class MongoData:
             timeKey = 'year'
 
         results = self.get_time_series_data(keyName='word', timeType=timeType, listData=temp_data)
+        rawData = self.search_transactions(searchParams)
         summary_info = self.get_total_spent(filters=searchParams)
         grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + (
                     (summary_info['maravedises'] % 34) / 100)
@@ -250,7 +267,8 @@ class MongoData:
                                             transactionCount=t.transactionCount))
 
         return DataPackage(reales=summary_info['reales'], maravedises=summary_info['maravedises'], grandTotal=grand_total,
-                           totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results)
+                           totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results,
+                           rawData=rawData)
 
     def get_category_time_data(self, searchParams=None):
         """
@@ -273,6 +291,7 @@ class MongoData:
             timeKey = 'year'
 
         results = self.get_time_series_data(keyName='category', timeType=timeType, listData=temp_data)
+        rawData = self.search_transactions(searchParams=searchParams)
         summary_info = self.get_total_spent(filters=searchParams)
         grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + (
                     (summary_info['maravedises'] % 34) / 100)
@@ -284,7 +303,8 @@ class MongoData:
                                             transactionCount=t.transactionCount))
 
         return DataPackage(reales=summary_info['reales'], maravedises=summary_info['maravedises'], grandTotal=grand_total,
-                           totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results)
+                           totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results,
+                           rawData=rawData)
 
     def get_categories(self):
         json_list = self.db.transactions.distinct('categories')

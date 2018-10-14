@@ -7,10 +7,12 @@ export class VisFilter {
 }
 
 export class VisFeatures {
+  searchID: string;
   graphType: string;
   xField: string;
   yField: string;
   sizeField: string;
+  groupField: string;
 }
 
 export class LabelValue {

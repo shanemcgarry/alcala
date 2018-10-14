@@ -38,6 +38,8 @@ export interface SummaryInfo {
 export interface DataSummaryPackage {
   summary: SummaryInfo;
   data: KeyTimePivotData[];
+  rawData: AnalysisItem[];
+  searchID: string;
 }
 
 export interface TimeSeriesData {

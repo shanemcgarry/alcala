@@ -45,6 +45,7 @@
     "npm": "^6.4.1",
     "rxjs": "^6.3.3",
     "stream": "0.0.2",
+    "strongly-typed-events": "^1.4.6",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

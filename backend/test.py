@@ -74,7 +74,7 @@ mdb = MongoData()
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
 
-searchParams = VisSearchParams(year=None, filteredCategories=['bread', 'wine', 'meat'], bottomWords=None, topWords=5, groupBy='word')
+searchParams = VisSearchParams(year=None, userID='ae635eb02a404a479cb5f5dea4e560e2', filteredCategories=['bread', 'wine', 'meat'], bottomWords=None, topWords=5, groupBy='word')
 
 raw_data = mdb.search_transactions(searchParams=searchParams)
 fdist = sorted(FrequencyDistribution(raw_data).freq_dist.items(), key=lambda x: x[1], reverse=True)
@@ -99,5 +99,7 @@ else:
     # do word search
     results = mdb.get_word_time_data(searchParams=searchParams)
 
-print(results.data[0].toJson())
+results.searchID = mdb.log_search(searchParams, 'visualisation')
+
+print(results.searchID)
 

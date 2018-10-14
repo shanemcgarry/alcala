@@ -76,6 +76,11 @@ export class DiscreteBarChart extends BaseChart {
           bottom: 50,
           left: 55
         },
+        callback: function(chart) {
+          chart.discretebar.dispatch.on('elementClick', function(e) {
+            self._onElementDblClick.dispatch(self, e);
+          });
+        },
         x: function(d) { return d.key; },
         y: function(d) { return d.value; },
         showValues: true,

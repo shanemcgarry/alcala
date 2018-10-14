@@ -27,9 +27,11 @@ class TimeSummary(JsonSerializable):
 
 
 class DataPackage(JsonSerializable):
-    def __init__(self, reales=None, maravedises=None, grandTotal=None, totalTransactions=None, timeSummary=None, data=None, *args, **kwargs):
+    def __init__(self, reales=None, maravedises=None, grandTotal=None, totalTransactions=None, timeSummary=None, data=None, rawData=None, searchID=None, *args, **kwargs):
         self.summary = SummaryInfo(reales=reales, maravedises=maravedises, grandTotal=grandTotal, totalTransactions=totalTransactions, timeSummary=timeSummary, *args, **kwargs)
         self.data = data
+        self.rawData = rawData
+        self.searchID = searchID
 
 
 class SummaryInfo(JsonSerializable):

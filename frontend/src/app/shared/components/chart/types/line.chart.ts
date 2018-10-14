@@ -57,12 +57,11 @@ export class LineChart extends BaseChart {
         },
         x: function(d) { return d.x; },
         y: function(d) { return d.y; },
-        useInteractiveGuideline: true,
-        dispatch: {
-          stateChange: function(e) { console.log('stateChange'); },
-          changeState: function(e) { console.log('changeState'); },
-          tooltipShow: function(e) { console.log('tooltipShow'); },
-          tooltipHide: function(e) { console.log('tooltipHide'); },
+        useInteractiveGuideline: false,
+        callback: function(chart) {
+          chart.lines.dispatch.on('elementClick', function(e) {
+            self._onElementDblClick.dispatch(self, e);
+          });
         },
         xAxis: {
           axisLabel: this.getAxisLabel(this.xField),

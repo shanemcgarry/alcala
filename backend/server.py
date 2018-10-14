@@ -5,7 +5,7 @@ from flask_cors import CORS
 import base64
 from models.pageSearch import PageSearch
 from models.analysisItem import AnalysisItem, AnalysisResultList, AnalysisSummary
-from models.visSearch import VisSearchParams
+from models.visSearch import VisSearchParams, VisSearchFeatures
 from analysis.frequency import FrequencyDistribution
 from models.users import SiteUser
 from models.flaskErrors import ApplicationError
@@ -254,6 +254,20 @@ def get_categories(year):
     return response
 
 
+@app.route("/visualise/features", methods=['POST'])
+def log_search_features():
+    mdb = MongoData()
+    json_req = request.get_json()
+    visFeatures = VisSearchFeatures(**json_req)
+    object_id = mdb.log_features(visFeatures, searchType='visualisation')
+    response = app.response_class(
+        status=200,
+        response= json.dumps({'objectID': object_id}),
+        mimetype='application/json'
+    )
+    return response
+
+
 @app.route("/visualise/search", methods=['POST'])
 def do_vis_search():
     json_req = request.get_json()
@@ -285,6 +299,8 @@ def do_vis_search():
         results = mdb.get_word_time_data(searchParams=searchParams)
     else:
         raise ApplicationError('Invalid groupBy setting')
+
+    results.searchID = mdb.log_search(searchParams, 'visualisation')
 
     response = app.response_class(
         status=200,

@@ -1,14 +1,33 @@
 import { DataSummaryPackage } from '../../../models/analysis-result';
+import { EventDispatcher } from 'strongly-typed-events';
 
-export abstract class BaseChart {
+export interface IBaseChart {
+  allowableXFields: string[];
+  allowableYFields: string[];
+  allowableSizeFields: string[];
+  allowableGroupFields: string[];
+  selectedData: any[];
+
+  formatAxisData(axis: string, dataValue: any): any;
+  getAxisLabel(axis: string): string;
+  formatTimeTicks(date_value: number, date_type: string): any;
+  createOptions(): any;
+  formatData(chartData: DataSummaryPackage): any;
+}
+
+export abstract class BaseChart implements IBaseChart {
   abstract allowableXFields: string[];
   abstract allowableYFields: string[];
   abstract allowableSizeFields: string[];
   abstract allowableGroupFields: string[];
+  protected _onElementDblClick = new EventDispatcher<IBaseChart, any>();
   selectedData: any[] = [];
 
-  abstract createOptions(dateFormat?: string): any;
+  abstract createOptions(): any;
   abstract formatData(chartData: DataSummaryPackage): any;
+  get onElementDblClick() {
+    return this._onElementDblClick.asEvent();
+  }
 
   protected constructor(public xField: string, public yField: string, public height: number, public width: number, public groupField?: string, public sizeField?: string ) {}
 
