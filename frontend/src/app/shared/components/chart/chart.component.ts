@@ -1,13 +1,5 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
-import {CumulativeLineOptions} from './options/cumulative-line-options';
-import {LineOptions} from './options/line-options';
-import {MultiBarOptions} from './options/multi-bar-options';
-import {StackedAreaOptions} from './options/stacked-area-options';
-import {PieOptions} from './options/pie-options';
-import {DiscreteBarOptions} from './options/discrete-bar-options';
-import {ScatterOptions} from './options/scatter-options';
+import { Component, OnInit, OnChanges, Input, Output } from '@angular/core';
 import { BaseChart } from './types/base.chart';
-import {StackedAreaChart} from './types/stacked-area.chart';
 import {DataSummaryPackage} from '../../models/analysis-result';
 import {ChartFactory} from './chart.factory';
 
@@ -24,7 +16,8 @@ export class ChartComponent implements OnInit, OnChanges {
   @Input() sizeField: string;
   @Input() height = 300;
   @Input() width = 600;
-  @Input() dateFormat: string;
+  @Output() selectedData: any[];
+  //@Input() dateFormat: string;
   chartInfo: BaseChart;
   formattedData: any;
   options: any;
@@ -41,7 +34,7 @@ export class ChartComponent implements OnInit, OnChanges {
     this.chartInfo = ChartFactory.createChart({type: chartType, xField: this.xField, yField: this.yField, height: this.height, width: this.width, sizeField: this.sizeField});
     this.options = this.chartInfo.createOptions();
     this.formattedData = this.chartInfo.formatData(this.data);
-    console.log(this.formattedData);
+    this.selectedData = this.chartInfo.selectedData;
   }
 
   /*createOptions() {

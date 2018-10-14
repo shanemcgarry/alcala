@@ -46,20 +46,18 @@
     </app-info-box>
   </mat-grid-tile>
 </mat-grid-list>
-<mat-grid-list cols="2" rowHeight="400" class="ml10" *ngIf="this.chartData">
+<mat-grid-list cols="2" rowHeight="400" class="ml10 chart-samples" *ngIf="this.chartData">
   <mat-grid-tile *ngFor="let c of this.availableCharts" [colspan]="1" [rowspan]="1">
     <mat-card class="full-width ml0 mr10">
       <mat-card-header>
         <mat-card-title>{{ c.label }} Example</mat-card-title>
+        <button mat-flat-button color="primary" (click)="this.onCustomise(c.value)">Customise</button>
       </mat-card-header>
       <mat-card-content>
         <app-chart [data]="this.chartData" [chartType]="c.value" [height]="300"
                    [xField]="this.getFieldDefaults(c.value, 'x')" [yField]="this.getFieldDefaults(c.value, 'y')"
                    [sizeField]="this.getFieldDefaults(c.value, 'size')"></app-chart>
       </mat-card-content>
-      <mat-card-actions align="end">
-        <button mat-raised-button color="primary" (click)="onCustomise(c.value)">Customise</button>
-      </mat-card-actions>
     </mat-card>
   </mat-grid-tile>
 </mat-grid-list>

@@ -1,3 +1,5 @@
+@import '../src/styles/_variables.scss';
+
 .mat-card {
   text-align: center; }
 .mat-card img {
@@ -8,9 +10,29 @@
   align-content: right;
 }
 
+mat-card-header {
+  mat-card-title {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: $base-red;
+  }
+  button {
+    margin-left: auto;
+  }
+  margin-bottom: 5px;
+}
+
 mat-grid-tile {
   margin-bottom: 20px;
   margin-top: 20px;
+}
+
+mat-grid-list {
+  margin-top: -15px;
+}
+
+.chart-samples {
+  margin-bottom: 30px;
 }
 
 .mat-table {

@@ -5,10 +5,12 @@ export abstract class BaseChart {
   abstract allowableYFields: string[];
   abstract allowableSizeFields: string[];
   abstract allowableGroupFields: string[];
+  selectedData: any[] = [];
 
   abstract createOptions(dateFormat?: string): any;
   abstract formatData(chartData: DataSummaryPackage): any;
-  protected constructor(public xField: string, public yField: string, public height: number, public width: number, public groupField?: string, public sizeField?: string, ) {}
+
+  protected constructor(public xField: string, public yField: string, public height: number, public width: number, public groupField?: string, public sizeField?: string ) {}
 
   formatAxisData(axis: string, dataValue: any) {
     switch (axis) {

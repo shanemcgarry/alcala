@@ -60,6 +60,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     this.searchParams.userID = this.userService.getLoggedInUser()._id;
     // set defaults
     this.searchParams.groupBy = this.supportedGroups[0];
+    this.onSearch();
   }
 
   ngAfterViewInit() {
@@ -70,16 +71,38 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     this.supportedXFields = [];
     this.supportedYFields = [];
     this.supportedSizeFields = [];
+    this.supportedXFields = this.getAllowableFields('x');
+    this.supportedYFields = this.getAllowableFields('y');
+    this.supportedSizeFields = this.getAllowableFields('size');
+  }
+
+  getAllowableFields(fieldType: string, strippedValue?: string): LabelValue[] {
+    const results: LabelValue[] = [];
     const chartInfo = ChartFactory.createChart({type: this.features.graphType});
-    chartInfo.allowableXFields.forEach(x => {
-      this.supportedXFields.push(this.getLabelValueItem(x));
-    });
-    chartInfo.allowableYFields.forEach(x => {
-      this.supportedYFields.push(this.getLabelValueItem(x));
-    });
-    chartInfo.allowableSizeFields.forEach(x => {
-      this.supportedSizeFields.push(this.getLabelValueItem(x));
-    });
+    switch (fieldType) {
+      case 'x':
+        chartInfo.allowableXFields.forEach(x => {
+          results.push(this.getLabelValueItem(x));
+        });
+        break;
+      case 'y':
+        chartInfo.allowableYFields.forEach(x => {
+          results.push(this.getLabelValueItem(x));
+        });
+        break;
+      case 'size':
+        chartInfo.allowableSizeFields.forEach(x => {
+          results.push(this.getLabelValueItem(x));
+        });
+    }
+
+    if (strippedValue) {
+      const removeIndex = results.findIndex(x => x.value === strippedValue);
+      if (removeIndex > -1) {
+        results.splice(removeIndex, 1);
+      }
+    }
+    return results;
   }
 
   getLabelValueItem(fieldName: string): LabelValue {
@@ -89,7 +112,11 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
         lv = this.getValidTimeField();
         break;
       case 'key':
-        lv = this.supportedFields.find( y => y.value === this.searchParams.groupBy);
+        if (this.searchParams.groupBy) {
+          lv = this.supportedFields.find( y => y.value === this.searchParams.groupBy);
+        } else {
+          lv = this.supportedFields.find( y => y.value === this.supportedGroups[0]);
+        }
         break;
       default:
         lv = this.supportedFields.find( y => y.value === fieldName);
@@ -123,6 +150,14 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     });
     this.supportedFields.push(newValue);
     this.resetFeatures();
+  }
+
+  onXFieldChange(e: MatSelectChange): void {
+    this.supportedYFields = this.getAllowableFields('y', e.value);
+  }
+
+  onYFieldChange(e: MatSelectChange): void {
+    this.supportedXFields = this.getAllowableFields('x', e.value);
   }
 
   onYearChecked(e: MatCheckboxChange) {

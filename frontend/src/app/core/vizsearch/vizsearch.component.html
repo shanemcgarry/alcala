@@ -92,9 +92,14 @@
     </mat-card>
   </mat-drawer>
   <mat-drawer-content #drawerContent>
-    <app-chart #appChart *ngIf="this.graphData" [height]="800" [width]="this.graphWidth"
-               [chartType]="this.features.graphType" [xField]="this.features.xField"
-               [yField]="this.features.yField" [sizeField]="this.features.sizeField"
-               [data]="this.graphData"></app-chart>
+    <mat-tab-group>
+      <mat-tab label="Chart">
+        <app-chart #appChart *ngIf="this.graphData" [height]="750" [width]="this.graphWidth"
+                   [chartType]="this.features.graphType" [xField]="this.features.xField"
+                   [yField]="this.features.yField" [sizeField]="this.features.sizeField"
+                   [data]="this.graphData"></app-chart>
+      </mat-tab>
+      <mat-tab label="Details">To be implemented</mat-tab>
+    </mat-tab-group>
   </mat-drawer-content>
 </mat-drawer-container>

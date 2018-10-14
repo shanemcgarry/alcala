@@ -62,7 +62,7 @@ export class LineChart extends BaseChart {
           stateChange: function(e) { console.log('stateChange'); },
           changeState: function(e) { console.log('changeState'); },
           tooltipShow: function(e) { console.log('tooltipShow'); },
-          tooltipHide: function(e) { console.log('tooltipHide'); }
+          tooltipHide: function(e) { console.log('tooltipHide'); },
         },
         xAxis: {
           axisLabel: this.getAxisLabel(this.xField),
