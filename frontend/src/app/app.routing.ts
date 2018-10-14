@@ -15,12 +15,10 @@ import {VizsearchComponent} from './core/vizsearch/vizsearch.component';
 const appRoutes: Routes = [
   { path: 'page/:id', component: PageComponent },
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
-  { path: 'search/:phrase', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'visualise/dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'visualise/search/:graph', component: VizsearchComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
-  { path: 'setup', component: UserSetupComponent, canActivate: [AuthGuard] },
   { path: 'admin/curation', component: CurationComponent, canActivate: [AuthGuard] },
   { path: '', component: HomeComponent }
 ];

@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {PageService} from '../service/page.service';
 import {PageResult} from '../../shared/models/page-result.model';
 import { environment } from '../../../environments/environment';
+import {UserService} from '../../shared/services/user.service';
 
 @Component({
   selector: 'app-search',
@@ -15,10 +16,15 @@ export class SearchComponent implements OnInit {
   dataModel: PageResult;
   imageBase: string = environment.imageUrl + 'thumbs/';
   currentIndex: number;
+  userID: string;
 
-  constructor(private route: ActivatedRoute, private pageService: PageService) { }
+  constructor(private route: ActivatedRoute, private pageService: PageService, private userService: UserService) { }
 
   ngOnInit() {
+    const loggedInUser = this.userService.getLoggedInUser();
+    if (loggedInUser) {
+      this.userID = loggedInUser._id;
+    }
   }
 
   getPageArray(): any[] {
@@ -35,7 +41,7 @@ export class SearchComponent implements OnInit {
 
   onNavClick(index: number) {
     this.currentIndex = index;
-    this.pageService.search(this.searchPhrase, index, 20)
+    this.pageService.search(this.searchPhrase, index, 20, this.userID)
       .subscribe(
         data => this.dataModel = data,
         error => console.log(error),
@@ -50,7 +56,7 @@ export class SearchComponent implements OnInit {
   onSearchClick() {
     this.currentIndex = 1;
     this.isTile = false;
-    this.pageService.search(this.searchPhrase, 1, 20)
+    this.pageService.search(this.searchPhrase, 1, 20, this.userID)
       .subscribe(
         data => this.dataModel = data,
         error => console.log(error),

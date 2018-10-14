@@ -23,23 +23,20 @@ export class PageService {
   private handleError: HandleError;
 
   constructor(private http: HttpClient, private httpErrorHandler: HttpErrorHandler) {
-    this.pageServiceUrl = environment.apiUrl;
+    this.pageServiceUrl = `${environment.apiUrl}page/`;
     this.handleError = httpErrorHandler.createHandleError('PageService');
   }
 
   getPage(pageid: string): Observable<AlcalaPage> {
-    return this.http.get<AlcalaPage>(this.pageServiceUrl + 'page/' + pageid)
+    return this.http.get<AlcalaPage>(`${this.pageServiceUrl}${pageid}`)
       .pipe(
           catchError(this.handleError('getPage', null))
         );
   }
 
-  search(phrase: string, pageIndex: number, resultLimit: number): Observable<PageResult> {
-    const searchObj = new PageSearch(phrase, pageIndex, resultLimit);
-
-    const json64 = btoa(searchObj.toJson());
-    console.log(json64)
-    return this.http.get<PageResult>(this.pageServiceUrl + 'pages/search/' + json64)
+  search(phrase: string, pageIndex: number, resultLimit: number, userID?: string): Observable<PageResult> {
+    const searchObj = new PageSearch(phrase, pageIndex, resultLimit, userID);
+    return this.http.post<PageResult>(`${this.pageServiceUrl}search`, searchObj, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('searchPage', null))
       );

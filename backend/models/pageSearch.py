@@ -3,10 +3,11 @@ import jsonpickle
 
 
 class PageSearch(JsonSerializable):
-    def __init__(self, search_phrase="", page_index=1, result_limit=50):
-        self.searchPhrase = search_phrase
-        self.pageIndex = page_index
-        self.resultLimit = result_limit
+    def __init__(self, userID=None, searchPhrase=None, pageIndex=1, resultLimit=50, *args, **kwargs):
+        self.searchPhrase = searchPhrase
+        self.pageIndex = pageIndex
+        self.resultLimit = resultLimit
+        self.userID = userID
 
     @staticmethod
     def from_json(json):

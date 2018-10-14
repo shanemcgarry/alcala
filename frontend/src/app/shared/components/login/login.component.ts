@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   userName: string;
   password: string;
   siteUser: SiteUser;
-  reqValid = new FormControl('', [Validators.required])
+  reqValid = new FormControl('', [Validators.required]);
 
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) { }
 
@@ -29,21 +29,7 @@ export class LoginComponent implements OnInit {
         data => {
           this.siteUser = data;
           if (this.siteUser.loginToken) {
-            switch (this.siteUser.useDashboard) {
-              case true:
-                if (!navigation) {
-                  navigation = '/dashboard';
-                }
-                break;
-              case false:
-                if (!navigation) {
-                  navigation = '/search';
-                }
-                break;
-              default:
-                navigation = '/setup';
-                break;
-            }
+            navigation = '/dashboard';
             this.router.navigate([navigation]);
           }
         },

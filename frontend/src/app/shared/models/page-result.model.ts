@@ -4,6 +4,7 @@ export interface PageResult {
   currentIndex: number;
   totalPageResults: number;
   resultLimit: number;
+  searchID: string;
   pages: PageResultDetail[];
 }
 

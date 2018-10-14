@@ -54,13 +54,19 @@ def get_sample_data(size):
     return response
 
 
-@app.route("/pages/search/<query>")
-def get_page_by_keyword(query):
+@app.route("/page/search", methods=['POST'])
+def get_page_by_keyword():
+    json_req = request.get_json()
+    searchParams = PageSearch(**json_req)
+    print(searchParams.toJson())
     edb = ExistData()
-    json = base64.b64decode(query).decode('utf-8')
-    query_obj = Json.loads(json, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
-    query_result = edb.get_pages_by_keyword(query_obj.searchPhrase, pageIndex=query_obj.pageIndex,
-                                            limit=query_obj.resultLimit)
+    query_result = edb.get_pages_by_keyword(searchParams.searchPhrase, pageIndex=searchParams.pageIndex,
+                                            limit=searchParams.resultLimit)
+
+    if searchParams.userID is not None:
+        mdb = MongoData()
+        query_result.searchID = mdb.log_search(searchParams, 'keyword')
+
     response = app.response_class(
         response=query_result.toJson(),
         status=200,
