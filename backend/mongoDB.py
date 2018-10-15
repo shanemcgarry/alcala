@@ -456,7 +456,6 @@ class MongoData:
                             "transaction_count": {"$sum": 1}
                          }})
 
-
         json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
 
         results = list()

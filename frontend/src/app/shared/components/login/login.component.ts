@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
         data => {
           this.siteUser = data;
           if (this.siteUser.loginToken) {
-            navigation = '/dashboard';
+            navigation = '/visualise/dashboard';
             this.router.navigate([navigation]);
           }
         },
