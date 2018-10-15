@@ -1,7 +1,7 @@
 <mat-drawer-container>
   <mat-drawer mode="side" opened>
     <mat-card>
-      <mat-card-subtitle>View Options</mat-card-subtitle>
+      <!--<mat-card-subtitle>View Options</mat-card-subtitle>-->
       <mat-card-content>
         <mat-form-field class="features">
           <mat-select placeholder="Select a mode of visualisation" [(ngModel)]="this.features.graphType"
@@ -27,10 +27,11 @@
             <mat-option *ngFor="let sf of this.supportedSizeFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
         </mat-form-field>
+        <button mat-button color="primary" class="two-column" (click)="this.saveChartToImage()"><mat-icon>save_alt</mat-icon> Download</button>
       </mat-card-content>
     </mat-card>
     <mat-card>
-      <mat-card-subtitle>Search Options</mat-card-subtitle>
+      <!--<mat-card-subtitle>Search Options</mat-card-subtitle>-->
       <mat-card-content>
         <label>Group By</label>
         <div #groupBy class="filter">
@@ -57,6 +58,7 @@
             </mat-form-field>
           </div>
           <div #topWordsFilter class="filter">
+            <h4>Contains:</h4>
             <mat-checkbox [(ngModel)]="this.filters.topWordsEnabled"></mat-checkbox>
             <span>Top </span><mat-form-field class="word-num"><input matInput [(ngModel)]="this.searchParams.topWords" [disabled]="!this.filters.topWordsEnabled" ></mat-form-field><span>words</span>
           </div>
@@ -65,13 +67,13 @@
             <span>Words that appear less than </span><mat-form-field class="word-num"><input matInput [(ngModel)]="this.searchParams.bottomWords" [disabled]="!this.filters.bottomWordsEnabled" ></mat-form-field><span>times</span>
           </div>
           <div #keywordsFilter class="filter">
-            <mat-checkbox [(ngModel)]="this.filters.keywordsEnabled">Only include entries with the follow keyword(s)</mat-checkbox>
+            <mat-checkbox [(ngModel)]="this.filters.keywordsEnabled">Entries with the following keyword(s)</mat-checkbox>
             <mat-form-field class="keyword-filter">
               <input matInput placeholder="Keyword(s)" [(ngModel)]="this.searchParams.keywords" [disabled]="!this.filters.keywordsEnabled">
             </mat-form-field>
           </div>
           <div #categoriesFilter class="filter">
-            <mat-checkbox [(ngModel)]="this.filters.categoriesEnabled" (change)="onEnableCategories($event)">Only include the following categories</mat-checkbox>
+            <mat-checkbox [(ngModel)]="this.filters.categoriesEnabled" (change)="onEnableCategories($event)">The following categories</mat-checkbox>
             <mat-form-field *ngIf="this.categoryData" class="category-list">
               <mat-select placeholder="Selected Categories" [(ngModel)]="this.searchParams.filteredCategories"
                           [disabled]="!this.filters.categoriesEnabled" multiple>
@@ -93,7 +95,7 @@
   </mat-drawer>
   <mat-drawer-content #drawerContent>
     <mat-tab-group>
-      <mat-tab label="Chart">
+      <mat-tab label="Chart" class="chart">
         <app-chart #appChart *ngIf="this.graphData" [height]="750" [width]="this.graphWidth"
                    [chartType]="this.features.graphType" [xField]="this.features.xField"
                    [yField]="this.features.yField" [sizeField]="this.features.sizeField"

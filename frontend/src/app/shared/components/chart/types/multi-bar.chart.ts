@@ -1,5 +1,5 @@
 import { BaseChart } from './base.chart';
-import {DataSummaryPackage} from '../../../models/analysis-result';
+import {DataSummaryPackage, TimeSeriesData} from '../../../models/analysis-result';
 
 export class MultiBarChart extends BaseChart {
   allowableXFields: string[] = ['time', 'key'];
@@ -12,20 +12,24 @@ export class MultiBarChart extends BaseChart {
 }
 
   formatData(chartData: DataSummaryPackage): any {
-    switch (this.groupField) {
-      case 'key':
+    switch (this.xField) {
+      case 'category':
+      case 'word':
         return this.formatDataForKey(chartData);
+      case 'year':
+      case 'monthNum':
+        return this.formatDataForTime(chartData);
       default:
-        throw new Error(`${this.groupField} is not an allowable group option.`);
+        throw new Error(`${this.xField} is not an allowable group option.`);
     }
   }
 
-  private formatDataForKey(chartData: DataSummaryPackage): any {
+  private formatDataForTime(chartData: DataSummaryPackage): any {
     const results = [];
     chartData.data.forEach(x => {
       const timeData = [];
       x.timeSeries.forEach(y => {
-        let xValue, yValue;
+        let xValue;
         switch (this.xField) {
           case 'year':
           case 'monthNum':
@@ -34,21 +38,46 @@ export class MultiBarChart extends BaseChart {
           default:
             throw new Error(`${this.xField} is not an allowable field for the x axis`);
         }
-        switch (this.yField) {
-          case 'totalAmount':
-            yValue = y.totalAmount;
-            break;
-          case 'transactionCount':
-            yValue = y.transactionCount;
-            break;
-          default:
-            throw new Error(`${this.yField} is not an allowable field for the y axis`);
-        }
-        timeData.push({'x': xValue, 'y': yValue});
+        timeData.push({'x': xValue, 'y': this.getYDataPoint(y)});
       });
       results.push({'key': x.key, 'values': timeData});
     });
     return results;
+  }
+
+  private formatDataForKey(chartData: DataSummaryPackage): any {
+    const results = [];
+    chartData.data.forEach(x => {
+      x.timeSeries.forEach( y => {
+        const timeObj = results.find(z => z.key === y.timeValue);
+        if (!timeObj) {
+          results.push({'key': y.timeValue, 'values': [{'x': x.key, 'y': this.getYDataPoint(y)}]});
+        } else {
+          const catObj = timeObj.values.find(c => c.x === x.key);
+          if (!catObj) {
+            timeObj.values.push({'x': x.key, 'y': this.getYDataPoint(y)});
+          } else {
+            catObj.y += this.getYDataPoint(y);
+          }
+        }
+      });
+    });
+    return results;
+  }
+
+  private getYDataPoint(data: TimeSeriesData): number {
+    let yValue;
+    switch (this.yField) {
+      case 'totalAmount':
+        yValue = data.totalAmount;
+        break;
+      case 'transactionCount':
+        yValue = data.transactionCount;
+        break;
+      default:
+        throw new Error(`${this.yField} is not an allowable field for the y axis`);
+    }
+    return yValue;
   }
 
   createOptions(): any {

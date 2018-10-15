@@ -57,10 +57,10 @@
     <tr mat-header-row *matHeaderRowDef="this.displayColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: this.displayColumns;"></tr>
   </table>
-  <!--<mat-paginator #dataPaginator [pageSizeOptions]="this.pageSizeOptions" [length]="this.dataModel.data.length"></mat-paginator>-->
+  <mat-paginator #dataPaginator [pageSizeOptions]="[10,25,50,100]" showFirstLastButtons></mat-paginator>
   </mat-card-content>
-  <!--<mat-card-actions align="right">-->
-    <!--<button mat-raised-button color="primary" (click)="this.onSave()">Save</button>-->
-  <!--</mat-card-actions>-->
+  <!--<mat-card-actions align="right">
+  <button mat-raised-button color="primary" (click)="this.onSave()">Save</button>
+</mat-card-actions>-->
 </mat-card>
 

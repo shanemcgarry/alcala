@@ -9,6 +9,7 @@ import {ChartComponent} from '../../shared/components/chart/chart.component';
 import {AnalysisItem, DataSummaryPackage} from '../../shared/models/analysis-result';
 import { ChartFactory } from '../../shared/components/chart/chart.factory';
 import { VisFeatures, LabelValue, VisFilter} from '../../shared/models/visualisation.models';
+import canvg from 'canvg';
 
 
 @Component({
@@ -70,6 +71,25 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.graphWidth = this.drawerContainer.nativeElement ? this.drawerContainer.nativeElement.width : this.graphWidth;
+  }
+
+  saveChartToImage() {
+    const renderw = 1000, renderh = 750;
+    const hyperLink = <HTMLAnchorElement>document.createElement('a', {is: 'HTMLAnchorElement'});
+    const nvd3Element = document.getElementsByTagName('nvd3')[0];
+    const svgElement = new XMLSerializer().serializeToString(nvd3Element.firstChild);
+    const canvas = <HTMLCanvasElement>document.createElement('canvas', {is: 'HTMLCanvasElement'});
+
+    canvas.id = 'canvas';
+    canvas.height = renderh;
+    canvas.width = renderw;
+    console.log(svgElement);
+
+    canvg(canvas, svgElement, { ignoreDimensions: true });
+
+    hyperLink.download = `${this.features.graphType}.png`;
+    hyperLink.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+    hyperLink.click();
   }
 
   logSearchFeatures(): void {
@@ -230,7 +250,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
             this.setChartDetailData(data.rawData);
           },
         err => console.log(err),
-        () => { console.log('Graph Data loaded'); this.logSearchFeatures(); }
+        () => { console.log('Graph Data loaded:', this.graphData.data); this.logSearchFeatures(); }
       );
   }
 
@@ -260,7 +280,19 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     const rdFilters = [];
     switch (this.features.graphType) {
       case 'multiBar':
-        rdFilters.push(this.getFilterForKey(e.data.key));
+        switch (this.features.xField) {
+          case 'year':
+          case 'monthNum':
+            rdFilters.push(this.getFilterForKey(e.data.key));
+            break;
+          case 'category':
+            if (this.searchParams.year) {
+              rdFilters.push({'key': 'month', 'value': e.data.key});
+            } else {
+              rdFilters.push({'key': 'year', 'value': e.data.key });
+            }
+            break;
+        }
         rdFilters.push(this.getFilterForXField(e.data.x));
         break;
       case 'line':
@@ -319,7 +351,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       case 'monthNum':
         switch (this.features.graphType) {
           case 'discreteBar':
-            filterName = this.features.xField;
+            filterName = 'month';
             formattedX = xValue;
             break;
           default:

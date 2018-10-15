@@ -30,45 +30,13 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   setChartInfo(chartType: string): void {
-    this.chartInfo = ChartFactory.createChart({type: chartType, xField: this.xField, yField: this.yField, height: this.height, width: this.width, sizeField: this.sizeField});
+    this.chartInfo = ChartFactory.createChart({type: chartType, xField: this.xField, yField: this.yField, height: this.height,
+                                                     width: this.width, sizeField: this.sizeField});
     this.options = this.chartInfo.createOptions();
     this.formattedData = this.chartInfo.formatData(this.data);
     this.chartInfo.onElementDblClick.subscribe((sender, e) => {
       this.elementDbClick.emit(e);
     });
   }
-
-  /*createOptions() {
-    switch (this.chartType) {
-      case 'cumulativeLine':
-        const cumOptions = new CumulativeLineOptions();
-        this.options = cumOptions.createOptions(this.dateFormat);
-        break;
-      case 'line':
-        const lineOptions = new LineOptions();
-        this.options = lineOptions.createOptions(this.dateFormat);
-        break;
-      case 'multiBar':
-        const multiBarOptions = new MultiBarOptions();
-        this.options = multiBarOptions.createOptions(this.dateFormat);
-        break;
-      case 'stackedArea':
-        const stackedAreaOptions = new StackedAreaOptions();
-        this.options = stackedAreaOptions.createOptions(this.dateFormat);
-        break;
-      case 'pie':
-        const pieOptions = new PieOptions();
-        this.options = pieOptions.createOptions();
-        break;
-      case 'discreteBar':
-        const discreteBarOptions = new DiscreteBarOptions();
-        this.options = discreteBarOptions.createOptions();
-        break;
-      case 'scatter':
-        const scatterOptions = new ScatterOptions();
-        this.options = scatterOptions.createOptions(this.dateFormat);
-        break;
-    }
-  }*/
 
 }

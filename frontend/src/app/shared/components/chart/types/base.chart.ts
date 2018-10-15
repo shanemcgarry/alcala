@@ -42,7 +42,7 @@ export abstract class BaseChart implements IBaseChart {
       case 'transactionCount':
         return d3.format('d')(dataValue);
       default:
-        return d3.format('')(dataValue);
+        return dataValue;
     }
   }
 

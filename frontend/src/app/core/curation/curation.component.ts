@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TrainingData } from '../../shared/models/training-data.model';
 import { UserService } from '../../shared/services/user.service';
 import { AdminService } from '../../shared/services/admin.service';
@@ -13,27 +13,24 @@ import { cloneDeep } from 'lodash';
   templateUrl: './curation.component.html',
   styleUrls: ['./curation.component.scss']
 })
-export class CurationComponent implements OnInit, AfterViewInit {
-  dataModel: MatTableDataSource<TrainingData>;
+export class CurationComponent implements OnInit {
+  dataModel: MatTableDataSource<TrainingData> = new MatTableDataSource<TrainingData>();
   currUser: SiteUser;
   pageSizeOptions: number[] = [10, 25, 50, 100];
   displayColumns: string[] = ['pageid', 'month', 'words', 'reales', 'maravedises', 'categories', 'actions'];
 
-  @ViewChild('dataPaginator') paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private userService: UserService, private adminService: AdminService, private spinnerService: SpinnerService, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.spinnerService.show('curationSpinner');
     this.currUser = this.userService.getLoggedInUser();
-  }
-
-  ngAfterViewInit() {
     this.adminService.getTrainingData(this.currUser._id)
       .subscribe(
         data => {
-          this.dataModel = new MatTableDataSource<TrainingData>(data);
-          // this.dataModel.paginator = this.paginator;
+          this.dataModel.data = data;
+          this.dataModel.paginator = this.paginator;
         },
         err => console.log(err),
         () => {

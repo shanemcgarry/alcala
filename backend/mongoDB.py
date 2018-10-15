@@ -196,6 +196,8 @@ class MongoData:
         results = []
         curr_key = None
         time_data = []
+        print('list data has %s items' % len(listData))
+        print(Tools.serialise_list(listData))
 
         # If we are dealing with years, there are certain years which exist in the database. Otherwise if we are dealing
         # with months then we want to get a list of valid months. This will be used to "fill in" missing times in the data
@@ -232,6 +234,14 @@ class MongoData:
 
             time_data.append(TimeSeriesData(timeValue=item[timeAttr], timeType=timeType, totalAmount=item.totalAmount, transactionCount=item.transactionCount))
             prevTime = item[timeAttr]
+
+        # Need to add in the last of the data:
+        lastIndex = validTimes.index(prevTime)
+        for i in range(lastIndex + 1, len(validTimes), 1):
+            time_data.append(
+                TimeSeriesData(timeValue=validTimes[i], timeType=timeType, totalAmount=0, transactionCount=0))
+        results.append(KeyTimePivotData(key=curr_key, timeSeries=time_data))
+        print('results has %s items. ' % len(results))
         return results
 
     def get_word_time_data(self, searchParams=None):
@@ -352,8 +362,6 @@ class MongoData:
             "transaction_count": {"$sum": 1}
         }})
 
-        print(pipeline)
-
         json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
         results = list()
         for j in json_list['cursor']['firstBatch']:
@@ -448,7 +456,9 @@ class MongoData:
                             "transaction_count": {"$sum": 1}
                          }})
 
+
         json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
+
         results = list()
         for j in json_list['cursor']['firstBatch']:
             results.append(CategoryMonthPivotItem(month_name=self.get_month_name(j['_id']['month']), month=j['_id']['month'],

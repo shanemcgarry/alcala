@@ -63,7 +63,7 @@ def get_page_by_keyword():
     query_result = edb.get_pages_by_keyword(searchParams.searchPhrase, pageIndex=searchParams.pageIndex,
                                             limit=searchParams.resultLimit)
 
-    if searchParams.userID is not None:
+    if searchParams.userID is not None and searchParams.userID != 'undefined' and searchParams.userID != 'null':
         mdb = MongoData()
         query_result.searchID = mdb.log_search(searchParams, 'keyword')
 
@@ -306,7 +306,8 @@ def do_vis_search():
     else:
         raise ApplicationError('Invalid groupBy setting')
 
-    results.searchID = mdb.log_search(searchParams, 'visualisation')
+    if searchParams.userID is not None and searchParams.userID != 'undefined' and searchParams.userID != 'null':
+        results.searchID = mdb.log_search(searchParams, 'visualisation')
 
     response = app.response_class(
         status=200,
