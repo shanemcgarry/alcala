@@ -20,13 +20,13 @@ export abstract class BaseChart implements IBaseChart {
   abstract allowableYFields: string[];
   abstract allowableSizeFields: string[];
   abstract allowableGroupFields: string[];
-  protected _onElementDblClick = new EventDispatcher<IBaseChart, any>();
+  protected _onElementClick = new EventDispatcher<IBaseChart, any>();
   selectedData: any[] = [];
 
   abstract createOptions(): any;
   abstract formatData(chartData: DataSummaryPackage): any;
-  get onElementDblClick() {
-    return this._onElementDblClick.asEvent();
+  get onElementClick() {
+    return this._onElementClick.asEvent();
   }
 
   protected constructor(public xField: string, public yField: string, public height: number, public width: number, public groupField?: string, public sizeField?: string ) {}

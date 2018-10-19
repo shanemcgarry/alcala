@@ -21,6 +21,7 @@ import canvg from 'canvg';
 export class VizsearchComponent implements OnInit, AfterViewInit {
   @ViewChild('appChart') appChart: ChartComponent;
   @ViewChild('drawerContent') drawerContainer: ElementRef;
+  @ViewChild('chartContainer') chartContainer: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
   displayColumns: string[] = ['year', 'monthName', 'categories', 'words', 'reales', 'maravedises', 'pageid'];
@@ -58,7 +59,8 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
         () => console.log('Categories loaded')
       );
     this.route.params.subscribe(params => {
-      this.features.graphType = params['graph'];
+      const baseChart = this.supportedGraphs.find(g => g.value === params['graph']);
+      this.features.chartType = baseChart.value;
       this.setValidFields();
       this.setFieldDefaults();
     });
@@ -70,7 +72,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.graphWidth = this.drawerContainer.nativeElement ? this.drawerContainer.nativeElement.width : this.graphWidth;
+    this.graphWidth = this.chartContainer.nativeElement.offsetWidth;
   }
 
   saveChartToImage() {
@@ -85,9 +87,9 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     canvas.width = renderw;
     console.log(svgElement);
 
-    canvg(canvas, svgElement, { ignoreDimensions: true });
+    canvg(canvas, svgElement);
 
-    hyperLink.download = `${this.features.graphType}.png`;
+    hyperLink.download = `${this.features.chartType}.png`;
     hyperLink.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
     hyperLink.click();
   }
@@ -126,7 +128,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
 
   getAllowableFields(fieldType: string, strippedValue?: string): LabelValue[] {
     const results: LabelValue[] = [];
-    const chartInfo = ChartFactory.createChart({type: this.features.graphType});
+    const chartInfo = ChartFactory.createChart({type: this.features.chartType});
     switch (fieldType) {
       case 'x':
         chartInfo.allowableXFields.forEach(x => {
@@ -181,8 +183,8 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   setFieldDefaults() {
     this.features.xField = this.supportedXFields[0] ? this.supportedXFields[0].value : undefined;
     this.features.yField = this.supportedYFields[0] ? this.supportedYFields[0].value : undefined;
-    this.features.sizeField = this.supportedSizeFields[0] && this.features.graphType === 'scatter' ? this.supportedSizeFields[0].value : undefined;
-    this.enableSizeField = this.features.graphType === 'scatter';
+    this.features.sizeField = this.supportedSizeFields[0] && this.features.chartType === 'scatter' ? this.supportedSizeFields[0].value : undefined;
+    this.enableSizeField = this.features.chartType === 'scatter';
   }
 
   onGroupChange(e: MatRadioChange) {
@@ -254,7 +256,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       );
   }
 
-  onElementDblClick(e: any) {
+  onElementClick(e: any) {
     console.log(e);
     const rdFilters = this.getFiltersForChartData(e);
     let filteredData = this.graphData.rawData;
@@ -278,7 +280,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
 
   getFiltersForChartData(e: any): any[] {
     const rdFilters = [];
-    switch (this.features.graphType) {
+    switch (this.features.chartType) {
       case 'multiBar':
         switch (this.features.xField) {
           case 'year':
@@ -310,7 +312,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
         rdFilters.push(this.getFilterForXField(e.point.x));
         break;
       default:
-        throw new Error(`Click events have not been implemented for the ${this.features.graphType} chart type`);
+        throw new Error(`Click events have not been implemented for the ${this.features.chartType} chart type.`);
     }
     return rdFilters;
   }
@@ -335,7 +337,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     let formattedX, filterName;
     switch (this.features.xField) {
       case 'year':
-        switch (this.features.graphType) {
+        switch (this.features.chartType) {
           case 'discreteBar':
           case 'pie':
             filterName = this.features.xField;
@@ -349,7 +351,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
         }
         break;
       case 'monthNum':
-        switch (this.features.graphType) {
+        switch (this.features.chartType) {
           case 'discreteBar':
             filterName = 'month';
             formattedX = xValue;

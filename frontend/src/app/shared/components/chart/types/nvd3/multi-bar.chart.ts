@@ -1,7 +1,7 @@
-import { BaseChart } from './base.chart';
-import {DataSummaryPackage, TimeSeriesData} from '../../../models/analysis-result';
+import { BaseChart } from '../base.chart';
+import {DataSummaryPackage, TimeSeriesData} from '../../../../models/analysis-result';
 
-export class MultiBarChart extends BaseChart {
+export class NVD3MultiBarChart extends BaseChart {
   allowableXFields: string[] = ['time', 'key'];
   allowableYFields: string[] = ['totalAmount', 'transactionCount'];
   allowableSizeFields: string[] = [];
@@ -86,6 +86,7 @@ export class MultiBarChart extends BaseChart {
       chart: {
         type: 'multiBarChart',
         height: this.height,
+        width: this.width,
         showLegend: false,
         margin: {
           top: 50,
@@ -96,7 +97,7 @@ export class MultiBarChart extends BaseChart {
         callback: function(chart) {
           chart.multibar.dispatch.on('elementClick', function(e) {
             self.selectedData = e;
-            self._onElementDblClick.dispatch(self, e);
+            self._onElementClick.dispatch(self, e);
           });
         },
         x: function(d) { return d.x; },

@@ -10,6 +10,7 @@ import { UserSetupComponent } from './shared/components/user-setup/user-setup.co
 import { DashboardComponent } from './core/dashboard/dashboard.component';
 import { CurationComponent } from './core/curation/curation.component';
 import {VizsearchComponent} from './core/vizsearch/vizsearch.component';
+import {TestComponent} from './shared/components/test/test.component';
 
 
 const appRoutes: Routes = [
@@ -20,6 +21,7 @@ const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'admin/curation', component: CurationComponent, canActivate: [AuthGuard] },
+  { path: 'test', component: TestComponent },
   { path: '', component: HomeComponent }
 ];
 

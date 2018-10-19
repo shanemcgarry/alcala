@@ -4,7 +4,7 @@
       <!--<mat-card-subtitle>View Options</mat-card-subtitle>-->
       <mat-card-content>
         <mat-form-field class="features">
-          <mat-select placeholder="Select a mode of visualisation" [(ngModel)]="this.features.graphType"
+          <mat-select placeholder="Select a mode of visualisation" [(ngModel)]="this.features.chartType"
                       (selectionChange)="onGraphTypeChange($event)"
                       matTooltip="For a demonstration of each graph type, please see your dashboard.">
             <mat-option *ngFor="let sg of this.supportedGraphs" [value]="sg.value">{{ sg.label }}</mat-option>
@@ -43,14 +43,6 @@
           <h4>Filters</h4>
           <div #yearFilter class="filter">
             <mat-checkbox [(ngModel)]="this.filters.yearEnabled" (change)="onYearChecked($event)"></mat-checkbox>
-              <!--<mat-slider [disabled]="!this.filters.yearEnabled"
-                          [min]="1774"
-                          [max]="1781"
-                          [step]="1"
-                          [thumbLabel]="true"
-                          [tickInterval]="1"
-                          [(ngModel)]="this.searchParams.year">
-              </mat-slider>-->
             <mat-form-field>
               <mat-select placeholder="Filter by Year" [(ngModel)]="this.searchParams.year" [disabled]="!this.filters.yearEnabled">
                 <mat-option *ngFor="let y of this.validYears" [value]="y">{{ y }}</mat-option>
@@ -80,11 +72,6 @@
                 <mat-option *ngFor="let c of this.categoryData" [value]="c.category">{{ c.category }}</mat-option>
               </mat-select>
             </mat-form-field>
-            <!--<div *ngIf="this.categoryData" class="category-list">
-              <mat-checkbox *ngFor="let c of this.categoryData" (change)="onCategoryCheck(c.category)"
-                            [checked]="this.searchParams.filteredCategories.indexOf(c.category) > -1"
-                            [value]="c.category" [disabled]="!this.filters.categoriesEnabled">{{ c.category }}</mat-checkbox>
-            </div>-->
           </div>
         </div>
       </mat-card-content>
@@ -96,10 +83,12 @@
   <mat-drawer-content #drawerContent>
     <mat-tab-group>
       <mat-tab label="Chart" class="chart">
+        <div #chartContainer class="chart-container">
         <app-chart #appChart *ngIf="this.graphData" [height]="750" [width]="this.graphWidth"
-                   [chartType]="this.features.graphType" [xField]="this.features.xField"
+                   [chartType]="this.features.chartType" [xField]="this.features.xField"
                    [yField]="this.features.yField" [sizeField]="this.features.sizeField"
-                   [data]="this.graphData" (elementDbClick)="this.onElementDblClick($event)"></app-chart>
+                   [data]="this.graphData" (elementClick)="this.onElementClick($event)"></app-chart>
+        </div>
       </mat-tab>
       <mat-tab label="Details">
         <table mat-table [dataSource]="this.detailData">

@@ -1,7 +1,7 @@
-import {BaseChart} from './base.chart';
-import {DataSummaryPackage, TimeSeriesData} from '../../../models/analysis-result';
+import {BaseChart} from '../base.chart';
+import {DataSummaryPackage, TimeSeriesData} from '../../../../models/analysis-result';
 
-export class ScatterChart extends BaseChart {
+export class NVD3ScatterChart extends BaseChart {
   allowableXFields: string[] = ['totalAmount', 'transactionCount'];
   allowableYFields: string[] = ['totalAmount', 'transactionCount'];
   allowableSizeFields: string[] = ['totalAmount', 'transactionCount'];
@@ -30,6 +30,7 @@ export class ScatterChart extends BaseChart {
       chart: {
         type: 'scatterChart',
         height: this.height,
+        width: this.width,
         scatter: {
           onlyCircles: false
         },

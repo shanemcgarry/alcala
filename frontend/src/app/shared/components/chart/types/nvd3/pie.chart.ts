@@ -1,8 +1,8 @@
-import { BaseChart } from './base.chart';
-import { DataSummaryPackage } from '../../../models/analysis-result';
+import { BaseChart } from '../base.chart';
+import { DataSummaryPackage } from '../../../../models/analysis-result';
 
 
-export class PieChart extends BaseChart {
+export class NVD3PieChart extends BaseChart {
   allowableXFields: string[] = ['time', 'key'];
   allowableYFields: string[] = ['totalAmount', 'transactionCount'];
   allowableSizeFields: string[] = [];
@@ -67,9 +67,10 @@ export class PieChart extends BaseChart {
       chart: {
         type: 'pieChart',
         height: this.height,
+        width: this.width,
         callback: function(chart) {
           chart.pie.dispatch.on('elementClick', function(e) {
-            self._onElementDblClick.dispatch(self, e);
+            self._onElementClick.dispatch(self, e);
           });
         },
         x: function(d) { return d.key; },

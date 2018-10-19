@@ -83,7 +83,9 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "src/scripts/canvasjs.min.js"
+            ],
             "assets": [
               "src/favicon.ico",
               "src/assets"

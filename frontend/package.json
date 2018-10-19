@@ -25,6 +25,7 @@
     "@angular/router": "^6.1.9",
     "@hallysonh/ngx-imageviewer": "^2.0.4",
     "@ng-bootstrap/ng-bootstrap": "^3.3.0",
+    "@types/canvasjs": "^1.9.4",
     "alasql": "^0.4.11",
     "angular-tag-cloud-module": "^3.1.0",
     "angular-youtube-player": "^1.0.2",

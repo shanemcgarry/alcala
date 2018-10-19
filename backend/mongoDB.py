@@ -196,8 +196,6 @@ class MongoData:
         results = []
         curr_key = None
         time_data = []
-        print('list data has %s items' % len(listData))
-        print(Tools.serialise_list(listData))
 
         # If we are dealing with years, there are certain years which exist in the database. Otherwise if we are dealing
         # with months then we want to get a list of valid months. This will be used to "fill in" missing times in the data
@@ -241,7 +239,6 @@ class MongoData:
             time_data.append(
                 TimeSeriesData(timeValue=validTimes[i], timeType=timeType, totalAmount=0, transactionCount=0))
         results.append(KeyTimePivotData(key=curr_key, timeSeries=time_data))
-        print('results has %s items. ' % len(results))
         return results
 
     def get_word_time_data(self, searchParams=None):

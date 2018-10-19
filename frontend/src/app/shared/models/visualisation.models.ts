@@ -8,7 +8,7 @@ export class VisFilter {
 
 export class VisFeatures {
   searchID: string;
-  graphType: string;
+  chartType: string;
   xField: string;
   yField: string;
   sizeField: string;
@@ -18,9 +18,11 @@ export class VisFeatures {
 export class LabelValue {
   label: string;
   value: string;
+  info: any;
 
-  constructor(labelName: string, valueName: string) {
+  constructor(labelName: string, valueName: string, infoData?: any) {
     this.label = labelName;
     this.value = valueName;
+    this.info = infoData;
   }
 }

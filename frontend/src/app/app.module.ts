@@ -68,6 +68,7 @@ import { LocalStorageService } from 'ngx-store';
 import { CurationComponent } from './core/curation/curation.component';
 import { EditComponent } from './core/curation/edit/edit.component';
 import { VizsearchComponent } from './core/vizsearch/vizsearch.component';
+import { TestComponent } from './shared/components/test/test.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -93,7 +94,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ChartComponent,
     CurationComponent,
     EditComponent,
-    VizsearchComponent
+    VizsearchComponent,
+    TestComponent
   ],
   imports: [
     routing,

@@ -1,7 +1,7 @@
-import {BaseChart} from './base.chart';
-import {DataSummaryPackage} from '../../../models/analysis-result';
+import {BaseChart} from '../base.chart';
+import {DataSummaryPackage} from '../../../../models/analysis-result';
 
-export class DiscreteBarChart extends BaseChart {
+export class NVD3DiscreteBarChart extends BaseChart {
   allowableXFields: string[] = ['time', 'key'];
   allowableYFields: string[] = ['totalAmount', 'transactionCount'];
   allowableSizeFields: string[] = [];
@@ -70,6 +70,7 @@ export class DiscreteBarChart extends BaseChart {
       chart: {
         type: 'discreteBarChart',
         height: this.height,
+        width: this.width,
         margin: {
           top: 20,
           right: 20,
@@ -78,7 +79,7 @@ export class DiscreteBarChart extends BaseChart {
         },
         callback: function(chart) {
           chart.discretebar.dispatch.on('elementClick', function(e) {
-            self._onElementDblClick.dispatch(self, e);
+            self._onElementClick.dispatch(self, e);
           });
         },
         x: function(d) { return d.key; },

@@ -1,7 +1,7 @@
-import {BaseChart} from './base.chart';
-import {DataSummaryPackage} from '../../../models/analysis-result';
+import {BaseChart} from '../base.chart';
+import {DataSummaryPackage} from '../../../../models/analysis-result';
 
-export class LineChart extends BaseChart {
+export class NVD3LineChart extends BaseChart {
   allowableXFields: string[] = ['time'];
   allowableYFields: string[] = ['totalAmount', 'transactionCount'];
   allowableSizeFields: string[] = [];
@@ -48,6 +48,7 @@ export class LineChart extends BaseChart {
       chart: {
         type: 'lineChart',
         height: this.height,
+        width: this.width,
         showLegend: false,
         margin: {
           top: 20,
@@ -60,7 +61,7 @@ export class LineChart extends BaseChart {
         useInteractiveGuideline: false,
         callback: function(chart) {
           chart.lines.dispatch.on('elementClick', function(e) {
-            self._onElementDblClick.dispatch(self, e);
+            self._onElementClick.dispatch(self, e);
           });
         },
         xAxis: {
