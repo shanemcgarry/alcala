@@ -6,6 +6,7 @@ import { NVD3MultiBarChart } from './types/nvd3/multi-bar.chart';
 import {NVD3LineChart} from './types/nvd3/line.chart';
 import { NVD3ScatterChart } from './types/nvd3/scatter.chart';
 import {CJSDiscreteBarChart} from './types/cjs/discrete-bar.chart';
+import {HCJSDiscreteBar} from './types/hcjs/discrete-bar.chart';
 
 export class ChartFactory {
   static getAllowableCharts(): LabelValue[];
@@ -16,7 +17,8 @@ export class ChartFactory {
     results.push(new LabelValue('Pie Chart', 'pie', {library: 'nvd3'}));
     results.push(new LabelValue('MultiBar Chart', 'multiBar', {library: 'nvd3'}));
     results.push(new LabelValue('Line Chart', 'line', {library: 'nvd3'}));
-    //results.push(new LabelValue('Discrete Bar Chart (CJS)', 'cjsDiscreteBar', {library: 'cjs'}));
+    // results.push(new LabelValue('Discrete Bar Chart (Highchart)', 'hcjsDiscreteBar', {library: 'hcjs'}));
+    // results.push(new LabelValue('Discrete Bar Chart (CJS)', 'cjsDiscreteBar', {library: 'cjs'}));
     // results.push(new LabelValue('Scatter Chart', 'scatter'));
     return results.sort((a, b): number => {
       if (a.value < b.value) { return -1; }
@@ -33,9 +35,10 @@ export class ChartFactory {
   static createChart(type: 'line'): NVD3LineChart;
   static createChart(type: 'scatter'): NVD3ScatterChart;
   static createChart(type: 'cjsDiscreteBar'): CJSDiscreteBarChart;
+  static createChart(type: 'hcjsDiscreteBar'): HCJSDiscreteBar;
 
   static createChart(chartOptions): NVD3StackedAreaChart | NVD3DiscreteBarChart | NVD3PieChart | NVD3MultiBarChart | NVD3LineChart |
-                                    NVD3ScatterChart | CJSDiscreteBarChart {
+                                    NVD3ScatterChart | CJSDiscreteBarChart | HCJSDiscreteBar {
     switch (chartOptions.type) {
       case 'stackedArea':
         return new NVD3StackedAreaChart(chartOptions.xField, chartOptions.yField, chartOptions.height, chartOptions.width);
@@ -51,6 +54,8 @@ export class ChartFactory {
         return new NVD3ScatterChart(chartOptions.xField, chartOptions.yField, chartOptions.height, chartOptions.width, chartOptions.sizeField);
       case 'cjsDiscreteBar':
         return new CJSDiscreteBarChart(chartOptions.xField, chartOptions.yField, chartOptions.height, chartOptions.width);
+      case 'hcjsDiscreteBar':
+        return new HCJSDiscreteBar(chartOptions.xField, chartOptions.yField, chartOptions.height, chartOptions.width);
       default:
         throw new Error(`${chartOptions.type} is not a valid chart option for the ${chartOptions.library} library`);
     }

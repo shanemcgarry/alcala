@@ -3,6 +3,7 @@ import { BaseChart } from './types/base.chart';
 import {DataSummaryPackage} from '../../models/analysis-result';
 import { ChartFactory } from './chart.factory';
 import * as CanvasJS from 'src/scripts/canvasjs.min';
+import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-chart',
@@ -45,16 +46,23 @@ export class ChartComponent implements OnInit, OnChanges {
       this.elementClick.emit(e);
     });
 
-    if (chartInfo.info.library === 'cjs') {
-      if (this.cjsChart) {
-        this.cjsChart.options = this.options;
-      } else {
-        this.cjsChart = new CanvasJS.Chart('chartContainer', this.options);
-      }
-      this.cjsChart.render();
-      this.setCanvasDisplay(false);
-    } else {
-      this.setCanvasDisplay(true);
+    switch (chartInfo.info.library) {
+      case 'cjs':
+        if (this.cjsChart) {
+          this.cjsChart.options = this.options;
+        } else {
+          this.cjsChart = new CanvasJS.Chart('chartContainer', this.options);
+        }
+        this.cjsChart.render();
+        this.setCanvasDisplay(false);
+        break;
+      case 'hcjs':
+        Highcharts.chart('chartContainer', this.options);
+        console.log(this.options);
+        break;
+      default:
+        this.setCanvasDisplay(true);
+        break;
     }
   }
 
