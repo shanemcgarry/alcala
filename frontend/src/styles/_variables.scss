@@ -7,6 +7,7 @@ $base-white: rgba(255,255,255,1);
 $base-dark-grey: rgba(50,50,50,1);
 $base-red: mat-color(map-get($alcala-theme, primary));
 $base-brown: mat-color(map-get($alcala-theme, accent));
+$base-warn: mat-color(map-get($alcala-theme, warn));
 $base-brown-light: mat-color(map-get($alcala-theme, accent), 100);
 $footer-color: mat-color(map-get($alcala-theme, accent), 900);
 

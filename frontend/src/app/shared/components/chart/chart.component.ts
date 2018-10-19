@@ -21,7 +21,6 @@ export class ChartComponent implements OnInit, OnChanges {
   @ViewChild('chartContainer') chartContainer: ElementRef;
   @Output() elementClick = new EventEmitter<any>();
   chart: BaseChart;
-  cjsChart: any;
   useNVD3 = true;
   formattedData: any;
   options: any;
@@ -37,7 +36,6 @@ export class ChartComponent implements OnInit, OnChanges {
   setChartInfo(chartType: string): void {
     const chartInfo = ChartFactory.getAllowableCharts().find(x => x.value === chartType);
     this.useNVD3 = chartInfo.info.library === 'nvd3';
-    console.log(`useNVD3 is ${this.useNVD3}`);
     this.chart = ChartFactory.createChart({type: chartInfo.value, xField: this.xField, yField: this.yField, height: this.height,
                                                      width: this.width, sizeField: this.sizeField, library:  chartInfo.info.library});
     this.formattedData = this.chart.formatData(this.data);
@@ -46,7 +44,7 @@ export class ChartComponent implements OnInit, OnChanges {
       this.elementClick.emit(e);
     });
 
-    switch (chartInfo.info.library) {
+/*    switch (chartInfo.info.library) {
       case 'cjs':
         if (this.cjsChart) {
           this.cjsChart.options = this.options;
@@ -63,16 +61,16 @@ export class ChartComponent implements OnInit, OnChanges {
       default:
         this.setCanvasDisplay(true);
         break;
-    }
+    }*/
   }
 
-  setCanvasDisplay(isHidden: boolean)  {
+/*  setCanvasDisplay(isHidden: boolean)  {
     if (this.chartContainer) {
       const cjs = this.chartContainer.nativeElement.querySelector('.canvasjs-chart-container');
       if (cjs) {
         cjs.style.display = isHidden ? 'none' : 'block';
       }
     }
-  }
+  }*/
 
 }

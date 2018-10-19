@@ -63,4 +63,10 @@ class JsonSerializable(object):
         return tempValue
 
 
+class BaseMongoObject(JsonSerializable):
+    def __init__(self, _id, *args, **kwargs):
+        if _id is not None:
+            self._id = _id
+
+
 

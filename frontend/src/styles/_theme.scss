@@ -67,9 +67,75 @@ $alcala-brown: (
   )
 );
 
+$alcala-purple: (
+  50 : #e8e6e7,
+  100 : #c7c1c4,
+  200 : #a1979d,
+  300 : #7b6d75,
+  400 : #5f4e58,
+  500 : #432f3a,
+  600 : #3d2a34,
+  700 : #34232c,
+  800 : #2c1d25,
+  900 : #1e1218,
+  A100 : #ff62b9,
+  A200 : #ff2fa2,
+  A400 : #fb008b,
+  A700 : #e1007d,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #ffffff,
+    A400 : #ffffff,
+    A700 : #ffffff,
+  )
+);
+
+$alcala-blue: (
+  50 : #e5e6e6,
+  100 : #bdc2c2,
+  200 : #919999,
+  300 : #657070,
+  400 : #445151,
+  500 : #233232,
+  600 : #1f2d2d,
+  700 : #1a2626,
+  800 : #151f1f,
+  900 : #0c1313,
+  A100 : #58ffff,
+  A200 : #25ffff,
+  A400 : #00f1f1,
+  A700 : #00d7d7,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #000000,
+    A700 : #000000,
+  )
+);
+
 $alcala-palette-primary: mat-palette($alcala-red);
 $alcala-palette-secondary: mat-palette($alcala-brown);
-$alcala-palette-warn: mat-palette($mat-deep-orange);
+$alcala-palette-warn: mat-palette($alcala-purple);
 
-$alcala-theme: mat-light-theme($alcala-palette-primary, $alcala-palette-secondary);
+$alcala-theme: mat-light-theme($alcala-palette-primary, $alcala-palette-secondary, $alcala-palette-warn);
 @include  angular-material-theme($alcala-theme);

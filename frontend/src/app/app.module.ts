@@ -69,6 +69,9 @@ import { CurationComponent } from './core/curation/curation.component';
 import { EditComponent } from './core/curation/edit/edit.component';
 import { VizsearchComponent } from './core/vizsearch/vizsearch.component';
 import { TestComponent } from './shared/components/test/test.component';
+import { DashboardSampleComponent } from './shared/components/dashboard-sample/dashboard-sample.component';
+import { CustomDashboardComponent } from './shared/components/custom-dashboard/custom-dashboard.component';
+import { StoriesComponent } from './shared/components/stories/stories.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -95,7 +98,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     CurationComponent,
     EditComponent,
     VizsearchComponent,
-    TestComponent
+    TestComponent,
+    DashboardSampleComponent,
+    CustomDashboardComponent,
+    StoriesComponent
   ],
   imports: [
     routing,

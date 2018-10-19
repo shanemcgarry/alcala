@@ -53,6 +53,24 @@ class MongoData:
         feature_id = self.db.search_feature.insert_one(features_obj)
         return str(feature_id.inserted_id)
 
+    def insert_custom_chart(self, chartObj):
+        """Inserts a saved, customised chart into the database"""
+        chart_id = self.db.user_charts.insert_one(chartObj.get_properties())
+        return str(chart_id.inserted_id)
+
+    def insert_custom_story(self, storyObj):
+        """Inserts a customised user story into the database"""
+        story_id = self.db.user_stories.insert_one(storyObj.get_properties())
+        return str(story_id.inserted_id)
+
+    def insert_custom_dashboard(self, dashboardObj):
+        """Inserts a customised dashboard object into the database"""
+        dashboard_id = self.db.user_dashboard(dashboardObj.get_properties())
+        return str(dashboard_id.inserted_id)
+
+    # Need to handle updates to the dashboard, stories
+    # Need to delete charts
+
     def insert_one_transaction(self, transaction, use_training=False):
         """Inserts a single transaction (AnalysisItem object) into either the transaction or training collection."""
         if use_training:

@@ -1,0 +1,66 @@
+<app-spinner name="dashboardSpinner"></app-spinner>
+<mat-grid-list cols="10" rowHeight="30" class="mt20">
+  <mat-grid-tile [colspan]="9" class="mt10"><h2>Dashboard Component Samples</h2></mat-grid-tile>
+  <mat-grid-tile [colspan]="1" class="mt10">
+    <mat-select placeholder="Select a year" [(ngModel)]="this.searchParams.year" >
+      <mat-option>None</mat-option>
+      <mat-option *ngFor="let year of this.validYears" value="{{ year }}">{{ year }}</mat-option>
+    </mat-select>
+  </mat-grid-tile>
+</mat-grid-list>
+<mat-grid-list cols="4" rowHeight="200" class="ml10 mr10" *ngIf="this.dataModel">
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <app-info-box class="full-width mr5"
+                  [bgClass]="'brown'"
+                  [icon]="'receipt'"
+                  [count]="this.dataModel.biggestExpense.total"
+                  [label]="'Biggest Expense'"
+                  [data]="this.dataModel.biggestExpense.category.charAt(0).toUpperCase() + this.dataModel.biggestExpense.category.substr(1)">
+    </app-info-box>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <app-info-box class="full-width mr5"
+                  [bgClass]="'blue'"
+                  [icon]="'assignment_late'"
+                  [count]="this.dataModel.mostExpensiveMonth.total"
+                  [label]="'Most Expensive Month'"
+                  [data]="this.getMonthTitle(this.dataModel.mostExpensiveMonth)">
+    </app-info-box>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <app-info-box class="full-width mr5"
+                  [bgClass]="'yellow'"
+                  [icon]="'assignment_returned'"
+                  [count]="this.dataModel.leastExpensiveMonth.total"
+                  [label]="'Least Expensive Month'"
+                  [data]="this.getMonthTitle(this.dataModel.leastExpensiveMonth)">
+    </app-info-box>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <app-info-box class="full-width"
+                  [bgClass]="'purple'"
+                  [icon]="'assignment_turned_in'"
+                  [count]="this.dataModel.busiestMonth.total"
+                  [label]="'Busiest Month'"
+                  [data]="this.getMonthTitle(this.dataModel.busiestMonth)">
+    </app-info-box>
+  </mat-grid-tile>
+</mat-grid-list>
+<div #chartsContainer class="chart-container">
+  <mat-grid-list cols="2" rowHeight="400" class="ml10 chart-samples" *ngIf="this.chartData">
+    <mat-grid-tile *ngFor="let c of this.availableCharts" [colspan]="1" [rowspan]="1">
+      <mat-card class="full-width ml0 mr10">
+        <mat-card-header>
+          <mat-card-title>{{ c.label }} Example</mat-card-title>
+          <button mat-flat-button color="primary" (click)="this.onCustomise(c.value)">Customise</button>
+        </mat-card-header>
+        <mat-card-content>
+          <app-chart [data]="this.chartData" [chartType]="c.value" [height]="300" [width]="this.graphWidth"
+                     [xField]="this.getFieldDefaults(c.value, 'x')" [yField]="this.getFieldDefaults(c.value, 'y')"
+                     [sizeField]="this.getFieldDefaults(c.value, 'size')"></app-chart>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
