@@ -43,6 +43,8 @@ class JsonSerializable(object):
                     temp[attr] = value
                 elif type(value) is list:
                     temp[attr] = value
+                elif len(value.__class__.__bases__) > 0:
+                    temp[attr] = value.get_properties()
                 else:
                     temp[attr] = value
             elif attr.find("_id") != -1:

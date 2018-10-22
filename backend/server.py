@@ -6,6 +6,7 @@ import base64
 from models.pageSearch import PageSearch
 from models.analysisItem import AnalysisItem, AnalysisResultList, AnalysisSummary
 from models.visSearch import VisSearchParams, VisSearchFeatures
+from models.dashboard import CustomDashboardInfo, CustomStoryInfo, CustomInfoBox, CustomChartInfo
 from analysis.frequency import FrequencyDistribution
 from models.users import SiteUser
 from models.flaskErrors import ApplicationError
@@ -95,6 +96,168 @@ def get_visualisation_data():
     result = AnalysisResultList(hits=len(transactions), items=transactions)
     response = app.response_class(
         response=result.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/<userID>")
+def get_user_dashboard(userID):
+    mdb = MongoData()
+    result = mdb.get_custom_dashboard(userID)
+    response = app.response_class(
+        response = result.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard", methods=['POST'])
+def save_user_dashboard():
+    mdb = MongoData()
+    json_data = request.get_json()
+    dashboardObj = CustomDashboardInfo(**json_data)
+    if Tools.check_for_empty_value(dashboardObj._id):
+        dashboardObj._id = mdb.insert_custom_dashboard(dashboardObj)
+    else:
+        dashboardObj = mdb.update_custom_dashboard(dashboardObj)
+
+    response = app.response_class(
+        response=dashboardObj.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/story/<userID>")
+def get_user_stories(userID):
+    mdb = MongoData()
+    results = mdb.get_custom_stories(userID=userID)
+    response = app.response_class(
+        response=Tools.serialise_list(results),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/story", methods=['POST'])
+def save_user_story():
+    mdb = MongoData()
+    json_data = request.get_json()
+    storyObj = CustomStoryInfo(**json_data)
+    if Tools.check_for_empty_value(storyObj._id):
+        storyObj._id = mdb.insert_custom_story(storyObj)
+    else:
+        storyObj = mdb.update_custom_story(storyObj)
+
+    response = app.response_class(
+        response=storyObj.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/story/delete", methods=['POST'])
+def delete_user_story():
+    mdb = MongoData()
+    json_data = request.get_json()
+    storyObj = CustomStoryInfo(**json_data)
+    mdb.delete_custom_story(storyObj._id)
+    response = app.response_class(
+        response=json.dumps('{}'),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/infobox/<userID>")
+def get_user_infoboxes(userID):
+    mdb = MongoData()
+    results = mdb.get_custom_infoboxes(userID=userID)
+    response = app.response_class(
+        response=Tools.serialise_list(results),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/infobox", methods=['POST'])
+def save_user_infobox():
+    mdb = MongoData()
+    json_data = request.get_json()
+    infoBox = CustomInfoBox(**json_data)
+    if Tools.check_for_empty_value(infoBox._id):
+        infoBox._id = mdb.insert_custom_infobox(infoBox)
+    else:
+        infoBox = mdb.update_custom_infobox(infoBox)
+
+    response = app.response_class(
+        response=infoBox.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/infobox/delete", methods=['POST'])
+def delete_user_infobox():
+    mdb = MongoData()
+    json_data = request.get_json()
+    infoBox = CustomInfoBox(**json_data)
+    mdb.delete_custom_infobox(infoBox._id)
+    response = app.response_class(
+        response=json.dumps('{}'),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/chart/<userID>")
+def get_user_charts(userID):
+    mdb = MongoData()
+    results = mdb.get_custom_charts(userID)
+    response = app.response_class(
+        response=Tools.serialise_list(results),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/chart", methods=['POST'])
+def save_user_chart():
+    mdb = MongoData()
+    json_data = request.get_json()
+    chartObj = CustomChartInfo(**json_data)
+    if Tools.check_for_empty_value(chartObj._id):
+        chartObj._id = mdb.insert_custom_chart(chartObj)
+    else:
+        chartObj = mdb.update_custom_chart(chartObj)
+
+    response = app.response_class(
+        response=chartObj.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/chart/delete", methods=['POST'])
+def delete_user_chart():
+    mdb = MongoData()
+    json_data = request.get_json()
+    chartObj = CustomChartInfo(**json_data)
+    mdb.delete_custom_chart(chartObj._id)
+    response = app.response_class(
+        response=json.dumps('{}'),
         status=200,
         mimetype='application/json'
     )

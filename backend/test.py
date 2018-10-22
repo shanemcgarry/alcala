@@ -5,7 +5,8 @@ from analysis.classification import DocumentClassifier
 from analysis.frequency import FrequencyDistribution
 from analysis.utilities import Utilities
 from models.analysisItem import AnalysisItem, AnalysisSummary
-from models.visSearch import VisSearchParams
+from models.visSearch import VisSearchParams, VisSearchFeatures
+from models.dashboard import CustomChartInfo, CustomStoryInfo, CustomDashboardInfo, CustomInfoBox
 from eulxml import xmlmap
 import json
 import re
@@ -73,33 +74,12 @@ mdb = MongoData()
 #
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
+chart_list = ['5bcda7e9b3cad4189dc94f91', '5bcdad7cb3cad41b28a9b7f1', '5bcdadc2b3cad41b54965747']
+story_list = ['5bcdae36b3cad41b8f8ef903', '5bcdafedb3cad41bddd7eb34']
+infobox_list = ['5bcdb227b3cad41d1a6f6bb9', '5bcdb25bb3cad41d4cba836e']
 
-searchParams = VisSearchParams(year=None, userID=None, filteredCategories=[], bottomWords=None, topWords=None, groupBy='category', keywords='viaticum')
-
-raw_data = mdb.search_transactions(searchParams=searchParams)
-fdist = sorted(FrequencyDistribution(raw_data).freq_dist.items(), key=lambda x: x[1], reverse=True)
-
-if searchParams.topWords is not None:
-    if searchParams.keywords is None:
-        searchParams.keywords = ''
-    for w in fdist[0:searchParams.topWords]:
-        searchParams.keywords += w[0] + ' '
-
-if searchParams.bottomWords is not None:
-    bWords = [x for x in fdist if x[1] <= searchParams.bottomWords]
-    if searchParams.keywords is None:
-        searchParams.keywords = ''
-    for w in bWords:
-        searchParams.keywords += w[0] + ' '
-
-if searchParams.groupBy == 'category':
-    # do category search
-    results = mdb.get_category_time_data(searchParams=searchParams)
-else:
-    # do word search
-    results = mdb.get_word_time_data(searchParams=searchParams)
-
-#results.searchID = mdb.log_search(searchParams, 'visualisation')
-
-print(Tools.serialise_list(results.data))
+user_id = 'ae635eb02a404a479cb5f5dea4e560e2'
+chart_id = '5bcdad7cb3cad41b28a9b7f1'
+result = mdb.delete_custom_chart(chart_id)
+print(result)
 

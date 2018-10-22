@@ -1,6 +1,8 @@
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from models.analysisItem import AnalysisItem, CategoryData, AnalysisUserItem, TimeSeriesData, KeyTimePivotData, \
     TimeSummary, DataPackage
+from models.dashboard import CustomStoryInfo, CustomDashboardInfo, CustomChartInfo, CustomInfoBox
 from models.pivotData import CategoryMonthPivotItem, CategoryYearPivotItem, MonthYearPivotItem, AllPointsPivotItem, \
     WordFreqPivotItem, CategoryPivotItem, YearPivotItem, WordFreqMonthPivotItem, WordFreqYearPivotItem
 from models.users import SiteUser
@@ -53,23 +55,147 @@ class MongoData:
         feature_id = self.db.search_feature.insert_one(features_obj)
         return str(feature_id.inserted_id)
 
+    def get_custom_charts(self, userID=None):
+        """Gets a list of all custom charts (associated with userID if supplied)"""
+        results = []
+        if userID is not None:
+            json_doc = self.db.user_charts.find({'userID': userID})
+        else:
+            json_doc = self.db.user_charts.find()
+
+        for j in json_doc:
+            results.append(CustomChartInfo(**j))
+
+        if len(results == 0):
+            results = None
+
+        return results
+
+    def get_custom_infoboxes(self, userID=None):
+        """Gets a list of all custom info boxes (associated with userID if supplied)"""
+        results = []
+        if userID is not None:
+            json_doc = self.db.user_infoboxes.find({'userID': userID})
+        else:
+            json_doc = self.db.user_infoboxes.find()
+
+        for j in json_doc:
+            results.append(CustomInfoBox(**j))
+
+        if len(results == 0):
+            results = None
+
+        return results
+
+    def get_custom_stories(self, userID=None):
+        """Gets a list of all custom stories (associated with userID if supplied)"""
+        results = []
+        if userID is not None:
+            json_doc = self.db.user_stories.find({'userID': userID})
+        else:
+            json_doc = self.db.user_stories.find()
+
+        for j in json_doc:
+            results.append(CustomStoryInfo(**j))
+
+        if len(results == 0):
+            results = None
+
+        return results
+
+    def get_custom_dashboard(self, userID):
+        """Gets the dashboard for the specified user"""
+        json_doc = self.db.user_stories.find({'userID': userID})
+        result = CustomDashboardInfo(**json_doc[0])
+
+        return result
+
+    def insert_custom_infobox(self, infoBox):
+        """Inserts a saved, customised info box into the database"""
+        infoBox_id = self.db.user_infoboxes.insert_one(infoBox.get_properties())
+        return str(infoBox_id.inserted_id)
+
+    def update_custom_infobox(self, infoBox):
+        update_result = self.db.user_infoboxes.update({'_id': ObjectId(infoBox._id)}, {
+            '$set': {'type': infoBox.type, 'icon': infoBox.icon, 'label': infoBox.label, 'colour': infoBox.colour}
+        })
+        query = self.db.user_infoboxes.find({'_id': ObjectId(infoBox._id)})
+        return CustomInfoBox(**query[0])
+
+    def delete_custom_infobox(self, infobox_id):
+        delete_result = self.db.user_infoboxes.remove({'_id': infobox_id}, {'justOne': True})
+        self.db.user_dashboard.update({}, {
+            '$pull': {'infoBoxes': {'$in': [infobox_id]}}
+        })
+        return True # This means we didn't raise an exception
+
     def insert_custom_chart(self, chartObj):
         """Inserts a saved, customised chart into the database"""
         chart_id = self.db.user_charts.insert_one(chartObj.get_properties())
         return str(chart_id.inserted_id)
+
+    def update_custom_chart(self, chartObj):
+        update_result = self.db.user_charts.update({'_id': ObjectId(chartObj._id)},{
+            '$set': {'title': chartObj.title, 'description': chartObj.description}
+        })
+        json_doc = self.db.user_charts.find({'_id': ObjectId(chartObj._id)})
+        return CustomChartInfo(**json_doc[0])
+
+    def delete_custom_chart(self, chart_id):
+        delete_result = self.db.user_charts.remove({'_id': ObjectId(chart_id)}, {'justOne': True})
+        self.db.user_stories.update({}, {
+            '$pull': {'charts': {'$in': [chart_id]}}
+        })
+        self.db.user_dashboard.update({}, {
+            '$pull': {'charts': {'$in': [chart_id]}}
+        })
+        return True # this means we didn't raise an exception
 
     def insert_custom_story(self, storyObj):
         """Inserts a customised user story into the database"""
         story_id = self.db.user_stories.insert_one(storyObj.get_properties())
         return str(story_id.inserted_id)
 
+    def update_custom_story(self, storyInfo):
+        query = self.db.user_stories.find({'_id': ObjectId(storyInfo._id)})
+        db_story = CustomStoryInfo(**query[0])
+        removed_charts = [x for x in db_story.charts if x not in storyInfo.charts]
+        self.db.user_stories.update({'_id': ObjectId(storyInfo._id)}, {
+            '$set': {'title': storyInfo.title, 'description': storyInfo.description},
+            '$addToSet': {'charts': {'$each': storyInfo.charts}}
+        })
+        self.db.user_stories.update({'_id': ObjectId(storyInfo._id)}, {
+            '$pull': {'charts': {'$in': removed_charts}}
+        })
+        json_doc = self.db.user_stories.find({'_id': ObjectId(storyInfo._id)})
+        return CustomStoryInfo(**json_doc[0])
+
+    def delete_custom_story(self, story_id):
+        delete_result = self.db.user_stories.remove({'_id': story_id}, {'justOne': True})
+        self.db.user_dashboard.update({}, {
+            '$pull': {'stories': {'$in': [story_id]}}
+        })
+        return True # this means we didn't raise an exception
+
     def insert_custom_dashboard(self, dashboardObj):
         """Inserts a customised dashboard object into the database"""
-        dashboard_id = self.db.user_dashboard(dashboardObj.get_properties())
+        dashboard_id = self.db.user_dashboard.insert_one(dashboardObj.get_properties())
         return str(dashboard_id.inserted_id)
 
-    # Need to handle updates to the dashboard, stories
-    # Need to delete charts
+    def update_custom_dashboard(self, dashboardObj):
+        query = self.db.user_dashboard.find({'_id': ObjectId(dashboardObj._id)})
+        db_dashboard = CustomDashboardInfo(**query[0])
+        removed_charts = [x for x in db_dashboard.charts if x not in dashboardObj.charts]
+        removed_stories = [x for x in db_dashboard.stories if x not in dashboardObj.stories]
+        removed_infoBoxes = [x for x in db_dashboard.infoBoxes if x not in dashboardObj.infoBoxes]
+        self.db.user_dashboard.update({'_id': ObjectId(dashboardObj._id)}, {
+            '$addToSet': {'charts': {'$each': dashboardObj.charts}, 'stories': {'$each': dashboardObj.stories}, 'infoBoxes': {'$each': dashboardObj.infoBoxes}}
+        })
+        self.db.user_dashboard.update({'_id': ObjectId(dashboardObj._id)}, {
+            '$pull': {'charts': {'$in': removed_charts}, 'stories': {'$in': removed_stories}, 'infoBoxes': {'$in': removed_infoBoxes}}
+        })
+        query = self.db.user_dashboard.find({'_id': ObjectId(dashboardObj._id)})
+        return CustomDashboardInfo(**query[0])
 
     def insert_one_transaction(self, transaction, use_training=False):
         """Inserts a single transaction (AnalysisItem object) into either the transaction or training collection."""
