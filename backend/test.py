@@ -5,7 +5,7 @@ from analysis.classification import DocumentClassifier
 from analysis.frequency import FrequencyDistribution
 from analysis.utilities import Utilities
 from models.analysisItem import AnalysisItem, AnalysisSummary
-from models.visSearch import VisSearchParams, VisSearchFeatures
+from models.search import SearchParameters, SearchFeatures
 from models.dashboard import CustomChartInfo, CustomStoryInfo, CustomDashboardInfo, CustomInfoBox
 from eulxml import xmlmap
 import json
@@ -74,12 +74,9 @@ mdb = MongoData()
 #
 # results = mdb.insert_multiple_training_for_curation(training_docs)
 
-chart_list = ['5bcda7e9b3cad4189dc94f91', '5bcdad7cb3cad41b28a9b7f1', '5bcdadc2b3cad41b54965747']
-story_list = ['5bcdae36b3cad41b8f8ef903', '5bcdafedb3cad41bddd7eb34']
-infobox_list = ['5bcdb227b3cad41d1a6f6bb9', '5bcdb25bb3cad41d4cba836e']
-
-user_id = 'ae635eb02a404a479cb5f5dea4e560e2'
-chart_id = '5bcdad7cb3cad41b28a9b7f1'
-result = mdb.delete_custom_chart(chart_id)
-print(result)
+# user_id = 'ae635eb02a404a479cb5f5dea4e560e2'
+user_id = '2da06d594a0847348cfd0a7bcf1fed70'
+result = mdb.get_search_log(user_id, searchType='keyword')
+for d in result:
+    print(d)
 

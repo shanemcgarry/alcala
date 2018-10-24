@@ -1,6 +1,8 @@
 from existDB import ExistData
 from mongoDB import MongoData
 from models.analysisItem import AnalysisItem, CategoryData
+from models.search import SearchParameters
+from analysis.frequency import FrequencyDistribution
 from nltk.tokenize import RegexpTokenizer, word_tokenize, sent_tokenize
 from stop_words import get_stop_words
 from nltk.stem.wordnet import WordNetLemmatizer
@@ -61,6 +63,29 @@ class Utilities:
         return documents
 
     @staticmethod
+    def process_search_params(req_params):
+        searchParams = Tools.check_search_params(searchParams=req_params)
+        mdb = MongoData()
+
+        raw_data = mdb.search_transactions(searchParams=searchParams)
+        fdist = sorted(FrequencyDistribution(raw_data).freq_dist.items(), key=lambda x: x[1], reverse=True)
+
+        if searchParams.topWords is not None:
+            if searchParams.keywords is None:
+                searchParams.keywords = ''
+            for w in fdist[0:searchParams.topWords]:
+                searchParams.keywords += w[0] + ' '
+
+        if searchParams.bottomWords is not None:
+            bWords = [x for x in fdist if x[1] <= searchParams.bottomWords]
+            if searchParams.keywords is None:
+                searchParams.keywords = ''
+            for w in bWords:
+                searchParams.keywords += w[0] + ' '
+
+        return searchParams
+
+    @staticmethod
     def get_lemmatizer():
         lemmatizer = WordNetLemmatizer()
         return lemmatizer
@@ -69,13 +94,6 @@ class Utilities:
     def get_tokenizer():
         tokenizer = RegexpTokenizer(r'\w+')
         return tokenizer
-
-    @staticmethod
-    def build_word_list(analysisItems):
-        results = list()
-        for t in analysisItems:
-            results.extend(t.words)
-        return results
 
     @staticmethod
     def get_category_colours():

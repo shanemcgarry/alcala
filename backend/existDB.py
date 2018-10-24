@@ -134,11 +134,15 @@ class ExistData:
         except ExistDBException as dberr:
             print(dberr.message())
 
-    def get_pages_by_keyword(self, keyword, pageIndex=1, limit=50):
+    def get_pages_by_keyword(self, keyword, year=None, pageIndex=1, limit=50):
         """Conducts a keyword search against the entire eXist-db instance and returns a list of PageResult objects"""
-        xquery = 'for $x in doc("alcala/books/ledger.xml")//pages/page where $x//textContent[ft:query(., "%s")] return util:expand($x)' % keyword
+        query_string = '$x//textContent[ft:query(.,"%s")]' % keyword
+        if year is not None:
+            query_string += ' and $x/content[@yearID=%s]' % year
+        xquery = 'for $x in doc("alcala/books/ledger.xml")//pages/page where %s return util:expand($x)' % query_string
+        print(xquery)
         qr = self.db.query(xquery, pageIndex, limit)
-        result = PageResultList(total_hits=qr.hits, search_phrase=keyword, current_index=pageIndex, result_limit=limit)
+        result = PageResultList(total_hits=qr.hits, current_index=pageIndex, result_limit=limit)
         for i in range(0, qr.count - 1):
             xml = etree.XML(tostring(qr.results[i]))
             page = AlcalaPage(xml)

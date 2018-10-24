@@ -3,9 +3,8 @@ from existDB import ExistData
 from mongoDB import MongoData
 from flask_cors import CORS
 import base64
-from models.pageSearch import PageSearch
 from models.analysisItem import AnalysisItem, AnalysisResultList, AnalysisSummary
-from models.visSearch import VisSearchParams, VisSearchFeatures
+from models.search import SearchParameters, SearchFeatures, PageSearch
 from models.dashboard import CustomDashboardInfo, CustomStoryInfo, CustomInfoBox, CustomChartInfo
 from analysis.frequency import FrequencyDistribution
 from models.users import SiteUser
@@ -55,22 +54,84 @@ def get_sample_data(size):
     return response
 
 
-@app.route("/page/search", methods=['POST'])
+@app.route("/search/page", methods=['POST'])
 def get_page_by_keyword():
     json_req = request.get_json()
-    searchParams = PageSearch(**json_req)
-    print(searchParams.toJson())
+    print(json_req)
+    page_search = PageSearch(**json_req['info'])
+    searchParams = Utilities.process_search_params(SearchParameters(**json_req['params']))
     edb = ExistData()
-    query_result = edb.get_pages_by_keyword(searchParams.searchPhrase, pageIndex=searchParams.pageIndex,
-                                            limit=searchParams.resultLimit)
+    query_result = edb.get_pages_by_keyword(searchParams.keywords, year=searchParams.year, pageIndex=page_search.pageIndex,
+                                            limit=page_search.resultLimit)
 
-    if searchParams.userID is not None and searchParams.userID != 'undefined' and searchParams.userID != 'null':
+    print(page_search.userID)
+    if not Tools.check_for_empty_value(page_search.userID):
         mdb = MongoData()
-        query_result.searchID = mdb.log_search(searchParams, 'keyword')
+        if 'searchID' not in json_req.keys() or Tools.check_for_empty_value(json_req['searchID']):
+            query_result.searchID = mdb.log_search(page_search.userID, searchParams, 'keyword', totalHits=query_result.totalHits)
+        else:
+            query_result.searchID = json_req['searchID']
+        search_feature = SearchFeatures(pageLimit=page_search.resultLimit, pageIndex=page_search.pageIndex)
+        mdb.log_features(query_result.searchID, search_feature)
 
     response = app.response_class(
         response=query_result.toJson(),
         status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/search/log/features", methods=['POST'])
+def log_search_features():
+    mdb = MongoData()
+    json_req = request.get_json()
+    search_features = SearchFeatures(**json_req['features'])
+    search_features._id = uuid.uuid4().hex
+    log_entry = mdb.log_features(json_req['searchID'], search_features)
+    response = app.response_class(
+        status=200,
+        response=log_entry.toJson(),
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/search/logs", methods=['POST'])
+def get_search_logs():
+    mdb = MongoData()
+    json_data = request.get_json()
+    result = mdb.get_search_log(json_data['userID'], json_data['type'])
+    response = app.response_class(
+        response=Tools.serialise_list(result),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/search/visualise", methods=['POST'])
+def do_vis_search():
+    json_req = request.get_json()
+    mdb = MongoData()
+    searchParams = Utilities.process_search_params(SearchParameters(**json_req['params']))
+
+    if searchParams.groupBy == 'category':
+        # do category search
+        results = mdb.get_category_time_data(searchParams=searchParams)
+    elif searchParams.groupBy == 'word':
+        # do word search
+        results = mdb.get_word_time_data(searchParams=searchParams)
+    else:
+        raise ApplicationError('Invalid groupBy setting')
+
+    if 'userID' in json_req.keys():
+        if not Tools.check_for_empty_value(json_req['userID']):
+            results.searchID = mdb.log_search(json_req['userID'], searchParams, 'visualisation')
+
+    response = app.response_class(
+        status=200,
+        response=results.toJson(),
         mimetype='application/json'
     )
     return response
@@ -85,7 +146,6 @@ def get_page(page_id):
         status=200,
         mimetype='application/json'
     )
-    # return jsonify(page.to_json()) //REMOVED BECAUSE IT ESCAPES ALL JSON
     return response
 
 
@@ -271,9 +331,9 @@ def get_dashboard_data(year):
         year = None
     else:
         year = int(year)
-    searchParams = VisSearchParams(year=year, filteredCategories=[])
+    searchParams = SearchParameters(year=year, filteredCategories=[])
     results = mdb.get_transactions(year=year)
-    fdist = FreqDist([w.lower() for w in Utilities.build_word_list(results)])
+    fdist = FreqDist([w.lower() for w in Tools.build_word_list(results)])
     categoryResults = mdb.get_category_summary(searchParams)
     monthResults = mdb.get_month_summary(searchParams)
     summaryResult = AnalysisSummary(category_grouping=categoryResults, month_grouping=monthResults, freq_dict=fdist, transaction_list=results)
@@ -328,6 +388,14 @@ def update_user():
             db_user[k] = v
         mdb.update_user(db_user)
         return db_user.toJson(), 200
+
+
+@app.route("/user/data/logs", methods=['POST'])
+def get_user_search_logs():
+    mdb = MongoData()
+    json_data = request.get_json()
+
+
 
 
 @app.route("/visualise/wordfreq/time_data/<year>")
@@ -418,63 +486,6 @@ def get_categories(year):
     response = app.response_class(
         status=200,
         response=Tools.serialise_list(results),
-        mimetype='application/json'
-    )
-    return response
-
-
-@app.route("/visualise/features", methods=['POST'])
-def log_search_features():
-    mdb = MongoData()
-    json_req = request.get_json()
-    visFeatures = VisSearchFeatures(**json_req)
-    object_id = mdb.log_features(visFeatures, searchType='visualisation')
-    response = app.response_class(
-        status=200,
-        response= json.dumps({'objectID': object_id}),
-        mimetype='application/json'
-    )
-    return response
-
-
-@app.route("/visualise/search", methods=['POST'])
-def do_vis_search():
-    json_req = request.get_json()
-    req_params = VisSearchParams(**json_req)
-    searchParams = Tools.check_search_params(searchParams=req_params)
-    mdb = MongoData()
-
-    raw_data = mdb.search_transactions(searchParams=searchParams)
-    fdist = sorted(FrequencyDistribution(raw_data).freq_dist.items(), key=lambda x: x[1], reverse=True)
-
-    if searchParams.topWords is not None:
-        if searchParams.keywords is None:
-            searchParams.keywords = ''
-        for w in fdist[0:searchParams.topWords]:
-            searchParams.keywords += w[0] + ' '
-
-    if searchParams.bottomWords is not None:
-        bWords = [x for x in fdist if x[1] <= searchParams.bottomWords]
-        if searchParams.keywords is None:
-            searchParams.keywords = ''
-        for w in bWords:
-            searchParams.keywords += w[0] + ' '
-
-    if searchParams.groupBy == 'category':
-        # do category search
-        results = mdb.get_category_time_data(searchParams=searchParams)
-    elif searchParams.groupBy == 'word':
-        # do word search
-        results = mdb.get_word_time_data(searchParams=searchParams)
-    else:
-        raise ApplicationError('Invalid groupBy setting')
-
-    if searchParams.userID is not None and searchParams.userID != 'undefined' and searchParams.userID != 'null':
-        results.searchID = mdb.log_search(searchParams, 'visualisation')
-
-    response = app.response_class(
-        status=200,
-        response=results.toJson(),
         mimetype='application/json'
     )
     return response

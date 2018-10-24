@@ -1,14 +1,23 @@
 import random
-from models.visSearch import VisSearchParams
 
 class Tools:
     @staticmethod
+    def build_word_list(analysisItems):
+        results = list()
+        for t in analysisItems:
+            results.extend(t.words)
+        return results
+
+    @staticmethod
     def serialise_list(list_obj):
-        str_result = '[' + ','.join(x.toJson() for x in list_obj) + ']'
+        if list_obj is not None and len(list_obj) > 0:
+            str_result = '[' + ','.join(x.toJson() for x in list_obj) + ']'
+        else:
+            str_result = '[]'
         return str_result
 
     @staticmethod
-    def check_search_params(searchParams: VisSearchParams):
+    def check_search_params(searchParams):
         if searchParams is not None:
             if Tools.check_for_empty_value(searchParams.year):
                 searchParams.year = None

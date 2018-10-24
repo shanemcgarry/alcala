@@ -2,7 +2,7 @@ from nltk import FreqDist
 from models.analysisItem import TimeSummary, TimeSeriesData, KeyTimePivotData, SummaryInfo, DataPackage
 from models.pivotData import WordFreqMonthPivotItem, WordFreqPivotItem, WordFreqYearPivotItem
 from mongoDB import MongoData
-from analysis.utilities import Utilities
+from tools import Tools
 import math
 
 
@@ -10,7 +10,7 @@ class FrequencyDistribution:
     """Used to calculate the frequency of words in the transactions within the corpus."""
     def __init__(self, transaction_list, year=None):
         self.transaction_list = transaction_list
-        self.freq_dist = FreqDist(w.lower() for w in Utilities.build_word_list(self.transaction_list))
+        self.freq_dist = FreqDist(w.lower() for w in Tools.build_word_list(self.transaction_list))
         self.year = year
 
     def get_word_freq_graph_data(self):

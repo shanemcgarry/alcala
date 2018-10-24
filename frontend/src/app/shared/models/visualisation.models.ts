@@ -6,15 +6,6 @@ export class VisFilter {
   categoriesEnabled: boolean;
 }
 
-export class VisFeatures {
-  searchID: string;
-  chartType: string;
-  xField: string;
-  yField: string;
-  sizeField: string;
-  groupField: string;
-}
-
 export class LabelValue {
   label: string;
   value: string;

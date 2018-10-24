@@ -1,15 +1,16 @@
-import {Component, ElementRef, OnInit, ViewChild, AfterViewInit} from '@angular/core';
-import { VisSearchParams } from '../../shared/models/vis-search-model';
-import {VisualisationService} from '../service/visualisation.service';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { SearchParams, SearchFeatures } from '../../shared/models/search.model';
+import { VisualisationService } from '../service/visualisation.service';
 import {CategoryData} from '../../shared/models/pivot-data.model';
-import {MatCheckboxChange, MatPaginator, MatRadioChange, MatSelectChange, MatTableDataSource, MatTabGroup} from '@angular/material';
+import { MatCheckboxChange, MatPaginator, MatRadioChange, MatSelectChange, MatTableDataSource, MatTabGroup } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
-import {UserService} from '../../shared/services/user.service';
-import {ChartComponent} from '../../shared/components/chart/chart.component';
-import {AnalysisItem, DataSummaryPackage} from '../../shared/models/analysis-result';
+import { UserService } from '../../shared/services/user.service';
+import { ChartComponent } from '../../shared/components/chart/chart.component';
+import { AnalysisItem, DataSummaryPackage } from '../../shared/models/analysis-result';
 import { ChartFactory } from '../../shared/components/chart/chart.factory';
-import { VisFeatures, LabelValue, VisFilter} from '../../shared/models/visualisation.models';
+import { LabelValue, VisFilter} from '../../shared/models/visualisation.models';
 import canvg from 'canvg';
+import {SearchService} from '../../shared/services/search.service';
 
 
 @Component({
@@ -25,7 +26,8 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
   displayColumns: string[] = ['year', 'monthName', 'categories', 'words', 'reales', 'maravedises', 'pageid'];
-  searchParams: VisSearchParams = new VisSearchParams();
+  searchParams: SearchParams = new SearchParams();
+  userID: string;
   graphData: DataSummaryPackage;
   graphWidth = 800;
   detailData = new MatTableDataSource<AnalysisItem>();
@@ -37,11 +39,11 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   supportedYFields: LabelValue[] = [];
   supportedSizeFields: LabelValue[] = [];
   filters: VisFilter = new VisFilter();
-  features: VisFeatures = new VisFeatures();
+  features: SearchFeatures = new SearchFeatures();
   enableSizeField = false;
   validYears = [1774, 1775, 1776, 1777, 1778, 1779, 1781];
 
-  constructor(private visService: VisualisationService, private userService: UserService, private route: ActivatedRoute) {
+  constructor(private visService: VisualisationService, private userService: UserService, private searchService: SearchService, private route: ActivatedRoute) {
     this.supportedFields.push(new LabelValue('Total Spent', 'totalAmount'));
     this.supportedFields.push(new LabelValue('# of Occurrences', 'transactionCount'));
     this.supportedFields.push(new LabelValue('Year', 'year'));
@@ -64,7 +66,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       this.setValidFields();
       this.setFieldDefaults();
     });
-    this.searchParams.userID = this.userService.getLoggedInUser()._id;
+    this.userID = this.userService.getLoggedInUser()._id;
     // set defaults
     this.searchParams.groupBy = this.supportedGroups[0];
     this.onSearch();
@@ -95,9 +97,10 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   logSearchFeatures(): void {
-    this.visService.logSearchFeatures(this.features)
+    console.log(`logging feature for search ${this.graphData.searchID}`);
+    this.searchService.logSearchFeatures(this.graphData.searchID, this.features)
       .subscribe(
-        x => console.log('next'),
+        x => console.log(x),
         err => console.log(err),
         () => console.log('Search Feature Logged')
       );
@@ -244,11 +247,10 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   onSearch(): void {
-    this.visService.generateSearch(this.searchParams)
+    this.searchService.visualiseSearch(this.searchParams, this.userID)
       .subscribe(
         data => {
             this.graphData = data;
-            this.features.searchID = data.searchID;
             this.setChartDetailData(data.rawData);
           },
         err => console.log(err),

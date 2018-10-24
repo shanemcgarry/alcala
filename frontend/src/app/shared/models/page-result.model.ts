@@ -1,6 +1,5 @@
 export interface PageResult {
   totalHits: number;
-  searchPhrase: string;
   currentIndex: number;
   totalPageResults: number;
   resultLimit: number;

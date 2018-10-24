@@ -1,7 +1,10 @@
 from pymongo import MongoClient
+import pymongo
 from bson.objectid import ObjectId
+from bson.code import Code
 from models.analysisItem import AnalysisItem, CategoryData, AnalysisUserItem, TimeSeriesData, KeyTimePivotData, \
     TimeSummary, DataPackage
+from models.search import SearchLogEntry
 from models.dashboard import CustomStoryInfo, CustomDashboardInfo, CustomChartInfo, CustomInfoBox
 from models.pivotData import CategoryMonthPivotItem, CategoryYearPivotItem, MonthYearPivotItem, AllPointsPivotItem, \
     WordFreqPivotItem, CategoryPivotItem, YearPivotItem, WordFreqMonthPivotItem, WordFreqYearPivotItem
@@ -39,21 +42,41 @@ class MongoData:
         # This class only works with alcala data. Although the constructor could be expanded to work with other datasets
         self.db = self.client.alcala
 
-    def log_search(self, searchParams, searchType):
+    def get_search_log(self, userID, searchType=None):
+        """Gets a list of search logs for a specified user (and type if requested)"""
+        if searchType is not None:
+            json_doc = self.db.search_log.find({'userID': userID, 'type': searchType}).sort('dateCreated', pymongo.DESCENDING)
+        else:
+            json_doc = self.db.search_log.find({'userID': userID}).sort('dateCreated', pymongo.DESCENDING)
+
+        results = []
+        for j in json_doc:
+            results.append(SearchLogEntry(**j))
+
+        if len(results) == 0:
+            results = None
+        return results
+
+    def log_search(self, userID, searchParams, searchType, totalHits=None):
         """Logs the search and returns a valid search id"""
-        if searchParams.userID is not None:
-            search_obj = { 'userID': searchParams.userID, 'type': searchType, 'params': searchParams.get_properties() }
+        import datetime
+        if userID is not None:
+            search_obj = { 'userID': userID, 'type': searchType, 'dateCreated': datetime.datetime.now(), 'params': searchParams.get_properties() }
+            if totalHits is not None:
+                search_obj['totalHits'] = totalHits
             search_id = self.db.search_log.insert_one(search_obj)
         else:
             search_id = None
 
         return str(search_id.inserted_id)
 
-    def log_features(self, visFeatures, searchType='visualisation'):
+    def log_features(self, searchID, search_features):
         """Logs the features of visualisation search for reproduction"""
-        features_obj = {'searchID': visFeatures.searchID, 'type': searchType, 'features': visFeatures.get_properties() }
-        feature_id = self.db.search_feature.insert_one(features_obj)
-        return str(feature_id.inserted_id)
+        update_result = self.db.search_log.update({'_id': ObjectId(searchID)}, {
+            '$addToSet': {'features': {'$each': [search_features.get_properties()]}}
+        })
+        json_doc = self.db.search_log.find({'_id': ObjectId(searchID)})
+        return SearchLogEntry(**json_doc[0])
 
     def get_custom_charts(self, userID=None):
         """Gets a list of all custom charts (associated with userID if supplied)"""

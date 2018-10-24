@@ -3,6 +3,7 @@ import jsonpickle
 import re
 import lxml
 import inspect
+from tools import Tools
 
 
 class JsonSerializable(object):
@@ -42,8 +43,14 @@ class JsonSerializable(object):
                 elif value is None:
                     temp[attr] = value
                 elif type(value) is list:
-                    temp[attr] = value
-                elif len(value.__class__.__bases__) > 0:
+                    if len(value) > 0:
+                        if 'JsonSerializable' in value.__class__.__bases__:
+                            temp[attr] = Tools.serialise_list(value)
+                        else:
+                            temp[attr] = value
+                    else:
+                        temp[attr] = value
+                elif 'JsonSerializable' in value.__class__.__bases__:
                     temp[attr] = value.get_properties()
                 else:
                     temp[attr] = value

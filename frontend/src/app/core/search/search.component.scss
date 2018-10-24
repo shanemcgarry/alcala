@@ -1,9 +1,39 @@
+h1,h2,h3,h4 {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 .search-fields {
   margin-top: 20px;
-  mat-form-field {
-    margin-right: 10px;
-    width: 80%;
+  margin-right: 1%;
+  width: 98%;
+}
+
+.search-card {
+  max-height: 100%;
+  button {
+    float: right;
   }
+  div {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+
+.word-num {
+  width: 5%;
+  margin-left: 1%;
+  margin-right: 1%;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.mrp5 {
+  margin-right: 5%;
+}
+
+mat-tab-group {
+  max-width: 98%;
 }
 
 .result-detail {

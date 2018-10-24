@@ -1,15 +1,79 @@
-<div class="search-fields page-content">
-  <mat-form-field appearance="outline" disabled="false">
-    <mat-label>Keyword(s)</mat-label>
-    <input #txtSearch matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchPhrase" (keyup.enter)="onSearchClick()">
-    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="this.searchPhrase=''">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
+<div class="full-width page-content">
+  <mat-tab-group color="primary" class="mt5 mb5">
+    <mat-tab label="Basic Search" fxLayout>
+      <div class="mt20">
+        <mat-form-field appearance="outline" disabled="false" fxFlex="100%" fxFill >
+          <mat-label>Keyword(s)</mat-label>
+          <input matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchParams.keywords" (keyup.enter)="onSearchClick()">
+          <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="this.searchParams.keywords=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </mat-tab>
+    <mat-tab label="Advanced Search" fxLayout fxLayoutGap="10px">
+      <div class="mt20">
+        <mat-form-field appearance="outline" disabled="false" fxFlex="100%" fxFill>
+          <mat-label>Keyword(s)</mat-label>
+          <input matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchParams.keywords" (keyup.enter)="onSearchClick()">
+          <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="this.searchParams.keywords=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <h4>Additional Filters</h4>
+      <mat-form-field fxFlex="30" class="mrp5" appearance="outline">
+        <mat-select placeholder="Select a year" [(ngModel)]="this.searchParams.year" name="year">
+          <mat-option *ngFor="let y of this.availableYears" [value]="y">{{ y }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <span fxFlex="30" class="mrp5">
+        <span>Top</span>
+        <mat-form-field class="word-num" appearance="outline">
+          <input matInput [(ngModel)]="this.searchParams.topWords">
+        </mat-form-field>
+        <span>Words</span>
+      </span>
+      <span class="mrp5" fxFlex="30">
+        <span>Words appearing less than </span>
+        <mat-form-field class="word-num"  appearance="outline">
+          <input matInput [(ngModel)]="this.searchParams.bottomWords">
+        </mat-form-field>
+        <span>times</span>
+      </span>
+    </mat-tab>
+  </mat-tab-group>
   <button mat-raised-button color="primary" (click)="onSearchClick()">Search</button>
 </div>
-
-<div *ngIf="dataModel" class="container page-content">
+<mat-divider></mat-divider>
+<h3 *ngIf="this.searchHistory" class="ml10">Recent Searches</h3>
+<mat-grid-list *ngIf="this.searchHistory" cols="4" rowHeight="200px" class="container page-content">
+  <mat-grid-tile *ngFor="let h of this.searchHistory" [colspan]="1" [rowspan]="1">
+    <mat-card class="search-card">
+      <mat-card-content>
+        <div>
+          <span class="bold">Keywords Used: </span><span>{{ h.params.keywords }}</span>
+        </div>
+        <div *ngIf="this.checkForValue(h.params.year)">
+          <span class="bold">Year: </span><span>{{ h.params.year }}</span>
+        </div>
+        <div *ngIf="this.checkForValue(h.params.topWords)">
+          <span>Only show the top <span class="bold">{{ h.params.topWords }}</span> words</span>
+        </div>
+        <div *ngIf="this.checkForValue(h.params.bottomWords)">
+          <span>Only show words appearing less than <span class="bold">{{ h.params.bottomWords }}</span></span>
+        </div>
+        <mat-divider></mat-divider>
+        <div>
+          <span class="bold">Total Results: </span> {{ h.totalHits }}
+        </div>
+        <button mat-raised-button color="primary" (click)="onHistoryClick(h._id)">View</button>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>
+<mat-divider></mat-divider>
+<div *ngIf="this.dataModel" class="container page-content">
   <div class="full-width">
     <mat-button-toggle-group value="false">
       <mat-button-toggle selected="true" value="false" (change)="onToggleClick($event.value)" matTooltip="View List">

@@ -2,18 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpErrorHandler, HandleError } from '../../shared/services/http-error-handler.service';
 import { environment } from '../../../environments/environment';
-import { Observable, from } from 'rxjs';
-import { catchError, groupBy, map, mergeMap, tap, toArray } from 'rxjs/operators';
-import {AnalysisItem, AnalysisSummary, AnalysisUserItem, DataSummaryPackage} from '../../shared/models/analysis-result';
-import {CategoryData, CategoryMonthPivotItem } from '../../shared/models/pivot-data.model';
-import { VisSearchParams } from '../../shared/models/vis-search-model';
-import {VisFeatures} from '../../shared/models/visualisation.models';
-
-const httpOptions = {
-  headers: new HttpHeaders( {
-    'Content-Type':  'application/json'
-  })
-};
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import {AnalysisItem, AnalysisSummary, DataSummaryPackage} from '../../shared/models/analysis-result';
+import {CategoryData } from '../../shared/models/pivot-data.model';
 
 @Injectable()
 export class VisualisationService {
@@ -53,24 +45,10 @@ export class VisualisationService {
       );
   }
 
-  logSearchFeatures(visFeatures: VisFeatures): Observable<any> {
-    return this.httpClient.post<any>(`${this.serviceUrl}features`, visFeatures, {responseType: 'json'})
-      .pipe(
-        catchError(this.handleError('Log Search Features', null))
-      );
-  }
-
   getRawData(year: any): Observable<AnalysisItem[]> {
     return this.httpClient.get<AnalysisItem[]>(`${this.serviceUrl}get_raw_data/${year}`)
       .pipe(
         catchError(this.handleError('Raw Data Fetch', null))
-      );
-  }
-
-  generateSearch(searchParams: VisSearchParams): Observable<DataSummaryPackage> {
-    return this.httpClient.post<any>(`${this.serviceUrl}search`, searchParams, {responseType: 'json'})
-      .pipe(
-        catchError(this.handleError('generateSearch', null))
       );
   }
 

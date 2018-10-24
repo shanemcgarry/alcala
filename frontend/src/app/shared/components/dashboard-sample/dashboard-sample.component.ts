@@ -1,12 +1,13 @@
 import {Component, OnInit, OnChanges, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
 import { AnalysisSummary, DataSummaryPackage } from '../../models/analysis-result';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { VisualisationService } from '../../../core/service/visualisation.service';
-import { VisSearchParams } from '../../models/vis-search-model';
+import { SearchParams } from '../../models/search.model';
 import { LabelValue } from '../../models/visualisation.models';
 import { ChartFactory } from '../chart/chart.factory';
 import { MonthYearPivotItem } from '../../models/pivot-data.model';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-dashboard-sample',
@@ -17,12 +18,12 @@ export class DashboardSampleComponent implements OnInit, OnChanges, AfterViewIni
   @ViewChild('chartsContainer') chartContainer: ElementRef;
   dataModel: AnalysisSummary;
   chartData: DataSummaryPackage;
-  searchParams: VisSearchParams = new VisSearchParams();
+  searchParams: SearchParams = new SearchParams();
   availableCharts: LabelValue[] = ChartFactory.getAllowableCharts();
   validYears = [1774, 1775, 1776, 1777, 1778, 1779, 1781];
   graphWidth = 750;
 
-  constructor(private route: ActivatedRoute, private visService: VisualisationService, private router: Router) {
+  constructor(private route: ActivatedRoute, private visService: VisualisationService, private searchService: SearchService, private router: Router) {
     this.searchParams.groupBy = 'category';
   }
 
@@ -40,7 +41,7 @@ export class DashboardSampleComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   getDashboardData() {
-    this.visService.generateSearch(this.searchParams)
+    this.searchService.visualiseSearch(this.searchParams)
       .subscribe(
         data => this.chartData = data,
         err => console.log(err),

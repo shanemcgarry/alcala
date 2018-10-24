@@ -1,7 +1,5 @@
 from lxml import etree
-from xml.sax.saxutils import escape, unescape
 from models.serializable import JsonSerializable
-import jsonpickle
 import datetime
 import locale
 import re
@@ -9,12 +7,11 @@ import math
 
 
 class PageResultList(JsonSerializable):
-    def __init__(self, total_hits, search_phrase, current_index, result_limit, search_id=None):
+    def __init__(self, total_hits, current_index, result_limit, search_id=None):
         self.pages = list()
         self.totalHits = total_hits
         self.resultLimit = result_limit;
         self.totalPageResults = int(math.ceil(total_hits / result_limit))
-        self.searchPhrase = search_phrase
         self.currentIndex = current_index
         self.searchID = search_id
 
