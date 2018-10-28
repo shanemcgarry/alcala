@@ -128,8 +128,14 @@ class MongoData:
 
     def get_custom_dashboard(self, userID):
         """Gets the dashboard for the specified user"""
-        json_doc = self.db.user_stories.find({'userID': userID})
-        result = CustomDashboardInfo(**json_doc[0])
+        result = None
+        json_doc = self.db.user_dashboard.find({'userID': userID})
+        for j in json_doc:
+            result = CustomDashboardInfo(**j)
+
+        if result is None:
+            result = CustomDashboardInfo(userID=userID)
+            result._id = self.insert_custom_dashboard(result)
 
         return result
 

@@ -1,1 +1,58 @@
-<h2>My Dashboard</h2>
+<div class="section-header">
+  <h2>My Dashboard</h2>
+<!--  <button mat-raised-button color="primary" *ngIf="!this.canCustomise" (click)="toggleCustomise(true)">Customise</button>
+  <button mat-raised-button color="primary" *ngIf="this.canCustomise" (click)="toggleCustomise(false)">Save</button>-->
+</div>
+
+<mat-grid-list [cols]="4" rowHeight="140px;" *ngIf="this.dataModel" class="card-section">
+  <mat-grid-tile *ngFor="let ib of this.dataModel.infoBoxes" [colspan]="1">
+    <app-info-box [bgClass]="ib.colour" [icon]="ib.icon"
+                  [label]="ib.label" [count]="this.getInfoBoxData('count', ib.type)"
+                  [data]="this.getInfoBoxData('data', ib.type)"></app-info-box>
+  </mat-grid-tile>
+  <mat-grid-tile *ngFor="let eb of this.getEmptyInfoBoxes()">
+    <div class="empty-box info-box">
+      <button mat-button (click)="addInfoBox()">Add New InfoBox</button>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<mat-grid-list [cols]="4" rowHeight="320" *ngIf="this.dataModel" class="card-section mt10">
+  <mat-grid-tile *ngFor="let c of this.dataModel.charts" [colspan]="2">
+    <mat-card class="full-width ml0 mr10">
+      <mat-card-header>
+        <mat-card-title>{{ c.title }}</mat-card-title>
+        <button mat-button (click)="this.onRemoveChart(c)">X</button>
+      </mat-card-header>
+      <mat-card-content>
+        <app-chart [data]="this.generateChartData(c)" [chartType]="c.features.chartType" [height]="300"
+                   [width]="this.getChartWidth()" [xField]="c.features.xField" [yField]="c.features.yField"
+                   [sizeField]="c.features.sizeField"></app-chart>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile *ngFor="let eb of this.getEmptyCharts()" [colspan]="2">
+    <div class="empty-box chart">
+      <button mat-button (click)="addChart()">Add New Chart</button>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<mat-grid-list [cols]="4" rowHeight="320" *ngIf="this.dataModel" class="card-section mt10">
+  <mat-grid-tile *ngFor="let s of this.dataModel.stories" [colspan]="4">
+    <mat-card class="full-width ml0 mr10">
+      <mat-card-header>
+        <mat-card-title>{{ s.title }}</mat-card-title>
+        <mat-card-subtitle>{{ s.description }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        TODO: I NEED A COMPONENT
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile *ngFor="let es of this.getEmptyStories()" [colspan]="4">
+    <div class="empty-box story">
+      <button mat-button (click)="addStory()">Add New Story</button>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>
