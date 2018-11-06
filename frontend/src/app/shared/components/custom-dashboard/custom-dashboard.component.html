@@ -5,10 +5,12 @@
 </div>
 
 <mat-grid-list [cols]="4" rowHeight="140px;" *ngIf="this.dataModel" class="card-section">
-  <mat-grid-tile *ngFor="let ib of this.dataModel.infoBoxes" [colspan]="1">
+  <mat-grid-tile *ngFor="let ib of this.infoBoxes" [colspan]="1">
     <app-info-box [bgClass]="ib.colour" [icon]="ib.icon"
                   [label]="ib.label" [count]="this.getInfoBoxData('count', ib.type)"
-                  [data]="this.getInfoBoxData('data', ib.type)"></app-info-box>
+                  [data]="this.getInfoBoxData('data', ib.type)" [dataType]="this.getInfoBoxSubType('count', ib.type)"
+                  (click)="this.editInfoBox(ib._id)">
+    </app-info-box>
   </mat-grid-tile>
   <mat-grid-tile *ngFor="let eb of this.getEmptyInfoBoxes()">
     <div class="empty-box info-box">

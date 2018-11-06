@@ -90,7 +90,7 @@ class MongoData:
         for j in json_doc:
             results.append(CustomChartInfo(**j))
 
-        if len(results == 0):
+        if len(results) == 0:
             results = None
 
         return results
@@ -106,7 +106,7 @@ class MongoData:
         for j in json_doc:
             results.append(CustomInfoBox(**j))
 
-        if len(results == 0):
+        if len(results) == 0:
             results = None
 
         return results
@@ -122,7 +122,7 @@ class MongoData:
         for j in json_doc:
             results.append(CustomStoryInfo(**j))
 
-        if len(results == 0):
+        if len(results) == 0:
             results = None
 
         return results
@@ -135,7 +135,7 @@ class MongoData:
             result = CustomDashboardInfo(**j)
 
         if result is None:
-            result = CustomDashboardInfo(userID=userID)
+            result = CustomDashboardInfo(userID=userID, charts=[], infoBoxes=[], stories=[])
             result._id = self.insert_custom_dashboard(result)
 
         return result
@@ -153,7 +153,7 @@ class MongoData:
         return CustomInfoBox(**query[0])
 
     def delete_custom_infobox(self, infobox_id):
-        delete_result = self.db.user_infoboxes.remove({'_id': infobox_id}, {'justOne': True})
+        delete_result = self.db.user_infoboxes.remove({'_id': ObjectId(infobox_id)}, {'justOne': True})
         self.db.user_dashboard.update({}, {
             '$pull': {'infoBoxes': {'$in': [infobox_id]}}
         })
@@ -201,7 +201,7 @@ class MongoData:
         return CustomStoryInfo(**json_doc[0])
 
     def delete_custom_story(self, story_id):
-        delete_result = self.db.user_stories.remove({'_id': story_id}, {'justOne': True})
+        delete_result = self.db.user_stories.remove({'_id': ObjectId(story_id)}, {'justOne': True})
         self.db.user_dashboard.update({}, {
             '$pull': {'stories': {'$in': [story_id]}}
         })
@@ -218,6 +218,7 @@ class MongoData:
         removed_charts = [x for x in db_dashboard.charts if x not in dashboardObj.charts]
         removed_stories = [x for x in db_dashboard.stories if x not in dashboardObj.stories]
         removed_infoBoxes = [x for x in db_dashboard.infoBoxes if x not in dashboardObj.infoBoxes]
+
         self.db.user_dashboard.update({'_id': ObjectId(dashboardObj._id)}, {
             '$addToSet': {'charts': {'$each': dashboardObj.charts}, 'stories': {'$each': dashboardObj.stories}, 'infoBoxes': {'$each': dashboardObj.infoBoxes}}
         })

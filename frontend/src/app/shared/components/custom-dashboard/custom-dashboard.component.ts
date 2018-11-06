@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {CustomChartInfo, CustomDashboardInfo, CustomInfoBox, CustomStoryInfo} from '../../models/custom-dashboard.model';
+import {CustomChartInfo, CustomDashboardInfo, CustomInfoBox, CustomStoryInfo, InfoBoxTypes} from '../../models/custom-dashboard.model';
 import {DashboardService} from '../../services/dashboard.service';
 import {UserService} from '../../services/user.service';
 import {SiteUser} from '../../models/site-user.model';
@@ -7,6 +7,9 @@ import {SearchService} from '../../services/search.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {InfoboxDialogComponent} from '../dashboard-dialogs/infobox-dialog/infobox-dialog.component';
 import {DashboardComponent} from '../../../core/dashboard/dashboard.component';
+import {AnalysisSummary } from '../../models/analysis-result';
+import {VisualisationService} from '../../../core/service/visualisation.service';
+import {CategoryPivotItem, MonthYearPivotItem, YearPivotItem} from '../../models/pivot-data.model';
 
 @Component({
   selector: 'app-custom-dashboard',
@@ -17,11 +20,13 @@ export class CustomDashboardComponent implements OnInit {
   maxInfoBoxes = 4;
   maxCharts = 4;
   maxStories = 1;
-  canCustomise = false;
   dataModel: CustomDashboardInfo;
+  infoBoxes: CustomInfoBox[];
   userInfo: SiteUser;
+  boxData: AnalysisSummary;
 
-  constructor(private dashboardService: DashboardService, private userService: UserService, private searchService: SearchService, public dialog: MatDialog) {
+  constructor(private dashboardService: DashboardService, private userService: UserService, private searchService: SearchService,
+              private visualisationService: VisualisationService, public dialog: MatDialog) {
     this.userInfo = this.userService.getLoggedInUser();
   }
 
@@ -41,33 +46,64 @@ export class CustomDashboardComponent implements OnInit {
             }
           },
         err => console.log(err),
-        () => { console.log('Dashboard Data Loaded'); console.log(this.dataModel); }
+        () => { console.log('Dashboard Data Loaded'); }
       );
-  }
-
-  toggleCustomise(value: boolean): void {
-    this.canCustomise = value;
+    this.visualisationService.getDashboardSummary(undefined)
+      .subscribe(
+        summary => this.boxData = summary,
+        err => console.log(err),
+        () => console.log('InfoBox Data loaded')
+      );
+    this.dashboardService.getInfoBoxes(this.userInfo._id)
+      .subscribe(
+        data => this.infoBoxes = data,
+        err => console.log(err),
+        () => { console.log('Infoboxes Loaded'); console.log(this.infoBoxes);}
+      );
   }
 
   addInfoBox(): void {
     const infoBoxData: CustomInfoBox = {
-      _id: undefined,
+      _id: null,
       userID: this.userInfo._id,
-      type: undefined,
-      icon: undefined,
-      label: undefined,
-      colour: undefined
+      type: null,
+      icon: null,
+      label: null,
+      colour: null
     };
-    const dialogRef = this.dialog.open(InfoboxDialogComponent, {
-      data: infoBoxData
-    });
+    const dialogRef = this.dialog.open(InfoboxDialogComponent, { data: infoBoxData });
     dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.dataModel.infoBoxes.push(result);
+        if (result && result._id) {
+          if (!this.dataModel.infoBoxes) {
+            console.log('infoboxes instantiated');
+            this.dataModel.infoBoxes = [];
+          }
+          console.log(result);
+          this.dataModel.infoBoxes.push(result._id);
           this.saveDashboard();
+          this.infoBoxes.push(result);
         }
       }
     );
+  }
+
+  editInfoBox(id: string): void {
+    console.log(this.infoBoxes);
+    let infoBoxData = this.infoBoxes.find(x => x._id === id);
+    console.log('Editing data');
+    console.log(infoBoxData);
+    const dialogRef = this.dialog.open(InfoboxDialogComponent, { data: infoBoxData });
+    dialogRef.afterClosed().subscribe( result => {
+      if (result) {
+        if (result._id) {
+          infoBoxData = result;
+        } else {
+          this.infoBoxes.splice(this.infoBoxes.findIndex(x => x._id === id), 1);
+          this.dataModel.infoBoxes.splice(this.dataModel.infoBoxes.findIndex(x => x === id), 1);
+          this.saveDashboard();
+        }
+      }
+    });
   }
 
   saveDashboard(): void {
@@ -79,8 +115,148 @@ export class CustomDashboardComponent implements OnInit {
       );
   }
 
+  getInfoBoxSubType(dataType: string, infoBoxType: string): string {
+    let result;
+    switch (this.convertToInfoBoxType(infoBoxType)) {
+      case InfoBoxTypes.BiggestExpense:
+        result = dataType === 'data' ? 'category' : 'totalAmount';
+        break;
+      case InfoBoxTypes.BusiestMonth:
+        result = dataType === 'data' ? 'month' : 'transactionCount';
+        break;
+      case InfoBoxTypes.BusiestYear:
+        result = dataType === 'data' ? 'year' : 'transactionCount';
+        break;
+      case InfoBoxTypes.LeastExpensiveMonth:
+        result = dataType === 'data' ? 'month' : 'totalAmount';
+        break;
+      case InfoBoxTypes.LeastExpensiveYear:
+        result = dataType === 'data' ? 'year' : 'totalAmount';
+        break;
+      case InfoBoxTypes.MostExpensiveMonth:
+        result = dataType === 'data' ? 'month' : 'totalAmount';
+        break;
+      case InfoBoxTypes.MostExpensiveYear:
+        result = dataType === 'data' ? 'year' : 'totalAmount';
+        break;
+      case InfoBoxTypes.MostFrequentExpense:
+        result = dataType === 'data' ? 'category' : 'transactionCount';
+        break;
+      case InfoBoxTypes.SlowestMonth:
+        result = dataType === 'data' ? 'month' : 'transactionCount';
+        break;
+      case InfoBoxTypes.SlowestYear:
+        result = dataType === 'data' ? 'year' : 'transactionCount';
+        break;
+      case InfoBoxTypes.MostFrequentWord:
+        result = 'frequency';
+        break;
+      default:
+        throw new Error (`${infoBoxType} has not been implemented.`);
+    }
+    return result;
+  }
+
   getInfoBoxData(dataType: string, infoBoxType: string): any {
-    return ''; // TODO: fix me
+    let result: any;
+    const subType = this.getInfoBoxSubType(dataType, infoBoxType);
+    switch (this.convertToInfoBoxType(infoBoxType)) {
+      case InfoBoxTypes.BiggestExpense:
+        result = this.getDataItem(dataType, this.boxData.biggestExpense, subType);
+        break;
+      case InfoBoxTypes.BusiestMonth:
+        result = this.getDataItem(dataType, this.boxData.busiestMonth, subType);
+        break;
+      case InfoBoxTypes.BusiestYear:
+        result = this.getDataItem(dataType, this.boxData.busiestYear, subType);
+        break;
+      case InfoBoxTypes.LeastExpensiveMonth:
+        result = this.getDataItem(dataType, this.boxData.leastExpensiveMonth, subType);
+        break;
+      case InfoBoxTypes.LeastExpensiveYear:
+        result = this.getDataItem(dataType, this.boxData.leastExpensiveYear, subType);
+        break;
+      case InfoBoxTypes.MostExpensiveMonth:
+        result = this.getDataItem(dataType, this.boxData.mostExpensiveMonth, subType);
+        break;
+      case InfoBoxTypes.MostExpensiveYear:
+        result = this.getDataItem(dataType, this.boxData.mostExpensiveYear, subType);
+        break;
+      case InfoBoxTypes.MostFrequentExpense:
+        result = this.getDataItem(dataType, this.boxData.mostFrequentExpense, subType);
+        break;
+      case InfoBoxTypes.SlowestMonth:
+        result = this.getDataItem(dataType, this.boxData.slowestMonth, subType);
+        break;
+      case InfoBoxTypes.SlowestYear:
+        result = this.getDataItem(dataType, this.boxData.slowestYear, subType);
+        break;
+      case InfoBoxTypes.MostFrequentWord:
+        switch (dataType) {
+          case 'count':
+            result = this.boxData.mostFrequentWord.frequency;
+            break;
+          case 'data':
+            result = this.formatString(this.boxData.mostFrequentWord.word);
+            break;
+          default:
+            throw new Error(`${dataType} is not a valid option for Most Frequent Word`);
+        }
+        break;
+      default:
+        throw new Error (`${infoBoxType} has not been implemented.`);
+    }
+    return result;
+  }
+
+  convertToInfoBoxType(value: string): InfoBoxTypes {
+    let result: InfoBoxTypes;
+    Object.keys(InfoBoxTypes).forEach( x => {
+      if (value === InfoBoxTypes[x]) {
+        result = InfoBoxTypes[x];
+      }
+    });
+    return result;
+  }
+
+  getDataItem(dataType: string, item: MonthYearPivotItem | YearPivotItem | CategoryPivotItem, subType: string): any {
+    let result: any;
+    switch (dataType) {
+      case 'count':
+        switch (subType) {
+          case 'totalAmount':
+            result = item.totalAmount;
+            break;
+          case 'transactionCount':
+            result = item.transactionCount;
+            break;
+          default:
+            throw new Error(`${subType} is not a valid field for returning count data`);
+        }
+        break;
+      case 'data':
+        switch (subType) {
+          case 'category':
+            result = this.formatString(item['category']);
+            break;
+          case 'month':
+            result = `${item['month']} ${item['year']}`;
+            break;
+          case 'year':
+            result = item['year'];
+            break;
+          default:
+            throw new Error(`${subType} is not a valid field for returning data elements`);
+        }
+        break;
+      default:
+        throw new Error(`${dataType} is not a valid data field`);
+    }
+    return result;
+  }
+
+  formatString (s: string) {
+    return `${s.charAt(0).toUpperCase()}${s.substr(1)}`;
   }
 
   getEmptyStories() {
@@ -114,9 +290,9 @@ export class CustomDashboardComponent implements OnInit {
 
   getEmptyInfoBoxes() {
     let result = new Array(0);
-    if (this.dataModel.infoBoxes) {
-      if (this.dataModel.infoBoxes.length <= this.maxInfoBoxes) {
-        result = new Array(this.maxInfoBoxes - this.dataModel.infoBoxes.length);
+    if (this.infoBoxes) {
+      if (this.infoBoxes.length <= this.maxInfoBoxes) {
+        result = new Array(this.maxInfoBoxes - this.infoBoxes.length);
       }
     } else {
       result = new Array(this.maxInfoBoxes);
@@ -125,12 +301,12 @@ export class CustomDashboardComponent implements OnInit {
   }
 
   onRemoveChart(chartInfO: CustomChartInfo): void {
-    const index = this.dataModel.charts.findIndex(x => x._id === chartInfO._id);
+    const index = this.dataModel.charts.findIndex(x => x === chartInfO._id);
     this.dataModel.charts.splice(index, 1);
   }
 
   addChart(): void {
-    //TODO: create a method to add a chart
+    // TODO: create a method to add a chart
   }
 
   generateChartData(chartInfo: CustomChartInfo): void {

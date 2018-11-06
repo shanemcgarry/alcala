@@ -25,7 +25,7 @@ export class DashboardService {
   }
 
   saveUserDashboard(dashboardInfo: CustomDashboardInfo): Observable<CustomDashboardInfo> {
-    return this.httpClient.put<CustomDashboardInfo>(`${this.serviceUrl}`, dashboardInfo, {responseType: 'json'})
+    return this.httpClient.post<CustomDashboardInfo>(`${this.serviceUrl}`, dashboardInfo, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('saveUserDashboard', null))
       );
@@ -39,14 +39,14 @@ export class DashboardService {
   }
 
   saveInfoBox(infoBox: CustomInfoBox): Observable<CustomInfoBox> {
-    return this.httpClient.put<CustomInfoBox>(`${this.serviceUrl}infobox`, infoBox, {responseType: 'json'})
+    return this.httpClient.post<CustomInfoBox>(`${this.serviceUrl}infobox`, infoBox, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('saveInfoBox', null))
       );
   }
 
   deleteInfoBox(infoBox: CustomInfoBox): Observable<any> {
-    return this.httpClient.put<any>(`${this.serviceUrl}infobox/delete`, infoBox, {responseType: 'json'})
+    return this.httpClient.post<any>(`${this.serviceUrl}infobox/delete`, infoBox, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('deleteInfoBox', null))
       );
@@ -60,14 +60,14 @@ export class DashboardService {
   }
 
   saveUserChart(chartInfo: CustomChartInfo): Observable<CustomChartInfo> {
-    return this.httpClient.put<CustomChartInfo>(`${this.serviceUrl}chart`, chartInfo, {responseType: 'json'})
+    return this.httpClient.post<CustomChartInfo>(`${this.serviceUrl}chart`, chartInfo, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('saveUserChart', null))
       );
   }
 
   deleteUserChart(chartInfo: CustomChartInfo): Observable<any> {
-    return this.httpClient.put<any>(`${this.serviceUrl}chart/delete`, chartInfo, {responseType: 'json'})
+    return this.httpClient.post<any>(`${this.serviceUrl}chart/delete`, chartInfo, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('deleteUserChart', null))
       );
@@ -81,14 +81,14 @@ export class DashboardService {
   }
 
   saveUserStory(storyInfo: CustomStoryInfo): Observable<CustomStoryInfo> {
-    return this.httpClient.put<CustomStoryInfo>(`${this.serviceUrl}story`, storyInfo, {responseType: 'json'})
+    return this.httpClient.post<CustomStoryInfo>(`${this.serviceUrl}story`, storyInfo, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('saveUserStory', null))
       );
   }
 
   deleteUserStory(storyInfo: CustomStoryInfo): Observable<any> {
-    return this.httpClient.put<any>(`${this.serviceUrl}story/delete`, storyInfo, {responseType: 'json'})
+    return this.httpClient.post<any>(`${this.serviceUrl}story/delete`, storyInfo, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('deleteUserStory', null))
       );

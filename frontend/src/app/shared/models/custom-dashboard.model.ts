@@ -42,7 +42,7 @@ export interface CustomStoryInfo {
 export interface CustomDashboardInfo {
   _id: string;
   userID: string;
-  infoBoxes: CustomInfoBox[];
-  charts: CustomChartInfo[];
-  stories: CustomStoryInfo[];
+  infoBoxes: string[];
+  charts: string[];
+  stories: string[];
 }

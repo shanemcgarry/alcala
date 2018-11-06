@@ -174,7 +174,7 @@ def get_user_dashboard(userID):
     return response
 
 
-@app.route("/dashboard", methods=['POST'])
+@app.route("/dashboard/", methods=['POST'])
 def save_user_dashboard():
     mdb = MongoData()
     json_data = request.get_json()
@@ -253,10 +253,10 @@ def save_user_infobox():
     mdb = MongoData()
     json_data = request.get_json()
     infoBox = CustomInfoBox(**json_data)
-    if Tools.check_for_empty_value(infoBox._id):
-        infoBox._id = mdb.insert_custom_infobox(infoBox)
-    else:
+    if hasattr(infoBox, '_id') and not(Tools.check_for_empty_value(infoBox._id)):
         infoBox = mdb.update_custom_infobox(infoBox)
+    else:
+        infoBox._id = mdb.insert_custom_infobox(infoBox)
 
     response = app.response_class(
         response=infoBox.toJson(),

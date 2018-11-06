@@ -77,7 +77,7 @@ export class DashboardSampleComponent implements OnInit, OnChanges, AfterViewIni
 
   private translateFieldKey(fieldKey: string) {
     let result;
-    switch(fieldKey) {
+    switch (fieldKey) {
       case 'time':
         if (this.searchParams.year) {
           result = 'monthNum';

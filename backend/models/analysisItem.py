@@ -102,15 +102,15 @@ class AnalysisSummary(JsonSerializable):
     def build_year_breakdown(self):
         result = []
         for m in self.monthBreakdown:
-            year = next(y for y in self.yearBreakdown if y.year ==  m.year)
-            if year:
+            if any(y for y in result if y.year == m.year):
+                year = next(y for y in result if y.year == m.year)
                 year.reales += m.reales
                 year.maravedises += m.maravedises
                 year.transactionCount += m.transactionCount
                 year.totalAmount = year.calculate_total()
             else:
                 year = YearPivotItem(reales=m.reales, maravedises=m.maravedises, transaction_count=m.transactionCount, year=m.year)
-                self.yearBreakdown.append(year)
+                result.append(year)
         return result
 
     def get_biggest_expense(self):

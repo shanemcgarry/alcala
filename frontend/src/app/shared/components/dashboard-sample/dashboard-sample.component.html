@@ -13,7 +13,7 @@
     <app-info-box class="full-width mr5"
                   [bgClass]="'brown'"
                   [icon]="'receipt'"
-                  [count]="this.dataModel.biggestExpense.total"
+                  [count]="this.dataModel.biggestExpense.totalAmount"
                   [label]="'Biggest Expense'"
                   [data]="this.dataModel.biggestExpense.category.charAt(0).toUpperCase() + this.dataModel.biggestExpense.category.substr(1)">
     </app-info-box>
@@ -22,7 +22,7 @@
     <app-info-box class="full-width mr5"
                   [bgClass]="'blue'"
                   [icon]="'assignment_late'"
-                  [count]="this.dataModel.mostExpensiveMonth.total"
+                  [count]="this.dataModel.mostExpensiveMonth.totalAmount"
                   [label]="'Most Expensive Month'"
                   [data]="this.getMonthTitle(this.dataModel.mostExpensiveMonth)">
     </app-info-box>
@@ -31,7 +31,7 @@
     <app-info-box class="full-width mr5"
                   [bgClass]="'yellow'"
                   [icon]="'assignment_returned'"
-                  [count]="this.dataModel.leastExpensiveMonth.total"
+                  [count]="this.dataModel.leastExpensiveMonth.totalAmount"
                   [label]="'Least Expensive Month'"
                   [data]="this.getMonthTitle(this.dataModel.leastExpensiveMonth)">
     </app-info-box>
@@ -40,7 +40,7 @@
     <app-info-box class="full-width"
                   [bgClass]="'purple'"
                   [icon]="'assignment_turned_in'"
-                  [count]="this.dataModel.busiestMonth.total"
+                  [count]="this.dataModel.busiestMonth.totalAmount"
                   [label]="'Busiest Month'"
                   [data]="this.getMonthTitle(this.dataModel.busiestMonth)">
     </app-info-box>
