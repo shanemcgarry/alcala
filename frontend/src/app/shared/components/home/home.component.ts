@@ -42,12 +42,12 @@ export class HomeComponent implements OnInit {
   constructor(private siteService: SiteService, private router: Router) { }
 
   ngOnInit() {
-    this.siteService.getSampleData(10)
+/*    this.siteService.getSampleData(10)
       .subscribe(
         data => this.sampleData = data,
         err => console.log(err),
         () => console.log('Sample Data loaded')
-      );
+      );*/
   }
 
   onViewClick(pageid: string): void {

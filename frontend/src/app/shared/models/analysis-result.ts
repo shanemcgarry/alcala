@@ -1,5 +1,4 @@
-import { Dictionary } from "lodash";
-import {CategoryPivotItem, MonthYearPivotItem} from './pivot-data.model';
+import {CategoryPivotItem, MonthYearPivotItem, YearPivotItem} from './pivot-data.model';
 
 export interface AnalysisResult {
   hits: number;
@@ -67,12 +66,24 @@ export interface AnalysisUserItem {
   userId: string;
 }
 
+export interface WordFrequncyInfo {
+  word: string;
+  frequency: number;
+}
+
 export interface AnalysisSummary {
   categoryBreakdown: CategoryPivotItem[];
   monthBreakdown: MonthYearPivotItem[];
   biggestExpense: CategoryPivotItem;
+  mostFrequentExpense: CategoryPivotItem;
   mostExpensiveMonth: MonthYearPivotItem;
+  mostExpensiveYear: YearPivotItem;
   leastExpensiveMonth: MonthYearPivotItem;
+  leastExpensiveYear: YearPivotItem;
   busiestMonth: MonthYearPivotItem;
+  busiestYear: YearPivotItem;
+  slowestMonth: MonthYearPivotItem;
+  slowestYear: YearPivotItem;
+  mostFrequentWord: WordFrequncyInfo;
   wordFreq: any[];
 }

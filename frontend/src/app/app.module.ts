@@ -72,6 +72,7 @@ import { TestComponent } from './shared/components/test/test.component';
 import { DashboardSampleComponent } from './shared/components/dashboard-sample/dashboard-sample.component';
 import { CustomDashboardComponent } from './shared/components/custom-dashboard/custom-dashboard.component';
 import { StoriesComponent } from './shared/components/stories/stories.component';
+import { InfoboxDialogComponent } from './shared/components/dashboard-dialogs/infobox-dialog/infobox-dialog.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -101,7 +102,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     TestComponent,
     DashboardSampleComponent,
     CustomDashboardComponent,
-    StoriesComponent
+    StoriesComponent,
+    InfoboxDialogComponent
   ],
   imports: [
     routing,
@@ -143,7 +145,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     FlexLayoutModule,
     HttpClientModule
   ],
-  entryComponents: [ EditComponent ],
+  entryComponents: [ EditComponent, InfoboxDialogComponent ],
   providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, SpinnerService, UserService, AuthGuard, SiteService, LocalStorageService, { provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG }],
   bootstrap: [AppComponent]
 })

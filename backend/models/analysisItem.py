@@ -1,4 +1,5 @@
 from models.serializable import JsonSerializable
+from models.pivotData import YearPivotItem
 import math
 
 
@@ -61,14 +62,22 @@ class AnalysisSummary(JsonSerializable):
     def __init__(self, category_grouping=None, month_grouping=None, freq_dict=None, transaction_list=None):
         self.categoryBreakdown = category_grouping
         self.monthBreakdown = month_grouping
+        self.yearBreakdown = self.build_year_breakdown()
         self.wordFreq_dict = freq_dict
         self.transaction_list = transaction_list
         self.biggestExpense = self.get_biggest_expense()
+        self.mostFrequentExpense = self.get_frequent_expense()
         self.mostExpensiveMonth = self.get_most_expensive_month()
+        self.mostExpensiveYear = self.get_most_expensive_year()
         self.leastExpensiveMonth = self.get_least_month()
+        self.leastExpensiveYear = self.get_least_year()
         self.busiestMonth = self.get_busiest_month()
+        self.busiestYear = self.get_busiest_year()
+        self.slowestMonth = self.get_slowest_month()
+        self.slowestYear = self.get_slowest_year()
         #self.wordFreq = [{ 'key': x[0], 'value': x[1] } for x in sorted(self.wordFreq_dict.items(), key=lambda kv: kv[1])]
         self.wordFreq = self.build_word_freq_info()
+        self.mostFrequentWord = self.get_most_used_word()
 
     def build_word_freq_info(self):
         result = []
@@ -90,22 +99,63 @@ class AnalysisSummary(JsonSerializable):
                     maravedises += float(t.maravedises)
         return { 'reales': reales, 'maravedises': maravedises, 'timeData': time_slice, 'totalAmount': reales + math.floor(maravedises / 34) + ((maravedises % 34) * .01) }
 
+    def build_year_breakdown(self):
+        result = []
+        for m in self.monthBreakdown:
+            year = next(y for y in self.yearBreakdown if y.year ==  m.year)
+            if year:
+                year.reales += m.reales
+                year.maravedises += m.maravedises
+                year.transactionCount += m.transactionCount
+                year.totalAmount = year.calculate_total()
+            else:
+                year = YearPivotItem(reales=m.reales, maravedises=m.maravedises, transaction_count=m.transactionCount, year=m.year)
+                self.yearBreakdown.append(year)
+        return result
 
     def get_biggest_expense(self):
         self.categoryBreakdown.sort(key=lambda x: x.totalAmount, reverse=True)
+        return self.categoryBreakdown[0]
+
+    def get_frequent_expense(self):
+        self.categoryBreakdown.sort(key=lambda x: x.transactionCount, reverse=True)
         return self.categoryBreakdown[0]
 
     def get_most_expensive_month(self):
         self.monthBreakdown.sort(key=lambda x: x.totalAmount, reverse=True)
         return self.monthBreakdown[0]
 
+    def get_most_expensive_year(self):
+        self.yearBreakdown.sort(key=lambda x: x.totalAmount, reverse=True)
+        return self.yearBreakdown[0]
+
     def get_least_month(self):
         self.monthBreakdown.sort(key=lambda x: x.totalAmount, reverse=False)
         return self.monthBreakdown[0]
 
+    def get_least_year(self):
+        self.yearBreakdown.sort(key=lambda x: x.totalAmount, reverse=False)
+        return self.yearBreakdown[0]
+
     def get_busiest_month(self):
         self.monthBreakdown.sort(key=lambda x: x.transactionCount, reverse=True)
         return self.monthBreakdown[0]
+
+    def get_busiest_year(self):
+        self.yearBreakdown.sort(key=lambda x: x.transactionCount, reverse=True)
+        return self.yearBreakdown[0]
+
+    def get_slowest_month(self):
+        self.monthBreakdown.sort(key=lambda x: x.transactionCount, reverse=False)
+        return self.monthBreakdown[0]
+
+    def get_slowest_year(self):
+        self.yearBreakdown.sort(key=lambda x: x.transactionCount, reverse=False)
+        return self.yearBreakdown[0]
+
+    def get_most_used_word(self):
+        self.wordFreq.sort(key=lambda x: x['frequency'], reverse=True)
+        return self.wordFreq[0]
 
     def get_top10_words(self):
         sorted_fd = sorted(self.wordFreq_dict.items(), key=lambda kv: kv[1], reverse=True)

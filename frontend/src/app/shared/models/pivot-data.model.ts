@@ -3,7 +3,7 @@ export interface CategoryPivotItem {
   reales: number;
   maravedises: number;
   transactionCount: number;
-  total: number;
+  totalAmount: number;
 }
 
 export interface CategoryMonthPivotItem {
@@ -12,7 +12,7 @@ export interface CategoryMonthPivotItem {
   reales: number;
   maravedises: number;
   transactionCount: number;
-  total: number;
+  totalAmount: number;
 }
 
 export interface CategoryYearPivotItem {
@@ -21,7 +21,7 @@ export interface CategoryYearPivotItem {
   reales: number;
   maravedises: number;
   transactionCount: number;
-  total: number;
+  totalAmount: number;
 }
 
 export interface MonthYearPivotItem {
@@ -30,7 +30,15 @@ export interface MonthYearPivotItem {
   reales: number;
   maravedises: number;
   transactionCount: number;
-  total: number;
+  totalAmount: number;
+}
+
+export interface YearPivotItem {
+  year: number;
+  reales: number;
+  maravedises: number;
+  transactionCount: number;
+  totalAmount: number;
 }
 
 export interface AllDataPivotItem {
@@ -40,7 +48,7 @@ export interface AllDataPivotItem {
   reales: number;
   maravedises: number;
   transactionCount: number;
-  total: number;
+  totalAmount: number;
 }
 
 export interface WordFrequencyPivotItem {
@@ -49,7 +57,7 @@ export interface WordFrequencyPivotItem {
   reales: number;
   maravedises: number;
   transactionCount: number;
-  total: number;
+  totalAmount: number;
 }
 
 export interface CategoryData {

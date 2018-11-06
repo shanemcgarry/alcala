@@ -86,7 +86,7 @@
   </div>
   <span class="query-info">Showing {{ getBeginHits() }} - {{ getEndHits() }} of {{ this.dataModel.totalHits }} results </span>
   <div *ngIf="!isTile" class="result-detail">
-    <div *ngFor="let page of dataModel.pages">
+   <!-- <div *ngFor="let page of dataModel.pages">
       <div class="full-width">
         <h3><a href="{{ '/page/' + page.id.trim() }}">{{ page.title }}</a></h3>
       </div>
@@ -95,7 +95,31 @@
       </div>
       <div class="full-width result-snippet" [innerHTML]="page.textSnippet">
       </div>
-    </div>
+    </div>-->
+    <table mat-table [dataSource]="this.dataModel.pages">
+      <ng-container matColumnDef="title" class="w10">
+        <th mat-header-cell *matHeaderCellDef>Page Title</th>
+        <td mat-cell *matCellDef="let p">{{ p.title }}</td>
+      </ng-container>
+      <ng-container matColumnDef="matches" class="w20">
+        <th mat-header-cell *matHeaderCellDef>Matches</th>
+        <td mat-cell *matCellDef="let p">{{ p.matchesString }}</td>
+      </ng-container>
+      <ng-container matColumnDef="description" class="words-column">
+        <th mat-header-cell *matHeaderCellDef>Text Snippet</th>
+        <td mat-cell *matCellDef="let p" [innerHTML]="p.textSnippet"></td>
+      </ng-container>
+      <ng-container matColumnDef="id" class="w5">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let p">
+          <a [href]="'/page/' + p.id.trim()">
+            <mat-icon color="primary">find_in_page</mat-icon>
+          </a>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="this.displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: this.displayedColumns;"></tr>
+    </table>
   </div>
   <div *ngIf="isTile">
     <mat-grid-list cols="5">

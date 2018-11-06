@@ -57,18 +57,18 @@ def get_sample_data(size):
 @app.route("/search/page", methods=['POST'])
 def get_page_by_keyword():
     json_req = request.get_json()
-    print(json_req)
     page_search = PageSearch(**json_req['info'])
+    origParams = SearchParameters(**json_req['params'])
+    logSearch = json_req['logSearch']
     searchParams = Utilities.process_search_params(SearchParameters(**json_req['params']))
     edb = ExistData()
     query_result = edb.get_pages_by_keyword(searchParams.keywords, year=searchParams.year, pageIndex=page_search.pageIndex,
                                             limit=page_search.resultLimit)
 
-    print(page_search.userID)
-    if not Tools.check_for_empty_value(page_search.userID):
+    if not Tools.check_for_empty_value(page_search.userID) and logSearch:
         mdb = MongoData()
         if 'searchID' not in json_req.keys() or Tools.check_for_empty_value(json_req['searchID']):
-            query_result.searchID = mdb.log_search(page_search.userID, searchParams, 'keyword', totalHits=query_result.totalHits)
+            query_result.searchID = mdb.log_search(page_search.userID, origParams, 'keyword', totalHits=query_result.totalHits)
         else:
             query_result.searchID = json_req['searchID']
         search_feature = SearchFeatures(pageLimit=page_search.resultLimit, pageIndex=page_search.pageIndex)

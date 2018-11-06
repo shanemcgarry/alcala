@@ -1,0 +1,43 @@
+<div class="edit-container">
+  <h3 mat-dialog-title>{{ this.getDialogTitle() }}</h3>
+  <mat-dialog-content>
+    <div fxLayout="row">
+      <mat-form-field fxFlex="100">
+        <input matInput type="text" fxFlex="100" placeholder="Label" [(ngModel)]="this.dataModel.label" [formControl]="labelFC">
+        <button mat-button *ngIf="this.dataModel.label" matSuffix mat-icon-button aria-label="Clear" (click)="this.dataModel.label = undefined">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="labelFC.hasError('required')">
+          Label is <strong>required</strong>.
+        </mat-error>
+        <mat-error *ngIf="labelFC.hasError('maxLength') && !labelFC.hasError('required')">
+          You may only enter a label <strong>50 characters</strong> in length.
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="35">
+        <mat-select class="color-options" placeholder="Background" [(ngModel)]="this.dataModel.colour">
+          <mat-option style="background: linear-gradient(60deg, #233232, #3C5454); color: white;" value="blue">Blue</mat-option>
+          <mat-option style="background: linear-gradient(60deg, #2E2A39, #4E4860); color: white;" value="purple">Purple</mat-option>
+          <mat-option style="background: linear-gradient(60deg, #534F3A, #8B8564); color: white;" value="yellow">Yellow</mat-option>
+          <mat-option style="background: linear-gradient(60deg, #53463A, #8B7664); color: white;" value="brown">Brown</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field fxFlex="20">
+        <mat-select placeholder="Icon" [(ngModel)]="this.dataModel.icon">
+          <mat-select-trigger>
+            <mat-icon color="primary">{{ this.dataModel.icon }}</mat-icon>
+          </mat-select-trigger>
+          <mat-option *ngFor="let i of this.validIcons" [value]="i">
+            <mat-icon color="primary">{{ i }}</mat-icon>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <mat-dialog-actions>
+      <button mat-raised-button color="primary" (click)="saveChanges()" class="mr5">Save</button>
+      <button mat-raised-button color="accent" (click)="cancelChanges()" class="ml5">Cancel</button>
+    </mat-dialog-actions>
+  </mat-dialog-content>
+</div>

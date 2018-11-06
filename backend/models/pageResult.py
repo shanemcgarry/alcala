@@ -20,15 +20,38 @@ class PageResultList(JsonSerializable):
 
 
 class PageResult(JsonSerializable):
-    def __init__(self, page):
+    def __init__(self, page, match_xml=None):
         self.__page__ = page
         self.id = page.id
         self.title = self.get_title()
-        self.__contents__ = dict()
-        self.load_matches()
-        self.matchesString = self.get_matches_text()
-        self.matchesArray = self.get_matches_array()
-        self.textSnippet = self.get_text_snippet().replace('---', '...')
+        if match_xml is None:
+            self.__contents__ = dict()
+            self.load_matches()
+            self.matchesString = self.get_matches_text()
+            self.matchesArray = self.get_matches_array()
+            self.textSnippet = self.get_text_snippet().replace('---', '...')
+        else:
+            self.__kwicArray__ = list()
+            self.matchesArray = list()
+            for p in match_xml.findall(".//p"):
+                text = self.stringify_children(p)
+                self.__kwicArray__.append(self.clean_string(text))
+
+            for match in match_xml.findall(".//p/span[@class='hi']"):
+                text = self.stringify_children(match)
+                found = next((x for x in self.matchesArray if x['key'] == self.clean_string(text)), None)
+                if found:
+                    found['value'] += 1
+                else:
+                    self.matchesArray.append({'key': self.clean_string(text), 'value': 1})
+
+            if len(self.matchesArray) > 0:
+                self.matchesString = ' '.join([(x['key'] + '(%s)' % x['value']) for x in self.matchesArray])
+            else:
+                self.matchesString = ''
+
+            self.textSnippet = '---'.join(list(x for x in self.__kwicArray__[0:3]))
+            #self.textSnippet = self.textSnippet.replace('---', '...')
 
     def get_title(self):
         year = self.__page__.year
@@ -169,3 +192,23 @@ class PageResult(JsonSerializable):
     def get_month_name(self, month):
         d = "28-%s-2018" % month
         return datetime.datetime.strptime(d, "%d-%m-%Y").strftime("%B")
+
+    def clean_string(self, text):
+        #text = re.sub('^[\r\n]+|\.|[\r\n]+$', "", text)
+        text = re.sub('[\r\n]', "", text)
+        text = re.sub("\s+", " ", text)
+        text = re.sub("[\.]"*3, "---", text)
+        return text.strip()
+
+    # code taken from stackoverflow answer: https://stackoverflow.com/a/28173933/1313890
+    def stringify_children(self, node):
+        from lxml.etree import tostring
+        from itertools import chain
+        if len(node.getchildren()) > 0:
+            parts = (list(chain(*([tostring(c, encoding=str)] for c in node.getchildren()))))
+        else:
+            parts = ([node.text] +
+                     list(chain(*([c.text, tostring(c, encoding=str), c.tail] for c in node.getchildren()))) +
+                     [node.tail])
+        # filter removes possible Nones in texts and tails
+        return ''.join(filter(None, parts))

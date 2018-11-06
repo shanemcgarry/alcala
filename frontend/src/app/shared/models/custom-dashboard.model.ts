@@ -1,5 +1,18 @@
 import {SearchFeatures, SearchParams} from './search.model';
 
+export enum InfoBoxTypes {
+  BiggestExpense = 'biggestExpense',
+  MostFrequentExpense = 'mostFrequentExpense',
+  BusiestMonth = 'busiestMonth',
+  BusiestYear = 'busiestYear',
+  SlowestMonth = 'slowestMonth',
+  SlowestYear = 'slowestYear',
+  MostExpensiveMonth = 'mostExpensiveMonth',
+  MostExpensiveYear = 'MostExpensiveYear',
+  LeastExpensiveMonth = 'leastExpensiveMonth',
+  LeastExpensiveYear = 'leastExpensiveYear',
+  MostFrequentWord = 'mostFrequentWord'
+}
 export interface CustomInfoBox {
   _id: string;
   userID: string;

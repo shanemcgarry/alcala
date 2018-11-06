@@ -27,16 +27,16 @@ export class SearchService {
       );
   }
 
-  visualiseSearch(searchParams: SearchParams, userID?: string): Observable<DataSummaryPackage> {
-    return this.httpClient.post<any>(`${this.serviceUrl}visualise`, {userID: userID, params: searchParams}, {responseType: 'json'})
+  visualiseSearch(searchParams: SearchParams, userID?: string, logSearch: boolean = true): Observable<DataSummaryPackage> {
+    return this.httpClient.post<any>(`${this.serviceUrl}visualise`, {userID: userID, params: searchParams, logSearch: logSearch}, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('generateSearch', null))
       );
   }
 
-  keywordSearch(searchParams: SearchParams, pageIndex: number, resultLimit: number, userID?: string, searchID?: string): Observable<PageResult> {
+  keywordSearch(searchParams: SearchParams, pageIndex: number, resultLimit: number, userID?: string, searchID?: string, logSearch: boolean = true): Observable<PageResult> {
     const searchObj = new PageSearch(pageIndex, resultLimit, userID);
-    return this.httpClient.post<PageResult>(`${this.serviceUrl}page`, { info: searchObj, params: searchParams, searchID: searchID }, {responseType: 'json'})
+    return this.httpClient.post<PageResult>(`${this.serviceUrl}page`, { info: searchObj, params: searchParams, searchID: searchID, logSearch: logSearch }, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('searchPage', null))
       );

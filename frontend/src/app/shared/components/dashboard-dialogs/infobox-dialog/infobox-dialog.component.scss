@@ -1,0 +1,36 @@
+.edit-container {
+  min-width: 400px;
+}
+
+mat-dialog-actions {
+  margin-bottom: 2%;
+}
+.color-options {
+  .blue {
+    background: linear-gradient(60deg, #233232, #3C5454);
+    color: white;
+    height: 100%;
+    width: 100%;
+  }
+
+  .purple {
+    background: linear-gradient(60deg, #2E2A39, #4E4860);
+    color: white;
+    height: 30px;
+    width: 100%;
+  }
+
+  .yellow {
+    background: linear-gradient(60deg, #534F3A, #8B8564);
+    color: white;
+    height: 100%;
+    width: 100%;
+  }
+
+  .brown {
+    background: linear-gradient(60deg, #53463A, #8B7664);
+    color: white;
+    height: 100%;
+    width: 100%;
+  }
+}

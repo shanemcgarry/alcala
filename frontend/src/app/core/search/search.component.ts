@@ -6,6 +6,7 @@ import {UserService} from '../../shared/services/user.service';
 import {SearchLogEntry, SearchParams, SearchFeatures} from '../../shared/models/search.model';
 import {SearchService} from '../../shared/services/search.service';
 import { cloneDeep } from 'lodash';
+import {SiteUser} from '../../shared/models/site-user.model';
 
 @Component({
   selector: 'app-search',
@@ -18,10 +19,11 @@ export class SearchComponent implements OnInit {
   dataModel: PageResult;
   imageBase: string = environment.imageUrl + 'thumbs/';
   currentIndex: number;
-  userID: string;
+  currentUser: SiteUser;
   currentSearchID: string;
   availableYears = [1774, 1775, 1776, 1777, 1778, 1779, 1781];
   searchHistory: SearchLogEntry[];
+  displayedColumns = ['title', 'matches', 'description', 'id'];
 
   constructor(private route: ActivatedRoute, private searchService: SearchService, private userService: UserService) {
     this.currentSearchID = undefined;
@@ -30,8 +32,8 @@ export class SearchComponent implements OnInit {
   ngOnInit() {
     const loggedInUser = this.userService.getLoggedInUser();
     if (loggedInUser) {
-      this.userID = loggedInUser._id;
-      this.searchService.getSearchHistory(this.userID, 'keyword')
+      this.currentUser = loggedInUser;
+      this.searchService.getSearchHistory(this.currentUser._id, 'keyword')
         .subscribe(
           data => this.searchHistory = data.slice(0, 4),
           err => console.log(err),
@@ -45,16 +47,24 @@ export class SearchComponent implements OnInit {
   }
 
   getBeginHits(): number {
-    return ((this.dataModel.currentIndex * this.dataModel.resultLimit) - this.dataModel.resultLimit + 1);
+    let result = 0;
+    if ( this.dataModel.totalHits > 0 ) {
+      result = ((this.dataModel.currentIndex * this.dataModel.resultLimit) - this.dataModel.resultLimit + 1);
+    }
+    return result;
   }
 
   getEndHits(): number {
-    return (this.dataModel.currentIndex * this.dataModel.resultLimit);
+    let result = 0;
+    if (this.dataModel.totalHits > 0) {
+      result = (this.dataModel.currentIndex * this.dataModel.resultLimit);
+    }
+    return result;
   }
 
   onNavClick(index: number) {
     this.currentIndex = index;
-    this.searchService.keywordSearch(this.searchParams, index, 20, this.userID, this.currentSearchID)
+    this.searchService.keywordSearch(this.searchParams, index, 20, this.currentUser._id, this.currentSearchID)
       .subscribe(
         data => this.dataModel = data,
         error => console.log(error),
@@ -82,9 +92,9 @@ export class SearchComponent implements OnInit {
     this.currentIndex = 1;
     this.isTile = false;
     this.searchParams = histObj.params;
-    this.searchService.keywordSearch(this.searchParams, 1, 20, this.userID, this.currentSearchID)
+    this.searchService.keywordSearch(this.searchParams, 1, 20, this.currentUser._id, this.currentSearchID, false)
       .subscribe(
-        data => this.dataModel = data,
+        data => { this.dataModel = data; console.log(this.dataModel); },
         err => console.log(err),
         () => console.log('History object loaded')
       );
@@ -97,7 +107,7 @@ export class SearchComponent implements OnInit {
     this.currentIndex = 1;
     this.currentSearchID = undefined;
     this.isTile = false;
-    this.searchService.keywordSearch(this.searchParams, 1, 20, this.userID, this.currentSearchID)
+    this.searchService.keywordSearch(this.searchParams, 1, 20, this.currentUser._id, this.currentSearchID)
       .subscribe(
         data => {
           this.dataModel = data;
@@ -108,7 +118,7 @@ export class SearchComponent implements OnInit {
           const histObj: SearchLogEntry = {
             _id: data.searchID,
             type: 'keyword',
-            userID: this.userID,
+            userID: this.currentUser._id,
             totalHits: data.totalHits,
             params: cloneDeep(this.searchParams),
             features: [features]

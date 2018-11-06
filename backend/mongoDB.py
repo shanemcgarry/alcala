@@ -72,6 +72,7 @@ class MongoData:
 
     def log_features(self, searchID, search_features):
         """Logs the features of visualisation search for reproduction"""
+        print('SearchID is %s' % searchID)
         update_result = self.db.search_log.update({'_id': ObjectId(searchID)}, {
             '$addToSet': {'features': {'$each': [search_features.get_properties()]}}
         })

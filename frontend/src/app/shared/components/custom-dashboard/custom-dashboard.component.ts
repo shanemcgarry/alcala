@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {CustomChartInfo, CustomDashboardInfo} from '../../models/custom-dashboard.model';
+import {CustomChartInfo, CustomDashboardInfo, CustomInfoBox, CustomStoryInfo} from '../../models/custom-dashboard.model';
 import {DashboardService} from '../../services/dashboard.service';
 import {UserService} from '../../services/user.service';
 import {SiteUser} from '../../models/site-user.model';
 import {SearchService} from '../../services/search.service';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {InfoboxDialogComponent} from '../dashboard-dialogs/infobox-dialog/infobox-dialog.component';
+import {DashboardComponent} from '../../../core/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-custom-dashboard',
@@ -18,14 +21,25 @@ export class CustomDashboardComponent implements OnInit {
   dataModel: CustomDashboardInfo;
   userInfo: SiteUser;
 
-  constructor(private dashboardService: DashboardService, private userService: UserService, private searchService: SearchService) {
+  constructor(private dashboardService: DashboardService, private userService: UserService, private searchService: SearchService, public dialog: MatDialog) {
     this.userInfo = this.userService.getLoggedInUser();
   }
 
   ngOnInit() {
     this.dashboardService.getUserDashboard(this.userInfo._id)
       .subscribe(
-        data => this.dataModel = data,
+        data => {
+            this.dataModel = data;
+            if (!this.dataModel || !this.dataModel._id) {
+              this.dataModel = {
+                _id: undefined,
+                userID: this.userInfo._id,
+                infoBoxes: [],
+                charts: [],
+                stories: [],
+              };
+            }
+          },
         err => console.log(err),
         () => { console.log('Dashboard Data Loaded'); console.log(this.dataModel); }
       );
@@ -36,7 +50,33 @@ export class CustomDashboardComponent implements OnInit {
   }
 
   addInfoBox(): void {
-    // TODO: create a method to add an infobox
+    const infoBoxData: CustomInfoBox = {
+      _id: undefined,
+      userID: this.userInfo._id,
+      type: undefined,
+      icon: undefined,
+      label: undefined,
+      colour: undefined
+    };
+    const dialogRef = this.dialog.open(InfoboxDialogComponent, {
+      data: infoBoxData
+    });
+    dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.dataModel.infoBoxes.push(result);
+          this.saveDashboard();
+        }
+      }
+    );
+  }
+
+  saveDashboard(): void {
+    this.dashboardService.saveUserDashboard(this.dataModel)
+      .subscribe(
+        x => this.dataModel = x,
+        err => console.log(err),
+        () => console.log('Dashboard saved.')
+      );
   }
 
   getInfoBoxData(dataType: string, infoBoxType: string): any {

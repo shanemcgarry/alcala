@@ -5,6 +5,6 @@ export interface SiteUser {
   firstname: string;
   surname: string;
   loginToken: string;
-  useDashboard: any;
+  allowLogging: boolean;
   roles: string[];
 }

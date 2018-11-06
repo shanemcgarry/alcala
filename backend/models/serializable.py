@@ -75,7 +75,7 @@ class JsonSerializable(object):
 class BaseMongoObject(JsonSerializable):
     def __init__(self, _id, *args, **kwargs):
         if _id is not None and _id != 'null' and _id != 'undefined' and _id != '':
-            self._id = _id
+            self._id = str(_id)
 
 
 
