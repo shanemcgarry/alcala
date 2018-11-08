@@ -159,7 +159,14 @@ class ExistData:
                         $hit
                 let $total-hits := count($hits)
                 let $results-to-show := subsequence($hits, %d, %d)
-                for $h
+                for $hit in $results-to-show
+                return
+                    <result>
+                        {$hit}
+                        <matches>
+                            {kwic:summarize($hit, <config width="40"/>)}
+                        </matches>
+                    </result>
                 """ % (query_string, ((pageIndex * limit) - limit + 1), limit)
         query_hits = """
                     for $hit in doc("alcala/books/ledger.xml")//pages/page
@@ -173,11 +180,13 @@ class ExistData:
         qr = self.db.query(xquery, pageIndex, limit)
         result = PageResultList(total_hits=qrh.hits, current_index=pageIndex, result_limit=limit)
         for i in range(0, qr.count - 1):
+            #print(tostring(qr.results[i]))
             xml = etree.XML(tostring(qr.results[i]))
             page = AlcalaPage(xml)
             # result_page = PageResult(page, match_xml=None)
             match_xml = xml.find('.//matches')
             result_page = PageResult(page, match_xml)
+            #print(match_xml)
             result.add_page(result_page)
 
         return result

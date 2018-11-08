@@ -50,7 +50,7 @@ class PageResult(JsonSerializable):
             else:
                 self.matchesString = ''
 
-            self.textSnippet = '---'.join(list(x for x in self.__kwicArray__[0:3]))
+            self.textSnippet = '---'.join(list(x for x in self.__kwicArray__[0:5]))
             #self.textSnippet = self.textSnippet.replace('---', '...')
 
     def get_title(self):
@@ -197,7 +197,7 @@ class PageResult(JsonSerializable):
         #text = re.sub('^[\r\n]+|\.|[\r\n]+$', "", text)
         text = re.sub('[\r\n]', "", text)
         text = re.sub("\s+", " ", text)
-        text = re.sub("[\.]"*3, "---", text)
+        #text = re.sub("[\.]"*3, "---", text)
         return text.strip()
 
     # code taken from stackoverflow answer: https://stackoverflow.com/a/28173933/1313890

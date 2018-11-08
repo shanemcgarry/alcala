@@ -24,6 +24,7 @@ export class SearchComponent implements OnInit {
   availableYears = [1774, 1775, 1776, 1777, 1778, 1779, 1781];
   searchHistory: SearchLogEntry[];
   displayedColumns = ['title', 'matches', 'description', 'id'];
+  showSpinner = false;
 
   constructor(private route: ActivatedRoute, private searchService: SearchService, private userService: UserService) {
     this.currentSearchID = undefined;
@@ -86,6 +87,16 @@ export class SearchComponent implements OnInit {
     return result;
   }
 
+  formatTextSnippet(snippet: string) {
+    let result = '<ul>';
+    snippet.split('---').forEach(x => {
+      result += `<li>${x}</li>`;
+    });
+    result += '</ul>';
+    console.log(result);
+    return result;
+  }
+
   onHistoryClick(searchID: string): void {
     this.currentSearchID = searchID;
     const histObj = this.searchHistory.find(x => x._id === searchID);
@@ -96,11 +107,12 @@ export class SearchComponent implements OnInit {
       .subscribe(
         data => { this.dataModel = data; console.log(this.dataModel); },
         err => console.log(err),
-        () => console.log('History object loaded')
+        () => this.showSpinner = false
       );
   }
 
   onSearchClick(): void {
+    this.showSpinner = true;
     if (!this.searchHistory) {
       this.searchHistory = [];
     }
@@ -130,6 +142,7 @@ export class SearchComponent implements OnInit {
           this.searchHistory.push(histObj);
         },
         error => console.log(error),
+        () => this.showSpinner = false
       );
   }
 

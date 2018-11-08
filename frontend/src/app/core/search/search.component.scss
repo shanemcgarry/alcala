@@ -1,3 +1,5 @@
+@import '../../../styles/_variables.scss';
+
 h1,h2,h3,h4 {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
@@ -77,18 +79,33 @@ mat-button-toggle-group {
   float: right;
 }
 
+mat-panel-title {
+  color: $base-red;
+  font-weight: bold;
+}
+
 .align-center {
-  position: relative;
-  margin-left: 40%;
-  margin-top: 30px;
+  /*position: relative;
+  margin-left: 30%;
+  margin-top: 30px;*/
+  margin-top: 1%;
 }
 
 .query-info {
   color: grey;
-  font-family: Roboto;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   margin-bottom: 10px;
   margin-top: -10px;
   display: block;
+}
+
+.search-results {
+  padding-top: 1%;
+}
+
+mat-progress-spinner {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 mat-card-content {

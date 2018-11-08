@@ -9,6 +9,10 @@ body {
   display: none !important;
 }
 
+.clear {
+  clear: both;
+}
+
 .app-content {
   //margin: 25px 17px 20px 17px;
   background-color: $page-color;

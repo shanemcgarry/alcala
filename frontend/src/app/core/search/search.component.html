@@ -4,7 +4,7 @@
       <div class="mt20">
         <mat-form-field appearance="outline" disabled="false" fxFlex="100%" fxFill >
           <mat-label>Keyword(s)</mat-label>
-          <input matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchParams.keywords" (keyup.enter)="onSearchClick()">
+          <input matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchParams.keywords" (keyup.enter)="this.showSpinner = true; onSearchClick()">
           <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="this.searchParams.keywords=''">
             <mat-icon>close</mat-icon>
           </button>
@@ -15,7 +15,7 @@
       <div class="mt20">
         <mat-form-field appearance="outline" disabled="false" fxFlex="100%" fxFill>
           <mat-label>Keyword(s)</mat-label>
-          <input matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchParams.keywords" (keyup.enter)="onSearchClick()">
+          <input matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchParams.keywords" (keyup.enter)="this.showSpinner = true; onSearchClick()">
           <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="this.searchParams.keywords=''">
             <mat-icon>close</mat-icon>
           </button>
@@ -43,10 +43,51 @@
       </span>
     </mat-tab>
   </mat-tab-group>
-  <button mat-raised-button color="primary" (click)="onSearchClick()">Search</button>
+  <button mat-raised-button color="primary" (click)="this.showSpinner = true; onSearchClick()">Search</button>
 </div>
-<mat-divider></mat-divider>
-<h3 *ngIf="this.searchHistory" class="ml10">Recent Searches</h3>
+<!--<mat-divider></mat-divider>-->
+<div *ngIf="showSpinner">
+  <!--<mat-card>
+    <mat-card-content>
+      <mat-progress-spinner color="primary" mode="indeterminate" [value]="50"></mat-progress-spinner>
+    </mat-card-content>
+  </mat-card>-->
+  <mat-progress-spinner color="primary" mode="indeterminate" [value]="50"></mat-progress-spinner>
+</div>
+<mat-accordion *ngIf="this.searchHistory" class="ml10">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Recent Searches</mat-panel-title>
+      <mat-panel-description>View your recent searches</mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-grid-list *ngIf="this.searchHistory" cols="4" rowHeight="200px" class="container page-content">
+      <mat-grid-tile *ngFor="let h of this.searchHistory" [colspan]="1" [rowspan]="1">
+        <mat-card class="search-card">
+          <mat-card-content>
+            <div>
+              <span class="bold">Keywords Used: </span><span>{{ h.params.keywords }}</span>
+            </div>
+            <div *ngIf="this.checkForValue(h.params.year)">
+              <span class="bold">Year: </span><span>{{ h.params.year }}</span>
+            </div>
+            <div *ngIf="this.checkForValue(h.params.topWords)">
+              <span>Only show the top <span class="bold">{{ h.params.topWords }}</span> words</span>
+            </div>
+            <div *ngIf="this.checkForValue(h.params.bottomWords)">
+              <span>Only show words appearing less than <span class="bold">{{ h.params.bottomWords }}</span></span>
+            </div>
+            <mat-divider></mat-divider>
+            <div>
+              <span class="bold">Total Results: </span> {{ h.totalHits }}
+            </div>
+            <button mat-raised-button color="primary" (click)="this.showSpinner = true; onHistoryClick(h._id)">View</button>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-expansion-panel>
+</mat-accordion>
+<!--<h3 *ngIf="this.searchHistory" class="ml10">Recent Searches</h3>
 <mat-grid-list *ngIf="this.searchHistory" cols="4" rowHeight="200px" class="container page-content">
   <mat-grid-tile *ngFor="let h of this.searchHistory" [colspan]="1" [rowspan]="1">
     <mat-card class="search-card">
@@ -67,19 +108,20 @@
         <div>
           <span class="bold">Total Results: </span> {{ h.totalHits }}
         </div>
-        <button mat-raised-button color="primary" (click)="onHistoryClick(h._id)">View</button>
+        <button mat-raised-button color="primary" (click)="this.showSpinner = true; onHistoryClick(h._id)">View</button>
       </mat-card-content>
     </mat-card>
   </mat-grid-tile>
-</mat-grid-list>
+</mat-grid-list>-->
 <mat-divider></mat-divider>
-<div *ngIf="this.dataModel" class="container page-content">
+<div class="clear"></div>
+<div *ngIf="this.dataModel" class="search-results container page-content">
   <div class="full-width">
     <mat-button-toggle-group value="false">
-      <mat-button-toggle selected="true" value="false" (change)="onToggleClick($event.value)" matTooltip="View List">
+      <mat-button-toggle selected="true" value="false" (change)="this.isTile = false;" matTooltip="View List">
         <mat-icon>view_list</mat-icon>
       </mat-button-toggle>
-      <mat-button-toggle value="true" (change)="onToggleClick($event.value)" matTooltip="View Tiles">
+      <mat-button-toggle value="true" (change)="this.isTile = true;" matTooltip="View Tiles">
         <mat-icon>view_comfy</mat-icon>
       </mat-button-toggle>
     </mat-button-toggle-group>
@@ -103,11 +145,16 @@
       </ng-container>
       <ng-container matColumnDef="matches" class="w20">
         <th mat-header-cell *matHeaderCellDef>Matches</th>
-        <td mat-cell *matCellDef="let p">{{ p.matchesString }}</td>
+        <!--<td mat-cell *matCellDef="let p">{{ p.matchesString }}</td>-->
+        <td mat-cell *matCellDef="let p">
+          <ul>
+            <li *ngFor="let m of p.matchesArray">{{  m['key'] + ' (' + m['value'] + ') ' }}</li>
+          </ul>
+        </td>
       </ng-container>
       <ng-container matColumnDef="description" class="words-column">
         <th mat-header-cell *matHeaderCellDef>Text Snippet</th>
-        <td mat-cell *matCellDef="let p" [innerHTML]="p.textSnippet"></td>
+        <td mat-cell *matCellDef="let p" [innerHTML]="formatTextSnippet(p.textSnippet)"></td>
       </ng-container>
       <ng-container matColumnDef="id" class="w5">
         <th mat-header-cell *matHeaderCellDef></th>
@@ -141,7 +188,7 @@
       </mat-grid-tile>
     </mat-grid-list>
   </div>
-  <div class="align-center">
+  <div class="align-center" fxLayout="row" fxLayoutAlign="center center">
     <button mat-icon-button [disabled]="this.currentIndex == 1" (click)="onNavClick(this.currentIndex - 1)" >
       <mat-icon aria-label="Previous">navigate_before</mat-icon>
     </button>

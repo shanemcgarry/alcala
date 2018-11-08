@@ -4,8 +4,8 @@
     <span class="nav-spacer"></span>
     <a mat-button href="/">Home</a>
     <a mat-button href="/search">Search</a>
-    <a mat-button href="/visualise/search/multiBar">Search</a>
-    <a mat-button href="/visualise/dashboard">My Dashboard</a>
+    <a mat-button href="/visualise/search/multiBar">Visual Search</a>
+    <a mat-button href="/visualise/dashboard">Dashboard</a>
     <a *ngIf="this.isAdminUser()" mat-button href="/admin/curation">Data Curation</a>
     <a *ngIf="this.userService.getLoggedInUser()" mat-icon-button href="/logout">
       <mat-icon>account_circle</mat-icon>
