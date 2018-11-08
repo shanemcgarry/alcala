@@ -6,9 +6,9 @@
     <button mat-button (click)="this.setView('custom')" matTooltip="View My Dashboard">
       <mat-icon>dashboard</mat-icon>
     </button>
-    <button mat-button (click)="this.setView('stories')" matTooltip="View My Stories">
+    <!--<button mat-button (click)="this.setView('stories')" matTooltip="View My Stories">
       <mat-icon>bookmarks</mat-icon>
-    </button>
+    </button>-->
   </mat-drawer>
   <mat-drawer-content>
     <app-dashboard-sample *ngIf="this.showSamples"></app-dashboard-sample>

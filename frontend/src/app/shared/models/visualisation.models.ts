@@ -4,6 +4,8 @@ export class VisFilter {
   bottomWordsEnabled: boolean;
   keywordsEnabled: boolean;
   categoriesEnabled: boolean;
+
+  constructor() { }
 }
 
 export class LabelValue {

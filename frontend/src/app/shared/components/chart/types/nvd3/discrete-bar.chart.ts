@@ -34,7 +34,7 @@ export class NVD3DiscreteBarChart extends BaseChart {
         });
         break;
       case 'year':
-      case 'month':
+      case 'monthNum':
         chartData.data.forEach(x => {
           x.timeSeries.forEach( y => {
             const timeElement = baseData.find(t => t.key === y.timeValue);
@@ -90,11 +90,17 @@ export class NVD3DiscreteBarChart extends BaseChart {
         },
         duration: 500,
         xAxis: {
-          axisLabel: this.getAxisLabel(this.xField)
+          axisLabel: this.getAxisLabel(this.xField),
+          tickFormat: function(d) {
+            return self.formatAxisData(self.xField, d);
+          }
         },
         yAxis: {
           axisLabel: this.getAxisLabel(this.yField),
-          axisLabelDistance: -10
+          axisLabelDistance: -10,
+          tickFormat: function(d) {
+            return self.formatAxisData(self.yField, d);
+          }
         }
       }
     };

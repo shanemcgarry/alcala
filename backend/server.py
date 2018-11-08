@@ -289,19 +289,21 @@ def delete_user_infobox():
 def get_user_charts(userID):
     mdb = MongoData()
     results = mdb.get_custom_charts(userID)
-    for r in results:
-        cleanParams = SearchParameters(groupBy=r.searchParams['groupBy'], year=r.searchParams['year'], topWords=r.searchParams['topWords'],
-                                       bottomWords=r.searchParams['bottomWords'],keywords=r.searchParams['keywords'],
-                                       filteredCategories=r.searchParams['filteredCategories'])
-        cleanParams = Tools.check_search_params(cleanParams)
-        if cleanParams.groupBy == 'category':
-            # do category search
-            r.data = mdb.get_category_time_data(searchParams=cleanParams)
-        elif cleanParams.groupBy == 'word':
-            # do word search
-            r.data = mdb.get_word_time_data(searchParams=cleanParams)
-        else:
-            raise ApplicationError('Invalid groupBy setting')
+
+    if results is not None:
+        for r in results:
+            cleanParams = SearchParameters(groupBy=r.searchParams['groupBy'], year=r.searchParams['year'], topWords=r.searchParams['topWords'],
+                                           bottomWords=r.searchParams['bottomWords'],keywords=r.searchParams['keywords'],
+                                           filteredCategories=r.searchParams['filteredCategories'])
+            cleanParams = Tools.check_search_params(cleanParams)
+            if cleanParams.groupBy == 'category':
+                # do category search
+                r.data = mdb.get_category_time_data(searchParams=cleanParams)
+            elif cleanParams.groupBy == 'word':
+                # do word search
+                r.data = mdb.get_word_time_data(searchParams=cleanParams)
+            else:
+                raise ApplicationError('Invalid groupBy setting')
 
     response = app.response_class(
         response=Tools.serialise_list(results),

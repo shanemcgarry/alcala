@@ -67,7 +67,7 @@ export class NVD3ScatterChart extends BaseChart {
   formatAxisData(axis: string, dataValue: any) {
     switch (axis) {
       case 'year':
-      case 'month':
+      case 'monthNum':
         return dataValue;
       case 'totalAmount':
         return d3.format('0f')(dataValue);

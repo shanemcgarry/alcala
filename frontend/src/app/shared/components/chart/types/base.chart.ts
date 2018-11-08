@@ -34,8 +34,8 @@ export abstract class BaseChart implements IBaseChart {
   formatAxisData(axis: string, dataValue: any) {
     switch (axis) {
       case 'year':
-      case 'month':
-        const timeFormat = axis === 'year' ? '%Y' :  '%m';
+      case 'monthNum':
+        const timeFormat = axis === 'year' ? '%Y' :  '%b';
         return d3.time.format(timeFormat)(new Date(dataValue));
       case 'totalAmount':
         return d3.format('0f')(dataValue);
@@ -52,7 +52,7 @@ export abstract class BaseChart implements IBaseChart {
       case 'totalAmount': result = 'Total Spent'; break;
       case 'transactionCount': result = '# of Occurrences'; break;
       case 'year': result = 'Years'; break;
-      case 'month': result = 'Months'; break;
+      case 'monthNum': result = 'Months'; break;
       case 'category': result = 'Categories'; break;
       case 'word': result = 'Words'; break;
     }

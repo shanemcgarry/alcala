@@ -35,7 +35,7 @@ export class NVD3PieChart extends BaseChart {
         });
         break;
       case 'year':
-      case 'month':
+      case 'monthNum':
         chartData.data.forEach(x => {
           x.timeSeries.forEach( y => {
             const timeElement = baseData.find(t => t.key === y.timeValue);

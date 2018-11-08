@@ -107,9 +107,6 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   setValidFields() {
-    this.supportedXFields = [];
-    this.supportedYFields = [];
-    this.supportedSizeFields = [];
     this.supportedXFields = this.getAllowableFields('x');
     this.supportedYFields = this.getAllowableFields('y');
     this.supportedSizeFields = this.getAllowableFields('size');
@@ -136,7 +133,9 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       case 'x':
         chartInfo.allowableXFields.forEach(x => {
           results.push(this.getLabelValueItem(x));
+          console.log(x);
         });
+        console.log(results);
         break;
       case 'y':
         chartInfo.allowableYFields.forEach(x => {
@@ -221,11 +220,15 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       this.supportedFields.push(new LabelValue('Year', 'year'));
       this.searchParams.year = undefined;
     }
+    this.filters.yearEnabled = e.checked;
   }
 
   getValidTimeField(): LabelValue {
     let result;
     if (this.filters.yearEnabled) {
+      console.log('getting month field');
+      console.log(this.supportedFields.find(x => x.value === 'monthNum'));
+      console.log(this.supportedFields.findIndex(x => x.value === 'monthNum'));
       result =  this.supportedFields.find(x => x.value === 'monthNum');
     } else {
       result =  this.supportedFields.find(x => x.value === 'year');
@@ -247,14 +250,18 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   onSearch(): void {
+    console.log(this.filters);
     this.searchService.visualiseSearch(this.searchParams, this.userID)
       .subscribe(
         data => {
             this.graphData = data;
             this.setChartDetailData(data.rawData);
+            this.logSearchFeatures();
           },
         err => console.log(err),
-        () => { console.log('Graph Data loaded:', this.graphData.data); this.logSearchFeatures(); }
+        () => {
+          this.resetFeatures();
+        }
       );
   }
 
