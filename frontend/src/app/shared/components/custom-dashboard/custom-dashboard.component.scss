@@ -13,6 +13,13 @@ app-info-box {
   margin-right: 1%;
 }
 
+.chart-card {
+  cursor: pointer;
+  mat-card-title {
+    font-size: 1em;
+  }
+}
+
 .section-header {
   width: 100%;
   button {

@@ -9,6 +9,7 @@ class CustomChartInfo(BaseMongoObject):
         self.description = description
         self.searchParams = searchParams
         self.features = features
+        self.data = None
 
 
 class CustomStoryInfo(BaseMongoObject):

@@ -1,4 +1,5 @@
 import {SearchFeatures, SearchParams} from './search.model';
+import {DataSummaryPackage} from './analysis-result';
 
 export enum InfoBoxTypes {
   BiggestExpense = 'biggestExpense',
@@ -29,6 +30,7 @@ export interface CustomChartInfo {
   description: string;
   searchParams: SearchParams;
   features: SearchFeatures;
+  data: DataSummaryPackage;
 }
 
 export interface CustomStoryInfo {

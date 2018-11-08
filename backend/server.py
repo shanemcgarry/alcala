@@ -125,8 +125,13 @@ def do_vis_search():
     else:
         raise ApplicationError('Invalid groupBy setting')
 
+    if 'logSearch' in json_req.keys():
+        logSearch = json_req['logSearch']
+    else:
+        logSearch = False
+
     if 'userID' in json_req.keys():
-        if not Tools.check_for_empty_value(json_req['userID']):
+        if not Tools.check_for_empty_value(json_req['userID']) and logSearch:
             results.searchID = mdb.log_search(json_req['userID'], searchParams, 'visualisation')
 
     response = app.response_class(
@@ -284,6 +289,20 @@ def delete_user_infobox():
 def get_user_charts(userID):
     mdb = MongoData()
     results = mdb.get_custom_charts(userID)
+    for r in results:
+        cleanParams = SearchParameters(groupBy=r.searchParams['groupBy'], year=r.searchParams['year'], topWords=r.searchParams['topWords'],
+                                       bottomWords=r.searchParams['bottomWords'],keywords=r.searchParams['keywords'],
+                                       filteredCategories=r.searchParams['filteredCategories'])
+        cleanParams = Tools.check_search_params(cleanParams)
+        if cleanParams.groupBy == 'category':
+            # do category search
+            r.data = mdb.get_category_time_data(searchParams=cleanParams)
+        elif cleanParams.groupBy == 'word':
+            # do word search
+            r.data = mdb.get_word_time_data(searchParams=cleanParams)
+        else:
+            raise ApplicationError('Invalid groupBy setting')
+
     response = app.response_class(
         response=Tools.serialise_list(results),
         status=200,
@@ -297,10 +316,10 @@ def save_user_chart():
     mdb = MongoData()
     json_data = request.get_json()
     chartObj = CustomChartInfo(**json_data)
-    if Tools.check_for_empty_value(chartObj._id):
-        chartObj._id = mdb.insert_custom_chart(chartObj)
-    else:
+    if hasattr(chartObj, '_id') and  not(Tools.check_for_empty_value(chartObj._id)):
         chartObj = mdb.update_custom_chart(chartObj)
+    else:
+        chartObj._id = mdb.insert_custom_chart(chartObj)
 
     response = app.response_class(
         response=chartObj.toJson(),

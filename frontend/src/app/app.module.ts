@@ -17,6 +17,7 @@ import { MatSidenavModule } from '@angular/material/sidenav/';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule, MatRadioModule, MatSelectModule } from '@angular/material';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -73,6 +74,7 @@ import { DashboardSampleComponent } from './shared/components/dashboard-sample/d
 import { CustomDashboardComponent } from './shared/components/custom-dashboard/custom-dashboard.component';
 import { StoriesComponent } from './shared/components/stories/stories.component';
 import { InfoboxDialogComponent } from './shared/components/dashboard-dialogs/infobox-dialog/infobox-dialog.component';
+import { ChartDialogComponent } from './shared/components/dashboard-dialogs/chart-dialog/chart-dialog.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -103,10 +105,12 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DashboardSampleComponent,
     CustomDashboardComponent,
     StoriesComponent,
-    InfoboxDialogComponent
+    InfoboxDialogComponent,
+    ChartDialogComponent
   ],
   imports: [
     routing,
+    BrowserAnimationsModule,
     BrowserModule,
     CommonModule,
     LayoutModule,
@@ -115,7 +119,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     YoutubePlayerModule,
     TagCloudModule,
     NvD3Module,
-    BrowserAnimationsModule,
     MatExpansionModule,
     MatListModule,
     MatDialogModule,
@@ -130,6 +133,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     MatButtonModule,
     MatToolbarModule,
     MatButtonToggleModule,
+    MatStepperModule,
     MatTableModule,
     MatCardModule,
     MatInputModule,
@@ -145,7 +149,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     FlexLayoutModule,
     HttpClientModule
   ],
-  entryComponents: [ EditComponent, InfoboxDialogComponent ],
+  entryComponents: [ EditComponent, InfoboxDialogComponent, ChartDialogComponent ],
   providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, SpinnerService, UserService, AuthGuard, SiteService, LocalStorageService, { provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG }],
   bootstrap: [AppComponent]
 })

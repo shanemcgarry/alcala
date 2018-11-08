@@ -1,0 +1,134 @@
+<h3 mat-dialog-title>{{ this.getDialogTitle() }}</h3>
+<mat-dialog-content>
+  <div *ngIf="!this.dataModel._id">
+    <mat-horizontal-stepper [linear]="true" *ngIf="this.tableData">
+      <mat-step>
+        <ng-template matStepLabel>Chart Selection</ng-template>
+        <H3>Search History</H3>
+        <table *ngIf="this.tableData" mat-table [dataSource]="this.tableData" multiTemplateDataRows>
+          <ng-container matColumnDef="chartType" class="t10">
+            <th mat-header-cell *matHeaderCellDef>Type of Chart</th>
+            <td mat-cell *matCellDef="let log">{{ this.formatString(log.features.chartType) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="xField" class="t10">
+            <th mat-header-cell *matHeaderCellDef>X Axis</th>
+            <td mat-cell *matCellDef="let log">{{ this.formatString(log.features.xField) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="yField" class="t10">
+            <th mat-header-cell *matHeaderCellDef>Y Axis</th>
+            <td mat-cell *matCellDef="let log">{{ this.formatString(log.features.yField)}}</td>
+          </ng-container>
+          <ng-container matColumnDef="groupBy" class="t5">
+            <th mat-header-cell *matHeaderCellDef>Grouping</th>
+            <td mat-cell *matCellDef="let log">{{ this.formatString(log.params.groupBy) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="keywords" class="t25">
+            <th mat-header-cell *matHeaderCellDef>Keywords</th>
+            <td mat-cell *matCellDef="let log">{{ log.params.keywords }}</td>
+          </ng-container>
+          <ng-container matColumnDef="year" class="t5">
+            <th mat-header-cell *matHeaderCellDef>Selected Year</th>
+            <td mat-cell *matCellDef="let log">{{ log.params.year }}</td>
+          </ng-container>
+          <ng-container matColumnDef="topWords" class="t5">
+            <th mat-header-cell *matHeaderCellDef>Top Words</th>
+            <td mat-cell *matCellDef="let log">{{ log.params.topWords }}</td>
+          </ng-container>
+          <ng-container matColumnDef="bottomWords" class="t5">
+            <th mat-header-cell *matHeaderCellDef>Bottom Words</th>
+            <td mat-cell *matCellDef="let log">{{ log.params.bottomWords }}</td>
+          </ng-container>
+          <ng-container matColumnDef="categories" class="t25">
+            <th mat-header-cell *matHeaderCellDef>Filtered Categories</th>
+            <td mat-cell *matCellDef="let log">{{ log.params.filteredCategories ? log.params.filteredCategories.join(', ') : null }}</td>
+          </ng-container>
+          <ng-container matColumnDef="select" class="t5">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let log">
+              <button matStepperNext (click)="onChartSelect(log._id)">
+                <mat-icon color="primary">check_circle</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let log" [attr.colspan]="displayColumns.length">
+              <div class="log-detail" [@detailExpand]="log == expandedLog ? 'expanded' : 'collapsed'">
+                <app-chart [data]="log.data" [chartType]="log.features.chartType"
+                           [height]="300" [width]="900" [xField]="log.features.xField" [yField]="log.features.yField"
+                           [sizeField]="log.features.sizeField">
+                </app-chart>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+          <tr mat-row *matRowDef="let log; columns: displayColumns;" (click)="expandedLog = log"
+              class="log-entry-row" [class.expanded-row]="expandedLog === log">
+          </tr>
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="log-detail-row"></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Chart Details</ng-template>
+        <h3>Chart Details</h3>
+        <div fxLayout="row">
+          <mat-form-field fxFlex="100">
+            <input matInput placeholder="Chart Title" [(ngModel)]="this.dataModel.title" [formControl]="titleFC">
+            <button mat-button *ngIf="this.dataModel.title" matSuffix mat-icon-button aria-label="Clear" (click)="this.dataModel.title = undefined">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-error *ngIf="titleFC.hasError('required')">
+              Label is <strong>required</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row">
+          <mat-form-field fxFlex="100">
+            <textarea matInput placeholder="Description" [(ngModel)]="this.dataModel.description"></textarea>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row" *ngIf="this.chartData">
+          <app-chart fxFlex="100" [data]="this.chartData" [chartType]="this.dataModel.features.chartType"
+                     [height]="300" [width]="900" [xField]="this.dataModel.features.xField"
+                     [yField]="this.dataModel.features.yField" [sizeField]="this.dataModel.features.sizeField">
+          </app-chart>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </div>
+
+  <div *ngIf="this.dataModel._id">
+    <div fxLayout="row">
+      <mat-form-field fxFlex="100">
+        <input matInput placeholder="Chart Title" [(ngModel)]="this.dataModel.title" [formControl]="titleFC">
+        <button mat-button *ngIf="this.dataModel.title" matSuffix mat-icon-button aria-label="Clear" (click)="this.dataModel.title = undefined">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="titleFC.hasError('required')">
+          Label is <strong>required</strong>.
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row">
+      <mat-form-field fxFlex="100">
+        <textarea matInput placeholder="Description" [(ngModel)]="this.dataModel.description"></textarea>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row" *ngIf="this.chartData">
+      <app-chart fxFlex="100" [data]="this.chartData" [chartType]="this.dataModel.features.chartType"
+                 [height]="300" [width]="900" [xField]="this.dataModel.features.xField"
+                 [yField]="this.dataModel.features.yField" [sizeField]="this.dataModel.features.sizeField">
+      </app-chart>
+    </div>
+  </div>
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="saveChanges()" class="mr5">Save</button>
+    <button *ngIf="this.dataModel._id" mat-raised-button color="warn" (click)="deleteObject()" class="mr5">Delete</button>
+    <button mat-raised-button color="accent" (click)="cancelChanges()" class="ml5">Cancel</button>
+  </mat-dialog-actions>
+</mat-dialog-content>
+
+
+

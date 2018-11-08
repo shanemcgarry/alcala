@@ -7,9 +7,11 @@ import {SearchService} from '../../services/search.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {InfoboxDialogComponent} from '../dashboard-dialogs/infobox-dialog/infobox-dialog.component';
 import {DashboardComponent} from '../../../core/dashboard/dashboard.component';
-import {AnalysisSummary } from '../../models/analysis-result';
+import {AnalysisSummary, DataSummaryPackage} from '../../models/analysis-result';
 import {VisualisationService} from '../../../core/service/visualisation.service';
 import {CategoryPivotItem, MonthYearPivotItem, YearPivotItem} from '../../models/pivot-data.model';
+import {ChartDialogComponent} from '../dashboard-dialogs/chart-dialog/chart-dialog.component';
+import {SearchParams} from '../../models/search.model';
 
 @Component({
   selector: 'app-custom-dashboard',
@@ -22,6 +24,7 @@ export class CustomDashboardComponent implements OnInit {
   maxStories = 1;
   dataModel: CustomDashboardInfo;
   infoBoxes: CustomInfoBox[];
+  charts: CustomChartInfo[];
   userInfo: SiteUser;
   boxData: AnalysisSummary;
 
@@ -58,7 +61,13 @@ export class CustomDashboardComponent implements OnInit {
       .subscribe(
         data => this.infoBoxes = data,
         err => console.log(err),
-        () => { console.log('Infoboxes Loaded'); console.log(this.infoBoxes);}
+        () => { console.log('Infoboxes Loaded'); }
+      );
+    this.dashboardService.getUserCharts(this.userInfo._id)
+      .subscribe(
+        data => this.charts = data,
+        err => console.log(err),
+        () => console.log('charts loaded')
       );
   }
 
@@ -88,10 +97,7 @@ export class CustomDashboardComponent implements OnInit {
   }
 
   editInfoBox(id: string): void {
-    console.log(this.infoBoxes);
     let infoBoxData = this.infoBoxes.find(x => x._id === id);
-    console.log('Editing data');
-    console.log(infoBoxData);
     const dialogRef = this.dialog.open(InfoboxDialogComponent, { data: infoBoxData });
     dialogRef.afterClosed().subscribe( result => {
       if (result) {
@@ -300,20 +306,49 @@ export class CustomDashboardComponent implements OnInit {
     return result;
   }
 
-  onRemoveChart(chartInfO: CustomChartInfo): void {
-    const index = this.dataModel.charts.findIndex(x => x === chartInfO._id);
-    this.dataModel.charts.splice(index, 1);
+  onEditChart(chartInfo: CustomChartInfo): void {
+    const dialogRef = this.dialog.open(ChartDialogComponent, { data: chartInfo });
+    dialogRef.afterClosed().subscribe( result => {
+      if (result) {
+        if (result._id) {
+          chartInfo = result;
+        } else {
+          this.charts.splice(this.charts.findIndex(x => x._id === chartInfo._id), 1);
+          this.dataModel.charts.splice(this.dataModel.charts.findIndex(x => x === chartInfo._id), 1);
+          this.saveDashboard();
+        }
+      }
+    });
   }
 
   addChart(): void {
-    // TODO: create a method to add a chart
+    const customChart: CustomChartInfo = {
+      _id: null,
+      userID: this.userInfo._id,
+      title: null,
+      description: null,
+      searchParams: null,
+      features: null,
+      data: null
+    };
+    const dialogRef = this.dialog.open(ChartDialogComponent, { data: customChart, width: '1000px' });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result._id) {
+        if (!this.dataModel.charts) {
+          this.dataModel.charts = [];
+        }
+        this.dataModel.charts.push(result._id);
+        this.saveDashboard();
+        this.charts.push(result);
+      }
+      }
+    );
   }
 
-  generateChartData(chartInfo: CustomChartInfo): void {
-    // TODO: create a method for retrieving archived search data
-  }
+
 
   getChartWidth(): number {
-    return 800; // TODO: Fix me
+    const chartCards = document.querySelector('div.chart-card');
+    return chartCards ? chartCards[0].offsetWidth : 700;
   }
 }
