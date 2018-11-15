@@ -17,7 +17,8 @@ export class SearchComponent implements OnInit {
   searchParams: SearchParams = new SearchParams();
   isTile: boolean;
   dataModel: PageResult;
-  imageBase: string = environment.imageUrl + 'thumbs/';
+  thumbsBase: string = environment.imageUrl + 'thumbs/';
+  imageBase: string = environment.imageUrl;
   currentIndex: number;
   currentUser: SiteUser;
   currentSearchID: string;
@@ -93,7 +94,6 @@ export class SearchComponent implements OnInit {
       result += `<li>${x}</li>`;
     });
     result += '</ul>';
-    console.log(result);
     return result;
   }
 
@@ -105,9 +105,14 @@ export class SearchComponent implements OnInit {
     this.searchParams = histObj.params;
     this.searchService.keywordSearch(this.searchParams, 1, 20, this.currentUser._id, this.currentSearchID, false)
       .subscribe(
-        data => { this.dataModel = data; console.log(this.dataModel); },
-        err => console.log(err),
-        () => this.showSpinner = false
+        data => {
+          this.dataModel = data;
+          this.showSpinner = false;
+          },
+        err => {
+          console.log(err);
+          this.showSpinner = false;
+        }
       );
   }
 
@@ -122,27 +127,33 @@ export class SearchComponent implements OnInit {
     this.searchService.keywordSearch(this.searchParams, 1, 20, this.currentUser._id, this.currentSearchID)
       .subscribe(
         data => {
-          this.dataModel = data;
-          const features = new SearchFeatures();
-          features.pageIndex = this.currentIndex;
-          features.pageLimit = 20;
+          if (data) {
+            this.dataModel = data;
+            const features = new SearchFeatures();
+            features.pageIndex = this.currentIndex;
+            features.pageLimit = 20;
 
-          const histObj: SearchLogEntry = {
-            _id: data.searchID,
-            type: 'keyword',
-            userID: this.currentUser._id,
-            totalHits: data.totalHits,
-            params: cloneDeep(this.searchParams),
-            features: [features]
-          };
-          this.currentSearchID = data.searchID;
-          if (this.searchHistory.length >= 4) {
-            this.searchHistory.shift(); // We only keep 4 items in the recent history so pop out the first element
+            const histObj: SearchLogEntry = {
+              _id: data.searchID,
+              type: 'keyword',
+              userID: this.currentUser._id,
+              totalHits: data.totalHits,
+              params: cloneDeep(this.searchParams),
+              features: [features]
+            };
+            this.currentSearchID = data.searchID;
+            if (this.searchHistory.length >= 4) {
+              this.searchHistory.shift(); // We only keep 4 items in the recent history so pop out the first element
+            }
+            this.searchHistory.push(histObj);
           }
-          this.searchHistory.push(histObj);
+          this.showSpinner = false;
         },
-        error => console.log(error),
-        () => this.showSpinner = false
+        error => {
+          console.log('uh oh!');
+          console.log(error);
+          this.showSpinner = false;
+        }
       );
   }
 

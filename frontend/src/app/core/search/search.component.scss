@@ -10,6 +10,8 @@ h1,h2,h3,h4 {
 }
 
 .search-card {
+  width: calc(100% - 70px);
+  height: calc(100% - 70px);
   max-height: 100%;
   button {
     float: right;
@@ -48,14 +50,26 @@ mat-tab-group {
   }
 }
 
-mat-card {
-  width: calc(100% - 70px);
-  height: calc(100% - 70px);
+.tile-card {
+  margin-bottom: 2%;
+  width: 20%;
   img {
-    max-height: 60%;
+    max-height: 200px;
   }
-  button {
-    margin-bottom: -30px;
+  .mat-card-actions {
+    margin-left: 3% !important;
+  }
+
+  mat-card-content {
+    ul {
+      list-style-type: none;
+      margin-left: -15%;
+
+      li {
+        float: left;
+        margin-right: 10px;
+      }
+    }
   }
 }
 
@@ -68,10 +82,6 @@ mat-card {
   margin-left: 10px !important;
 }
 
-mat-card-actions {
-  position: absolute;
-  bottom: 10%;
-}
 
 mat-button-toggle-group {
   margin-bottom: 50px;
@@ -108,17 +118,7 @@ mat-progress-spinner {
   margin-right: auto;
 }
 
-mat-card-content {
-  ul {
-    list-style-type: none;
-    margin-left: -15%;
 
-    li {
-      float: left;
-      margin-right: 10px;
-    }
-  }
-}
 
 table {
   width: 100%;

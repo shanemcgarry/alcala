@@ -4,8 +4,9 @@ class Tools:
     @staticmethod
     def build_word_list(analysisItems):
         results = list()
-        for t in analysisItems:
-            results.extend(t.words)
+        if analysisItems is not None:
+            for t in analysisItems:
+                results.extend(t.words)
         return results
 
     @staticmethod

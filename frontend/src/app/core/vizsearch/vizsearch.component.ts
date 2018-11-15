@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { SearchParams, SearchFeatures } from '../../shared/models/search.model';
 import { VisualisationService } from '../service/visualisation.service';
 import {CategoryData} from '../../shared/models/pivot-data.model';
@@ -27,6 +28,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
   displayColumns: string[] = ['year', 'monthName', 'categories', 'words', 'reales', 'maravedises', 'pageid'];
   searchParams: SearchParams = new SearchParams();
+  thumbsBase = environment.imageUrl + 'thumbs/';
   userID: string;
   graphData: DataSummaryPackage;
   graphWidth = 800;
@@ -113,17 +115,21 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   setChartDetailData(data: AnalysisItem[]) {
-    this.detailData.data = data.sort((a, b) => {
-      if (a.year === b.year ) {
-        if (a.month < b.month ) { return -1; }
-        if (a.month > b.month ) { return 1; }
-        return 0;
-      } else {
-        if (a.year < b.year ) { return - 1; }
-        if (a.year > b.year ) { return 1; }
-        return 0;
-      }
-    });
+    if (data) {
+      this.detailData.data = data.sort((a, b) => {
+        if (a.year === b.year ) {
+          if (a.month < b.month ) { return -1; }
+          if (a.month > b.month ) { return 1; }
+          return 0;
+        } else {
+          if (a.year < b.year ) { return - 1; }
+          if (a.year > b.year ) { return 1; }
+          return 0;
+        }
+      });
+    } else {
+      this.detailData.data = [];
+    }
   }
 
   getAllowableFields(fieldType: string, strippedValue?: string): LabelValue[] {
@@ -190,7 +196,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   onGroupChange(e: MatRadioChange) {
-    const selectedValue = e.value.toString();
+    /*const selectedValue = e.value.toString();
     const self = this;
     const unavailableOptions: string[] = this.supportedGroups.filter(x => x !== selectedValue);
     const newValue = new LabelValue(selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1), selectedValue);
@@ -201,7 +207,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       }
     });
     this.supportedFields.push(newValue);
-    this.resetFeatures();
+    this.resetFeatures();*/
   }
 
   onFieldInfoChange(e: MatSelectChange) {

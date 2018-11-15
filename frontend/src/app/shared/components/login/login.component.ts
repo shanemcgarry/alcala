@@ -29,7 +29,9 @@ export class LoginComponent implements OnInit {
         data => {
           this.siteUser = data;
           if (this.siteUser.loginToken) {
-            navigation = '/visualise/dashboard';
+            if (!navigation) {
+              navigation = '/visualise/dashboard';
+            }
             this.router.navigate([navigation]);
           }
         },

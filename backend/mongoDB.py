@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from sshtunnel import SSHTunnelForwarder
 import pymongo
 from bson.objectid import ObjectId
 from bson.code import Code
@@ -35,12 +36,24 @@ class MongoData:
                                       password=config.MONGODB_CONFIG['password'],
                                       authSource=config.MONGODB_CONFIG['database'],
                                       authMechanism='SCRAM-SHA-1')
+        elif 'ssh' in config.MONGODB_CONFIG: # if ssh is specified then we need to connect over an ssh tunnel
+            self.server = SSHTunnelForwarder(config.MONGODB_CONFIG['server'],
+                                             ssh_username=config.MONGODB_CONFIG['ssh']['user'],
+                                             ssh_password=config.MONGODB_CONFIG['ssh']['password'],
+                                             remote_bind_address=(config.MONGODB_CONFIG['ssh']['localhost'],
+                                                                  config.MONGODB_CONFIG['ssh']['localport']))
+            self.server.start()
+            self.client = MongoClient(config.MONGODB_CONFIG['ssh']['localhost'], self.server.local_bind_port)
         else:  # if there is no username, we supply fewer parameters to the constructor
             self.client = MongoClient(host=config.MONGODB_CONFIG['server'],
                                       port=config.MONGODB_CONFIG['port'],
                                       authSource=config.MONGODB_CONFIG['database'])
         # This class only works with alcala data. Although the constructor could be expanded to work with other datasets
         self.db = self.client.alcala
+
+    def __del__(self):
+        if hasattr(self, 'server') and self.server is not None:
+            self.server.stop()
 
     def get_search_log(self, userID, searchType=None):
         """Gets a list of search logs for a specified user (and type if requested)"""
@@ -385,31 +398,35 @@ class MongoData:
             raise Exception('Invalid timeType supplied')
 
         prevTime = validTimes[0] - 1
-        for item in listData:
-            if curr_key != item[keyName] and curr_key is not None:
-                lastIndex = validTimes.index(prevTime)
-                for i in range(lastIndex + 1, len(validTimes), 1):
+        if listData is not None:
+            for item in listData:
+                if curr_key != item[keyName] and curr_key is not None:
+                    lastIndex = validTimes.index(prevTime)
+                    for i in range(lastIndex + 1, len(validTimes), 1):
+                        time_data.append(TimeSeriesData(timeValue=validTimes[i], timeType=timeType, totalAmount=0, transactionCount=0))
+                    results.append(KeyTimePivotData(key=curr_key, timeSeries=time_data))
+                    time_data = []
+                    curr_key = item[keyName]
+                    prevTime = validTimes[0] - 1
+                elif curr_key is None:
+                    curr_key = item[keyName]
+
+                if prevTime not in validTimes:
+                    startLoop = 0
+                else:
+                    startLoop = validTimes.index(prevTime) + 1
+
+                for i in range(startLoop, validTimes.index(item[timeAttr]), 1):
                     time_data.append(TimeSeriesData(timeValue=validTimes[i], timeType=timeType, totalAmount=0, transactionCount=0))
-                results.append(KeyTimePivotData(key=curr_key, timeSeries=time_data))
-                time_data = []
-                curr_key = item[keyName]
-                prevTime = validTimes[0] - 1
-            elif curr_key is None:
-                curr_key = item[keyName]
 
-            if prevTime not in validTimes:
-                startLoop = 0
-            else:
-                startLoop = validTimes.index(prevTime) + 1
-
-            for i in range(startLoop, validTimes.index(item[timeAttr]), 1):
-                time_data.append(TimeSeriesData(timeValue=validTimes[i], timeType=timeType, totalAmount=0, transactionCount=0))
-
-            time_data.append(TimeSeriesData(timeValue=item[timeAttr], timeType=timeType, totalAmount=item.totalAmount, transactionCount=item.transactionCount))
-            prevTime = item[timeAttr]
+                time_data.append(TimeSeriesData(timeValue=item[timeAttr], timeType=timeType, totalAmount=item.totalAmount, transactionCount=item.transactionCount))
+                prevTime = item[timeAttr]
 
         # Need to add in the last of the data:
-        lastIndex = validTimes.index(prevTime)
+        if prevTime == validTimes[0] - 1:
+            lastIndex = validTimes.index(validTimes[0])
+        else:
+            lastIndex = validTimes.index(prevTime)
         for i in range(lastIndex + 1, len(validTimes), 1):
             time_data.append(
                 TimeSeriesData(timeValue=validTimes[i], timeType=timeType, totalAmount=0, transactionCount=0))
@@ -425,13 +442,15 @@ class MongoData:
 
         if searchParams is not None and searchParams.year is not None:
             temp_data = self.get_word_by_month_summary(filters=searchParams)
-            temp_data = sorted(temp_data, key=lambda x: (x.word, x.monthNum))
+            if temp_data is not None:
+                temp_data = sorted(temp_data, key=lambda x: (x.word, x.monthNum))
             time_summary = self.get_month_summary(filters=searchParams)
             timeType = 'm'
             timeKey = 'month'
         else:
             temp_data = self.get_word_by_year_summary(filters=searchParams)
-            temp_data = sorted(temp_data, key=lambda x: (x.word, x.year))
+            if temp_data is not None:
+                temp_data = sorted(temp_data, key=lambda x: (x.word, x.year))
             time_summary = self.get_year_summary(filters=searchParams)
             timeType = 'y'
             timeKey = 'year'
@@ -439,17 +458,27 @@ class MongoData:
         results = self.get_time_series_data(keyName='word', timeType=timeType, listData=temp_data)
         rawData = self.search_transactions(searchParams)
         summary_info = self.get_total_spent(filters=searchParams)
-        grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + (
-                    (summary_info['maravedises'] % 34) / 100)
+        if summary_info is not None:
+            grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + (
+                        (summary_info['maravedises'] % 34) / 100)
+            total_reales = summary_info['reales']
+            total_maravedises = summary_info['maravedises']
+            total_transactions = summary_info['transaction_count']
+        else:
+            grand_total = None
+            total_reales = None
+            total_maravedises = None
+            total_transactions = None
 
         time_results = list()
-        for t in time_summary:
-            time_results.append(TimeSummary(timeValue=t[timeKey], timeType=timeType, reales=t.reales,
-                                            maravedises=t.maravedises, totalAmount=t.totalAmount,
-                                            transactionCount=t.transactionCount))
+        if time_summary is not None:
+            for t in time_summary:
+                time_results.append(TimeSummary(timeValue=t[timeKey], timeType=timeType, reales=t.reales,
+                                                maravedises=t.maravedises, totalAmount=t.totalAmount,
+                                                transactionCount=t.transactionCount))
 
-        return DataPackage(reales=summary_info['reales'], maravedises=summary_info['maravedises'], grandTotal=grand_total,
-                           totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results,
+        return DataPackage(reales=total_reales, maravedises=total_maravedises, grandTotal=grand_total,
+                           totalTransactions=total_transactions, timeSummary=time_results, data=results,
                            rawData=rawData)
 
     def get_category_time_data(self, searchParams=None):
@@ -461,13 +490,15 @@ class MongoData:
 
         if searchParams is not None and searchParams.year is not None:
             temp_data = self.get_category_by_month_summary(filters=searchParams)
-            temp_data = sorted(temp_data, key=lambda x: (x.category, x.monthNum))
+            if temp_data is not None:
+                temp_data = sorted(temp_data, key=lambda x: (x.category, x.monthNum))
             time_summary = self.get_month_summary(filters=searchParams)
             timeType = 'm'
             timeKey = 'month'
         else:
             temp_data = self.get_category_by_year_summary(filters=searchParams)
-            temp_data = sorted(temp_data, key=lambda x: (x.category, x.year))
+            if temp_data is not None:
+                temp_data = sorted(temp_data, key=lambda x: (x.category, x.year))
             time_summary = self.get_year_summary(filters=searchParams)
             timeType = 'y'
             timeKey = 'year'
@@ -475,17 +506,27 @@ class MongoData:
         results = self.get_time_series_data(keyName='category', timeType=timeType, listData=temp_data)
         rawData = self.search_transactions(searchParams=searchParams)
         summary_info = self.get_total_spent(filters=searchParams)
-        grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + (
-                    (summary_info['maravedises'] % 34) / 100)
+        if summary_info is not None:
+            grand_total = summary_info['reales'] + math.floor(summary_info['maravedises'] / 34) + (
+                        (summary_info['maravedises'] % 34) / 100)
+            total_reales = summary_info['reales']
+            total_maravedises = summary_info['maravedises']
+            total_transactions = summary_info['transaction_count']
+        else:
+            grand_total = None
+            total_reales = None
+            total_maravedises = None
+            total_transactions = None
 
         time_results = list()
-        for t in time_summary:
-            time_results.append(TimeSummary(timeValue=t[timeKey], timeType=timeType, reales=t.reales,
-                                            maravedises=t.maravedises, totalAmount=t.totalAmount,
-                                            transactionCount=t.transactionCount))
+        if time_summary is not None:
+            for t in time_summary:
+                time_results.append(TimeSummary(timeValue=t[timeKey], timeType=timeType, reales=t.reales,
+                                                maravedises=t.maravedises, totalAmount=t.totalAmount,
+                                                transactionCount=t.transactionCount))
 
-        return DataPackage(reales=summary_info['reales'], maravedises=summary_info['maravedises'], grandTotal=grand_total,
-                           totalTransactions=summary_info['transaction_count'], timeSummary=time_results, data=results,
+        return DataPackage(reales=total_reales, maravedises=total_maravedises, grandTotal=grand_total,
+                           totalTransactions=total_transactions, timeSummary=time_results, data=results,
                            rawData=rawData)
 
     def get_categories(self):
@@ -511,7 +552,10 @@ class MongoData:
         }})
 
         json_list = self.db.command('aggregate', 'transactions', pipeline=pipeline, explain=False)
-        return json_list['cursor']['firstBatch'][0]
+        if len(json_list['cursor']['firstBatch']):
+            return json_list['cursor']['firstBatch'][0]
+        else:
+            return None
 
     def get_word_by_year_summary(self, filters=None):
         pipeline = []
@@ -719,10 +763,11 @@ class MongoData:
     def insert_user(self, user):
         db_user = self.get_user(user.username)
         if db_user is None:
-            result = self.db.user_info.insert_one(user.get_properties())
+            new_user = self.db.user_info.insert_one(user.get_properties())
+            result = new_user.inserted_id
         else:
-            result = db_user
-        return result.inserted_id
+            result = db_user._id
+        return str(result)
 
     def get_training_data_by_user(self, user_id):
         json_doc = self.db.curated_training.find({'userId': user_id})

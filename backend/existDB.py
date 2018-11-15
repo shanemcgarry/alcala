@@ -137,6 +137,8 @@ class ExistData:
     def get_pages_by_keyword(self, keyword, year=None, pageIndex=1, limit=50):
         """Conducts a keyword search against the entire eXist-db instance and returns a list of PageResult objects"""
         query_string = '$hit//textContent[ft:query(.,"%s")]' % keyword
+        if year is not None:
+            query_string += ' where $hit/content[@yearID = %d]' % year
         # if year is not None:
         #     query_string += ' and $x/content[@yearID=%s]' % year
         # xquery = 'for $x in doc("alcala/books/ledger.xml")//pages/page where %s return util:expand($x)' % query_string

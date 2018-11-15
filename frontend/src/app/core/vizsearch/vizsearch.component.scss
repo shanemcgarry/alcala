@@ -1,3 +1,5 @@
+@import '../../../styles/_variables.scss';
+
 mat-drawer-container {
   padding: 10px 10px 10px 10px;
 }
@@ -10,6 +12,15 @@ label, h4, span, mat-checkbox {
 label {
   margin-bottom: 10px;
   font-weight: bold;
+}
+
+.action-button {
+  border: 1px solid $base-red;
+  padding-left: -16px !important;
+  mat-icon {
+    align-content: center;
+    vertical-align: middle;
+  }
 }
 
 .word-num {

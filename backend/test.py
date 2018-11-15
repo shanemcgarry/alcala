@@ -79,5 +79,23 @@ mdb = MongoData()
 # result = mdb.get_search_log(user_id, searchType='keyword')
 # print(Tools.serialise_list(result))
 
+seanc = SiteUser(username='u180364',password='&XsdZs4r', firstname='Sean', surname='Comerford', roles=['tester'])
+seanr = SiteUser(username='p180066',password='d#9rtjPF', firstname='Sean', surname='Rooney', roles=['tester'])
+riang = SiteUser(username='u180488',password='&DSeU2eH', firstname='Rian', surname='Gallagher', roles=['tester'])
+aaronm = SiteUser(username='u180555',password='HCZ?f44Z', firstname='Aaron', surname='McAdams', roles=['tester'])
+colmr = SiteUser(username='p180097',password='@VBqj497', firstname='Colm', surname='Rourke', roles=['tester'])
 
+seanc._id = mdb.insert_user(seanc)
+seanr._id = mdb.insert_user(seanr)
+riang._id = mdb.insert_user(riang)
+aaronm._id = mdb.insert_user(aaronm)
+colmr._id = mdb.insert_user(colmr)
+
+print(seanc.toJson())
+print(seanr.toJson())
+print(riang.toJson())
+print(aaronm.toJson())
+print(colmr.toJson())
+
+del mdb
 

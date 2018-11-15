@@ -20,14 +20,18 @@
             <mat-option *ngFor="let sf of this.supportedYFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field class="two-column">
+        <!--<mat-form-field class="two-column">
           <mat-select placeholder="Size determined by..." [(ngModel)]="this.features.sizeField" [disabled]="!this.enableSizeField"
                       (selectionChange)="this.onFieldInfoChange($event)"
                       matTooltip="This option is only valid for scatter visualisations">
             <mat-option *ngFor="let sf of this.supportedSizeFields" [value]="sf.value">{{ sf.label }}</mat-option>
           </mat-select>
-        </mat-form-field>
-        <button mat-button color="primary" class="two-column" (click)="this.saveChartToImage()"><mat-icon>save_alt</mat-icon> Download</button>
+        </mat-form-field>-->
+        <button mat-raised-button color="primary" class="two-column action-button"
+                (click)="this.saveChartToImage()">
+          <span fxFlex="70">Download</span>
+          <mat-icon color="white" fxFlex="30">save_alt</mat-icon>
+        </button>
       </mat-card-content>
     </mat-card>
     <mat-card>
@@ -117,10 +121,11 @@
             <td mat-cell *matCellDef="let d" class="w10">{{ d.monthName }}</td>
           </ng-container>
           <ng-container matColumnDef="pageid">
-            <th mat-header-cell *matHeaderCellDef></th>
+            <th mat-header-cell *matHeaderCellDef><mat-icon color="primary">remove_red_eye</mat-icon></th>
             <td mat-cell *matCellDef="let d" class="w5">
               <a target="_blank" href="/page/{{ d.pageid }}">
-                <mat-icon color="primary">find_in_page</mat-icon>
+                <!--<mat-icon color="primary">find_in_page</mat-icon>-->
+                <img [src]="this.thumbsBase + d.pageid + '.jpg'" class="thumb-photo" alt="Photo of page" />
               </a>
             </td>
           </ng-container>
