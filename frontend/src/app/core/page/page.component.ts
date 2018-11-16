@@ -43,7 +43,7 @@ export class PageComponent implements OnInit, AfterContentChecked {
   getPage(): void {
     this.pageService.getPage(this.pageid)
       .subscribe(
-        data => { this.dataModel = data; },
+        data => { this.dataModel = data; console.log(this.dataModel); },
         err => console.error(err),
         () => console.log('page data loaded.')
         );

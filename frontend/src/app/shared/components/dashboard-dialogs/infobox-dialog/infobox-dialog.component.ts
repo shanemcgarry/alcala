@@ -39,6 +39,23 @@ export class InfoboxDialogComponent {
     console.log(this.dataModel);
   }
 
+  hasErrors(): boolean {
+    let result = false;
+    if (this.labelFC.hasError('required'))  {
+      result = true;
+    } else if (this.iconFC.hasError('required')) {
+      result = true;
+    } else if (this.colourFC.hasError('required')) {
+      result = true;
+    } else if (this.typeFC.hasError('required')) {
+      result = true;
+    } else {
+      result = false;
+    }
+
+    return result;
+  }
+
   deleteObject(): void {
     this.dashboardService.deleteInfoBox(this.dataModel)
       .subscribe(

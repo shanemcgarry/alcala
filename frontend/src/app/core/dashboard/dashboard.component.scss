@@ -1,5 +1,9 @@
 @import '~src/styles/_variables.scss';
 
+mat-drawer-container {
+  overflow-y: hidden;
+}
+
 mat-drawer {
   width: 3%;
   background-color: $base-warn !important;

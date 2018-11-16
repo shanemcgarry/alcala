@@ -73,7 +73,7 @@ export class NVD3PieChart extends BaseChart {
             self._onElementClick.dispatch(self, e);
           });
         },
-        x: function(d) { return d.key; },
+        x: function(d) { return self.formatAxisData(self.xField, d.key); },
         y: function(d) { return self.formatAxisData(self.yField, d.value); },
         showLabels: false,
         duration: 500,

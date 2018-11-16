@@ -36,7 +36,8 @@ export abstract class BaseChart implements IBaseChart {
       case 'year':
       case 'monthNum':
         const timeFormat = axis === 'year' ? '%Y' :  '%b';
-        return d3.time.format(timeFormat)(new Date(dataValue));
+        const ticks = dataValue > 0 ? this.formatTimeTicks(dataValue, axis === 'year' ? 'y' : 'm') : dataValue;
+        return d3.time.format(timeFormat)(new Date(ticks));
       case 'totalAmount':
         return d3.format('0f')(dataValue);
       case 'transactionCount':

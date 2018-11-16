@@ -35,6 +35,7 @@ export class VisualSearchLogEntry {
 })
 export class ChartDialogComponent implements OnInit {
   searchLogs: SearchLogEntry[];
+  chartSelected = false;
   tableData: MatTableDataSource<VisualSearchLogEntry>;
   chartData: DataSummaryPackage;
   expandedLog: VisualSearchLogEntry;
@@ -106,6 +107,7 @@ export class ChartDialogComponent implements OnInit {
     this.dataModel.searchParams = chartInfo.params;
     this.dataModel.features = chartInfo.features;
     this.chartData = chartInfo.data;
+    this.chartSelected = true;
   }
 
   formatString (s: string) {
@@ -132,6 +134,19 @@ export class ChartDialogComponent implements OnInit {
         this.dialogRef.close(this.dataModel);
       }
     );
+  }
+
+  hasErrors(): boolean {
+    let result = false;
+    if (this.titleFC.hasError('required')) {
+      result = true;
+    } else if (!this.chartSelected) {
+      result = true;
+    } else {
+      result = false;
+    }
+
+    return result;
   }
 
   convertSearchLogs(logs: SearchLogEntry[]): VisualSearchLogEntry[] {

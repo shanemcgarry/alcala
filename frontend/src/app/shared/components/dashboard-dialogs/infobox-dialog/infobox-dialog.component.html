@@ -52,7 +52,7 @@
       </mat-form-field>
     </div>
     <mat-dialog-actions>
-      <button mat-raised-button color="primary" (click)="saveChanges()" class="mr5">Save</button>
+      <button mat-raised-button color="primary" [disabled]="this.hasErrors()" (click)="saveChanges()" class="mr5">Save</button>
       <button *ngIf="this.dataModel._id" mat-raised-button color="warn" (click)="deleteObject()" class="mr5">Delete</button>
       <button mat-raised-button color="accent" (click)="cancelChanges()" class="ml5">Cancel</button>
     </mat-dialog-actions>

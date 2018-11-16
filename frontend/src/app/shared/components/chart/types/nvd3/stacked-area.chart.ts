@@ -44,6 +44,7 @@ export class NVD3StackedAreaChart extends BaseChart {
         height: this.height,
         width: this.width,
         showLegend: false,
+        showControls: false,
         margin: {
           top: 20,
           right: 20,

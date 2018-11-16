@@ -89,7 +89,6 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
     canvas.id = 'canvas';
     canvas.height = renderh;
     canvas.width = renderw;
-    console.log(svgElement);
 
     canvg(canvas, svgElement);
 
@@ -99,10 +98,8 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   logSearchFeatures(): void {
-    console.log(`logging feature for search ${this.graphData.searchID}`);
     this.searchService.logSearchFeatures(this.graphData.searchID, this.features)
       .subscribe(
-        x => console.log(x),
         err => console.log(err),
         () => console.log('Search Feature Logged')
       );
@@ -139,9 +136,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       case 'x':
         chartInfo.allowableXFields.forEach(x => {
           results.push(this.getLabelValueItem(x));
-          console.log(x);
         });
-        console.log(results);
         break;
       case 'y':
         chartInfo.allowableYFields.forEach(x => {
@@ -232,9 +227,6 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   getValidTimeField(): LabelValue {
     let result;
     if (this.filters.yearEnabled) {
-      console.log('getting month field');
-      console.log(this.supportedFields.find(x => x.value === 'monthNum'));
-      console.log(this.supportedFields.findIndex(x => x.value === 'monthNum'));
       result =  this.supportedFields.find(x => x.value === 'monthNum');
     } else {
       result =  this.supportedFields.find(x => x.value === 'year');
@@ -256,7 +248,6 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   onSearch(): void {
-    console.log(this.filters);
     this.searchService.visualiseSearch(this.searchParams, this.userID)
       .subscribe(
         data => {
@@ -272,10 +263,8 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   onElementClick(e: any) {
-    console.log(e);
     const rdFilters = this.getFiltersForChartData(e);
     let filteredData = this.graphData.rawData;
-    console.log(rdFilters);
     rdFilters.forEach( filter => {
       switch (filter.key) {
         case 'categories':
@@ -368,6 +357,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       case 'monthNum':
         switch (this.features.chartType) {
           case 'discreteBar':
+          case 'pie':
             filterName = 'month';
             formattedX = xValue;
             break;
