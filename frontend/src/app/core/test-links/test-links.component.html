@@ -1,0 +1,66 @@
+<div class="experiment-info" fxLayout="row" fxLayoutGap="10px">
+  <div fxFlex="65">
+    <h2>Alcalá Experiment Information</h2>
+    <p>
+      This website was built as part of a Ph.D. by <a href="https://wwww.shanemcgarry.com" target="_blank">Shane A. McGarry</a>.
+      The aim of this site is to collect information about how individuals utilise various search mechanisms such as keyword
+      searches or data visualisations. If you have a login, it is because you have agreed to participate in this study. If you'd
+      like more information about the project, you can read the
+      <a *ngIf="this.isUndergrad" href="https://www.shanemcgarry.com/wp-content/uploads/2018/11/05a_smcgarry_informationSheet_edited.pdf" target="_blank">
+        information sheet
+      </a>
+      <a *ngIf="!this.isUndergrad" href="https://www.shanemcgarry.com/wp-content/uploads/2018/11/05_smcgarry_informationSheet.pdf" target="_blank">
+        information sheet
+      </a>
+      located on Shane's website.
+    </p>
+
+    <h3>Experiment Details</h3>
+    <p>
+      As a participant in this experiment, you will be provided with a task worksheet that will guide you through a few questions
+      that you will answer using the tools in this website. Prior to the start of the exercise,  you will be asked to fill up
+      a short pre-test questionnaire that will help us gauge your comfort level with technology. You will be randomly assigned
+      into one of two groups. For the first hour, you will be working with either the keyword search or the visualisation
+      search to answer the questions in the task worksheet. Once you complete the task worksheet, you will then fill out a short
+      post-test questionnaire describing your experience with the particular version of search you employed. For the second
+      hour, you will switch modes and use the other form of search to complete the task worksheet. Like the first hour, you
+      will then fill up the post-test questionnaire in order to describe your experience with the mode of search you used.
+    </p>
+
+    <h3>Important Links</h3>
+    <p>
+      Below you will find links to the documents referenced in the above section.
+    </p>
+    <ul>
+      <li>
+        <a href="https://goo.gl/S2arDb" target="_blank">Pre-test Questionnaire</a> &mdash; the pre-test questionnaire is used to assess
+        each participants level of comfort and familiarity with technology.
+      </li>
+      <li>
+        <a href="https://goo.gl/8EHQFa" target="_blank">Task Worksheet</a> &mdash; the task worksheet contains the list of tasks to
+        complete while working your way through the experiment.
+      </li>
+      <li>
+        <a href="https://goo.gl/WBQjp7" target="_blank">Post-test Questionnaire</a> &mdash; the post-test questionnaire is used to
+        gather each participant's feedback after an search session.
+      </li>
+      <li *ngIf="this.isUndergrad">
+        <a href="https://www.shanemcgarry.com/wp-content/uploads/2018/11/05a_smcgarry_informationSheet_edited.pdf" target="_blank">
+          Information Sheet
+        </a> &mdash; the information sheet provides in-depth information about the project.
+      </li>
+      <li *ngIf="!this.isUndergrad">
+        <a href="https://www.shanemcgarry.com/wp-content/uploads/2018/11/05_smcgarry_informationSheet.pdf" target="_blank">
+          Information Sheet
+        </a> &mdash; the information sheet provides in-depth information about the project.
+      </li>
+      <li><a href="https://www.shanemcgarry.com/wp-content/uploads/2018/11/06_smcgarry_consentForm.pdf" target="_blank">Consent Form</a>
+        &mdash; a copy of the consent form that each participant signs in order
+        to participate in the experiment.
+      </li>
+    </ul>
+  </div>
+  <div fxFlex="40">
+    <img src="../../../assets/experiment-image.jpg" alt="experiment image">
+  </div>
+</div>

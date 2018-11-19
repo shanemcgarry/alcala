@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
           this.siteUser = data;
           if (this.siteUser.loginToken) {
             if (!navigation) {
-              navigation = '/visualise/dashboard';
+              navigation = '/experiment';
             }
             this.router.navigate([navigation]);
           }

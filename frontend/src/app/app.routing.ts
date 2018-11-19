@@ -6,11 +6,11 @@ import { LogoutComponent } from './shared/components/logout/logout.component';
 import { AuthGuard } from './shared/services/auth.guard';
 import { SearchComponent } from './core/search/search.component';
 import { PageComponent } from './core/page/page.component';
-import { UserSetupComponent } from './shared/components/user-setup/user-setup.component';
 import { DashboardComponent } from './core/dashboard/dashboard.component';
 import { CurationComponent } from './core/curation/curation.component';
 import {VizsearchComponent} from './core/vizsearch/vizsearch.component';
 import {TestComponent} from './shared/components/test/test.component';
+import {TestLinksComponent} from './core/test-links/test-links.component';
 
 
 const appRoutes: Routes = [
@@ -21,6 +21,7 @@ const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'admin/curation', component: CurationComponent, canActivate: [AuthGuard] },
+  { path: 'experiment', component: TestLinksComponent, canActivate: [AuthGuard] },
   { path: 'test', component: TestComponent },
   { path: '', component: HomeComponent }
 ];

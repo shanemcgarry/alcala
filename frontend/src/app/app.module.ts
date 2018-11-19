@@ -76,6 +76,7 @@ import { CustomDashboardComponent } from './shared/components/custom-dashboard/c
 import { StoriesComponent } from './shared/components/stories/stories.component';
 import { InfoboxDialogComponent } from './shared/components/dashboard-dialogs/infobox-dialog/infobox-dialog.component';
 import { ChartDialogComponent } from './shared/components/dashboard-dialogs/chart-dialog/chart-dialog.component';
+import { TestLinksComponent } from './core/test-links/test-links.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -107,7 +108,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     CustomDashboardComponent,
     StoriesComponent,
     InfoboxDialogComponent,
-    ChartDialogComponent
+    ChartDialogComponent,
+    TestLinksComponent
   ],
   imports: [
     routing,
