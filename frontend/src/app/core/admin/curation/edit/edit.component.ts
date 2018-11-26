@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MAT_DIALOG_DATA, MatDialogRef, MatChipInputEvent } from '@angular/material';
-import { TrainingData } from '../../../shared/models/training-data.model';
-import { AdminService } from '../../../shared/services/admin.service';
+import { TrainingData } from '../../../../shared/models/training-data.model';
+import { AdminService } from '../../../../shared/services/admin.service';
 
 @Component({
   selector: 'app-edit',

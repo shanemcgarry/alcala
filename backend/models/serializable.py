@@ -68,7 +68,7 @@ class JsonSerializable(object):
     def cleanString(self, value):
         tempValue = str(value)
         #pattern = re.sub('^[\r\n]+|\.|[\r\n]+$', '', tempValue)
-        tempValue = re.sub('^[\n]+|\.|[\n]+$', '', tempValue)
+        #tempValue = re.sub('^[\n]+|\.|[\n]+$', '', tempValue)
         return tempValue
 
 

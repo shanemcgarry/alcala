@@ -2,7 +2,7 @@ from models.serializable import BaseMongoObject
 
 
 class SiteUser(BaseMongoObject):
-    def __init__(self, _id=None, username=None, password=None, firstname=None, surname=None, loginToken=None, roles=None, allowLogging=True, *args, **kwargs):
+    def __init__(self, _id=None, username=None, password=None, firstname=None, surname=None, loginToken=None, roles=None, allowLogging=True, lastLogin=None, emailAddress=None, *args, **kwargs):
         super().__init__(_id, *args, **kwargs)
         self.username = username
         self.password = password
@@ -11,3 +11,5 @@ class SiteUser(BaseMongoObject):
         self.loginToken = loginToken
         self.roles = roles
         self.allowLogging = allowLogging
+        self.lastLogin = lastLogin
+        self.emailAddress = emailAddress

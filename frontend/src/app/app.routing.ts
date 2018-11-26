@@ -7,10 +7,10 @@ import { AuthGuard } from './shared/services/auth.guard';
 import { SearchComponent } from './core/search/search.component';
 import { PageComponent } from './core/page/page.component';
 import { DashboardComponent } from './core/dashboard/dashboard.component';
-import { CurationComponent } from './core/curation/curation.component';
 import {VizsearchComponent} from './core/vizsearch/vizsearch.component';
 import {TestComponent} from './shared/components/test/test.component';
 import {TestLinksComponent} from './core/test-links/test-links.component';
+import {AdminDashboardComponent} from './core/admin/admin-dashboard/admin-dashboard.component';
 
 
 const appRoutes: Routes = [
@@ -20,7 +20,7 @@ const appRoutes: Routes = [
   { path: 'visualise/search/:graph', component: VizsearchComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
-  { path: 'admin/curation', component: CurationComponent, canActivate: [AuthGuard] },
+  { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard] },
   { path: 'experiment', component: TestLinksComponent, canActivate: [AuthGuard] },
   { path: 'test', component: TestComponent },
   { path: '', component: HomeComponent }

@@ -12,9 +12,9 @@ export class AppComponent {
 
   isAdminUser() {
     const currUser = this.userService.getLoggedInUser();
-    let result: boolean = false;
+    let result = false;
     if (currUser && currUser.roles) {
-      if (currUser.roles.find(x => x === 'admin')) {
+      if (currUser.roles.find(x => x === 'admin' || x === 'super')) {
         result = true;
       }
     }

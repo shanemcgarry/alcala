@@ -24,7 +24,6 @@ export class SearchComponent implements OnInit {
   currentSearchID: string;
   availableYears = [1774, 1775, 1776, 1777, 1778, 1779, 1781];
   searchHistory: SearchLogEntry[];
-  displayedColumns = ['title', 'matches', 'description', 'id'];
   showSpinner = false;
 
   constructor(private route: ActivatedRoute, private searchService: SearchService, private userService: UserService) {
@@ -85,15 +84,6 @@ export class SearchComponent implements OnInit {
       }
     }
 
-    return result;
-  }
-
-  formatTextSnippet(snippet: string) {
-    let result = '<ul>';
-    snippet.split('---').forEach(x => {
-      result += `<li>${x}</li>`;
-    });
-    result += '</ul>';
     return result;
   }
 

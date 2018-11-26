@@ -2,10 +2,10 @@ from flask import Flask, render_template, send_from_directory, request, jsonify
 from existDB import ExistData
 from mongoDB import MongoData
 from flask_cors import CORS
-import base64
+import datetime
 from models.analysisItem import AnalysisItem, AnalysisResultList, AnalysisSummary
 from models.search import SearchParameters, SearchFeatures, PageSearch
-from models.dashboard import CustomDashboardInfo, CustomStoryInfo, CustomInfoBox, CustomChartInfo
+from models.dashboard import CustomDashboardInfo, CustomStoryInfo, CustomInfoBox, CustomChartInfo, BoundaryObject
 from analysis.frequency import FrequencyDistribution
 from models.users import SiteUser
 from models.flaskErrors import ApplicationError
@@ -191,6 +191,50 @@ def save_user_dashboard():
 
     response = app.response_class(
         response=dashboardObj.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/boundaryObject/<userID>")
+def get_boundary_objects(userID):
+    mdb = MongoData()
+    results = mdb.get_boundary_objects(userID=userID)
+    response = app.response_class(
+        response=Tools.serialise_list(results),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/boundaryObject", methods=['POST'])
+def save_boundary_object():
+    mdb = MongoData()
+    json_data = request.get_json()
+    boInfo = BoundaryObject(**json_data)
+    if Tools.check_for_empty_value(boInfo._id):
+        boInfo._id = mdb.insert_boundary_object(boInfo)
+    else:
+        boInfo = mdb.update_boundary_object(boInfo)
+
+    response = app.response_class(
+        response=boInfo.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/boundaryObject/delete", methods=['POST'])
+def delete_boundary_object():
+    mdb = MongoData()
+    json_data = request.get_json()
+    boInfo = BoundaryObject(**json_data)
+    mdb.delete_boundary_object(boInfo._id)
+    response = app.response_class(
+        response=json.dumps('{}'),
         status=200,
         mimetype='application/json'
     )
@@ -392,31 +436,52 @@ def authenticate_user():
     else:
         login_result = db_user
         login_result.loginToken = uuid.uuid4().hex
+        login_result.lastLogin = datetime.datetime.now()
+        mdb.update_user(login_result)
 
     login_result.password = None # clear out the password so we don't pass it back
     return login_result.toJson(), 200
 
 
-@app.route("/user/update", methods=['POST'])
-def update_user():
-    json_req = request.get_json();
+@app.route("/user/list", methods=['GET'])
+def get_users():
     mdb = MongoData()
-    db_user = mdb.get_user_by_id(json_req['_id'])
-    if db_user is None:
-        raise ApplicationError('The user id supplied (%) is invalid.' % json_req['_id'], status_code=420)
+    results = mdb.get_all_users()
+    response = app.response_class(
+        status=200,
+        response=Tools.serialise_list(results),
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/user/save", methods=['POST'])
+def save_user():
+    json_req = request.get_json()
+    mdb = MongoData()
+    db_user = SiteUser(**json_req['user'])
+
+    if not hasattr(db_user, '_id') or Tools.check_for_empty_value(db_user._id):
+        db_user._id = mdb.insert_user(db_user)
     else:
-        for k,v in json_req.items():
-            db_user[k] = v
-        mdb.update_user(db_user)
-        return db_user.toJson(), 200
+        db_user = mdb.update_user(db_user)
+
+    print(db_user)
+    return db_user.toJson(), 200
 
 
-@app.route("/user/data/logs", methods=['POST'])
-def get_user_search_logs():
+@app.route("/user/delete", methods=['POST'])
+def delete_user():
+    json_req = request.get_json()
     mdb = MongoData()
-    json_data = request.get_json()
-
-
+    user = SiteUser(**json_req['user'])
+    mdb.delete_user(user)
+    response = app.response_class(
+        response=json.dumps('{}'),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 @app.route("/visualise/wordfreq/time_data/<year>")

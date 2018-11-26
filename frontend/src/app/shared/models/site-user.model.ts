@@ -7,4 +7,6 @@ export interface SiteUser {
   loginToken: string;
   allowLogging: boolean;
   roles: string[];
+  emailAddress: string;
+  lastLogin?: Date;
 }

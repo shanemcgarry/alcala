@@ -6,7 +6,7 @@ from bson.code import Code
 from models.analysisItem import AnalysisItem, CategoryData, AnalysisUserItem, TimeSeriesData, KeyTimePivotData, \
     TimeSummary, DataPackage
 from models.search import SearchLogEntry
-from models.dashboard import CustomStoryInfo, CustomDashboardInfo, CustomChartInfo, CustomInfoBox
+from models.dashboard import CustomStoryInfo, CustomDashboardInfo, CustomChartInfo, CustomInfoBox, BoundaryObject
 from models.pivotData import CategoryMonthPivotItem, CategoryYearPivotItem, MonthYearPivotItem, AllPointsPivotItem, \
     WordFreqPivotItem, CategoryPivotItem, YearPivotItem, WordFreqMonthPivotItem, WordFreqYearPivotItem
 from models.users import SiteUser
@@ -140,6 +140,22 @@ class MongoData:
 
         return results
 
+    def get_boundary_objects(self, userID=None):
+        """Gets a list of all boundary objects (associated with userID if supplied"""
+        results = []
+        if userID is not None:
+            json_doc = self.db.boundary_objects.find({'userID': userID})
+        else:
+            json_doc = self.db.boundary_objects.find()
+
+        for j in json_doc:
+            results.append(BoundaryObject(**j))
+
+        if len(results) == 0:
+            results = None
+
+        return results
+
     def get_custom_dashboard(self, userID):
         """Gets the dashboard for the specified user"""
         result = None
@@ -148,7 +164,7 @@ class MongoData:
             result = CustomDashboardInfo(**j)
 
         if result is None:
-            result = CustomDashboardInfo(userID=userID, charts=[], infoBoxes=[], stories=[])
+            result = CustomDashboardInfo(userID=userID, charts=[], infoBoxes=[], stories=[], boundaryObjects=[])
             result._id = self.insert_custom_dashboard(result)
 
         return result
@@ -220,6 +236,31 @@ class MongoData:
         })
         return True # this means we didn't raise an exception
 
+    def insert_boundary_object(self, boInfo):
+        bo_id = self.db.boundary_objects.insert_one(boInfo.get_properties())
+        return str(bo_id.inserted_id)
+
+    def update_boundary_object(self, boInfo):
+        self.db.boundary_objects.update({'_id': ObjectId(boInfo._id)}, {
+            '$set': {
+                'type': boInfo.type,
+                'title': boInfo.title,
+                'description': boInfo.description,
+                'params': boInfo.params,
+                'features': boInfo.features,
+                'pageID': boInfo.pageID
+            }
+        })
+        json_doc = self.db.boundary_objects.find({'_id': ObjectId(boInfo._id)})
+        return BoundaryObject(**json_doc[0])
+
+    def delete_boundary_object(self, bo_id):
+        delete_result = self.db.boundary_objects.remove({'_id': ObjectId(bo_id)}, {'justOne': True})
+        self.db.user_dashboard.update({}, {
+            '$pull': {'boundaryObjects': {'$in': [bo_id]}}
+        })
+        return True # This means we didn't throw an exception
+
     def insert_custom_dashboard(self, dashboardObj):
         """Inserts a customised dashboard object into the database"""
         dashboard_id = self.db.user_dashboard.insert_one(dashboardObj.get_properties())
@@ -231,12 +272,23 @@ class MongoData:
         removed_charts = [x for x in db_dashboard.charts if x not in dashboardObj.charts]
         removed_stories = [x for x in db_dashboard.stories if x not in dashboardObj.stories]
         removed_infoBoxes = [x for x in db_dashboard.infoBoxes if x not in dashboardObj.infoBoxes]
+        removed_boundaryObjects = [x for x in db_dashboard.boundaryObjects if x not in dashboardObj.boundaryObjects]
 
         self.db.user_dashboard.update({'_id': ObjectId(dashboardObj._id)}, {
-            '$addToSet': {'charts': {'$each': dashboardObj.charts}, 'stories': {'$each': dashboardObj.stories}, 'infoBoxes': {'$each': dashboardObj.infoBoxes}}
+            '$addToSet': {
+                'charts': {'$each': dashboardObj.charts},
+                'stories': {'$each': dashboardObj.stories},
+                'infoBoxes': {'$each': dashboardObj.infoBoxes},
+                'boundaryObjects': {'$each': dashboardObj.boundaryObjects}
+            }
         })
         self.db.user_dashboard.update({'_id': ObjectId(dashboardObj._id)}, {
-            '$pull': {'charts': {'$in': removed_charts}, 'stories': {'$in': removed_stories}, 'infoBoxes': {'$in': removed_infoBoxes}}
+            '$pull': {
+                'charts': {'$in': removed_charts},
+                'stories': {'$in': removed_stories},
+                'infoBoxes': {'$in': removed_infoBoxes},
+                'boundaryObjects': {'$in': removed_boundaryObjects}
+            }
         })
         query = self.db.user_dashboard.find({'_id': ObjectId(dashboardObj._id)})
         return CustomDashboardInfo(**query[0])
@@ -784,6 +836,17 @@ class MongoData:
         result = self.db.curated_training.insert_many(json_docs)
         return result.inserted_ids
 
+    def get_all_users(self):
+        json_list = self.db.user_info.find()
+        results = list()
+        for j in json_list:
+            results.append(SiteUser(**j))
+
+        if len(results) == 0:
+            results = None
+
+        return results
+
     def get_user(self, username):
         json_doc = self.db.user_info.find_one({'username': username})
         if json_doc is None:
@@ -792,15 +855,43 @@ class MongoData:
             return SiteUser(**json_doc)
 
     def get_user_by_id(self, id):
-        json_doc = self.db.user_info.find_one({'_id': id})
+        json_doc = self.db.user_info.find_one({'_id': ObjectId(id)})
         if json_doc is None:
             return None
         else:
             return SiteUser(**json_doc)
 
+    def delete_user(self, user):
+        self.db.user_infoboxes.remove({'userID': user._id})
+        self.db.user_charts.remove({'userID': user._id})
+        self.db.user_stories.remove({'userID': user._id})
+        self.db.user_dashboard.remove({'userID': user._id})
+        self.db.search_log.remove({'userID': user._id})
+        result = self.db.user_info.remove({'_id': ObjectId(user._id)}, {'justOne': True})
+        return result;
+
     def update_user(self, user):
-        result = self.db.user_info.update_one({'_id': user._id}, {'$set': user.get_properties()}, upsert=False)
-        return result
+        query = self.db.user_info.find({'_id': ObjectId(user._id)})
+        db_user = SiteUser(**query[0])
+        removed_roles = [x for x in db_user.roles if x not in user.roles]
+
+        self.db.user_info.update_one({'_id': ObjectId(user._id)}, {'$set': {
+            'allowLogging': user.allowLogging,
+            'emailAddress': user.emailAddress,
+            'firstname': user.firstname,
+            'password': user.password,
+            'username': user.username,
+            'surname': user.surname,
+            'loginToken': user.loginToken,
+            'lastLogin': user.lastLogin
+            },
+            '$addToSet': {'roles': {'$each': user.roles} }
+        })
+        self.db.user_info.update({'_id': ObjectId(user._id)}, {
+            '$pull': {'roles': {'$in': removed_roles}}
+        })
+        query = self.db.user_info.find({'_id': ObjectId(user._id)})
+        return SiteUser(**query[0])
 
     def search_transactions(self, searchParams=None):
         filters = []

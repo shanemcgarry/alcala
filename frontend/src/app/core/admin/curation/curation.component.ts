@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { TrainingData } from '../../shared/models/training-data.model';
-import { UserService } from '../../shared/services/user.service';
-import { AdminService } from '../../shared/services/admin.service';
-import { SiteUser } from '../../shared/models/site-user.model';
+import { TrainingData } from '../../../shared/models/training-data.model';
+import { UserService } from '../../../shared/services/user.service';
+import { AdminService } from '../../../shared/services/admin.service';
+import { SiteUser } from '../../../shared/models/site-user.model';
 import {MatTableDataSource, MatPaginator, MatDialog} from '@angular/material';
-import { SpinnerService } from '../../shared/services/spinner.service';
+import { SpinnerService } from '../../../shared/services/spinner.service';
 import {EditComponent} from './edit/edit.component';
 import { cloneDeep } from 'lodash';
 

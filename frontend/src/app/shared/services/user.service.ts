@@ -7,6 +7,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { HttpErrorHandler, HandleError } from './http-error-handler.service';
 import { SiteUser } from '../models/site-user.model';
+import {CustomInfoBox} from '../models/custom-dashboard.model';
 
 @Injectable()
 export class UserService {
@@ -16,6 +17,12 @@ export class UserService {
   constructor(private http: HttpClient, private httpError: HttpErrorHandler) {
     this.serviceUrl = environment.apiUrl;
     this.handleError = httpError.createHandleError('UserService');
+  }
+  getUserList(): Observable<SiteUser[]> {
+    return this.http.get<SiteUser[]>(`${this.serviceUrl}user/list`)
+      .pipe(
+        catchError(this.handleError('getUserList', null))
+      );
   }
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>( `${this.serviceUrl}login`, { username: username, password: password}, {responseType: 'json'})
@@ -32,12 +39,19 @@ export class UserService {
   logout() {
     sessionStorage.removeItem('currentUser');
   }
-  setPreferences(id: string, useDashboard: boolean): Observable<any> {
-    return this.http.post( `${this.serviceUrl}user/update`, { _id: id, useDashboard: useDashboard })
-      .pipe(map( user => {
-        return user;
-      }),
-        catchError(this.handleError('setPreferences', id))
+
+  deleteUser(user: SiteUser): Observable<any> {
+    return this.http.post(`${this.serviceUrl}user/delete`, {user}, {responseType: 'json'})
+      .pipe(
+        catchError(this.handleError('deleteUser', null))
+      );
+  }
+
+  updateUser(user: SiteUser): Observable<SiteUser> {
+    console.log(user.emailAddress);
+    return this.http.post( `${this.serviceUrl}user/save`, { user }, {responseType: 'json'})
+      .pipe(
+        catchError(this.handleError('setPreferences', null))
       );
   }
   getLoggedInUser(): SiteUser {

@@ -32,9 +32,14 @@
       Below you will find links to the documents referenced in the above section.
     </p>
     <ul>
-      <li>
+      <li *ngIf="this.isUndergrad">
         <a href="https://goo.gl/S2arDb" target="_blank">Pre-test Questionnaire</a> &mdash; the pre-test questionnaire is used to assess
         each participants level of comfort and familiarity with technology.
+      </li>
+      <li *ngIf="!this.isUndergrad">
+        <a href="https://goo.gl/cLwwCP" target="_blank">Pre-test Questionnaire</a> &mdash; the pre-test questionnaire is used to assess
+        each participants level of comfort and familiarity with technology. You would have already completed this as part
+        of the workshop registration process.
       </li>
       <li>
         <a href="https://goo.gl/8EHQFa" target="_blank">Task Worksheet</a> &mdash; the task worksheet contains the list of tasks to

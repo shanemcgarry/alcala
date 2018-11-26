@@ -9,6 +9,10 @@ h1,h2,h3,h4 {
   width: 98%;
 }
 
+.search-results {
+  padding-top: 1%;
+}
+
 .search-card {
   width: calc(100% - 70px);
   height: calc(100% - 70px);
@@ -38,39 +42,6 @@ h1,h2,h3,h4 {
 
 mat-tab-group {
   max-width: 98%;
-}
-
-.result-detail {
-  font-family: Roboto, "Helvetica Neue", sans-serif !important;
-  .matches-detail {
-    color: darkgreen;
-    font-size: .75em;
-    margin-top: -20px;
-    margin-bottom: 10px;
-  }
-}
-
-.tile-card {
-  margin-bottom: 2%;
-  width: 20%;
-  img {
-    max-height: 200px;
-  }
-  .mat-card-actions {
-    margin-left: 3% !important;
-  }
-
-  mat-card-content {
-    ul {
-      list-style-type: none;
-      margin-left: -15%;
-
-      li {
-        float: left;
-        margin-right: 10px;
-      }
-    }
-  }
 }
 
 .paginator {
@@ -109,35 +80,8 @@ mat-panel-title {
   display: block;
 }
 
-.search-results {
-  padding-top: 1%;
-}
-
 mat-progress-spinner {
   margin-left: auto;
   margin-right: auto;
 }
 
-
-
-table {
-  width: 100%;
-}
-
-.words-column {
-  width: 50%;
-  white-space: normal;
-  word-wrap: break-word;
-}
-
-.w10 {
-  width: 10%
-}
-
-.w20 {
-  width: 20%
-}
-
-.w5 {
-  width: 5%;
-}

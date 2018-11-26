@@ -22,12 +22,13 @@ class CustomStoryInfo(BaseMongoObject):
 
 
 class CustomDashboardInfo(BaseMongoObject):
-    def __init__(self, _id=None, userID=None, infoBoxes=None, charts=None, stories=None, *args, **kwargs):
+    def __init__(self, _id=None, userID=None, infoBoxes=None, charts=None, stories=None, boundaryObjects=None, *args, **kwargs):
         super().__init__(_id, *args, **kwargs)
         self.userID = userID
         self.infoBoxes = infoBoxes
         self.charts = charts
         self.stories = stories
+        self.boundaryObjects = boundaryObjects
 
 
 class CustomInfoBox(BaseMongoObject):
@@ -38,3 +39,15 @@ class CustomInfoBox(BaseMongoObject):
         self.icon = icon
         self.label = label
         self.colour = colour
+
+class BoundaryObject(BaseMongoObject):
+    def __init__(self, _id=None, userID=None, type=None, title=None, description=None, params=None, features=None, pageID=None, *args, **kwargs):
+        super().__init__(_id, *args, **kwargs)
+        self.userID = userID
+        self.type = type
+        self.title = title
+        self.description = description
+        self.params = params
+        self.features = features
+        self.pageID = pageID
+

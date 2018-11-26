@@ -1,0 +1,67 @@
+<div class="data-container">
+  <h3 mat-dialog-title>{{ this.getDialogTitle() }}</h3>
+  <mat-dialog-content>
+    <div fxLayout="row wrap" fxLayoutGap="5px">
+      <mat-form-field fxFlex="48">
+        <input matInput placeholder="First Name" [(ngModel)]="this.dataModel.firstname" [formControl]="fcFirstName">
+        <mat-error *ngIf="fcFirstName.hasError('required')">First Name is <strong>required</strong></mat-error>
+      </mat-form-field>
+      <mat-form-field fxFlex="48">
+        <input matInput placeholder="Last Name" [(ngModel)]="this.dataModel.surname" [formControl]="fcSurName">
+        <mat-error *ngIf="fcSurName.hasError('required')">Last Name is <strong>required</strong></mat-error>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="5px">
+      <mat-form-field fxFlex="48">
+        <input matInput placeholder="UserName" [(ngModel)]="this.dataModel.username" [formControl]="fcUserName">
+        <mat-error *ngIf="fcUserName.hasError('required')">UserName is <strong>required</strong></mat-error>
+        <mat-error *ngIf="!fcUserName.hasError('required') && fcUserName.hasError('min')">
+          UserName must be at least <strong>5</strong> characters long
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field fxFlex="48">
+        <input #userPassword matInput [(ngModel)]="this.dataModel.password" [type]="this.showPassword ? 'text' : 'password'"
+               placeholder="Password" [formControl]="fcPassword">
+        <mat-error *ngIf="fcPassword.hasError('required')">Password is <strong>required</strong></mat-error>
+        <mat-error *ngIf="!fcPassword.hasError('required') && fcPassword.hasError('pattern')">
+          Passwords must be a minimum of 8 characters, contain one upper case, one lower case, and one special character.
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="5px">
+      <mat-form-field fxFlex="100">
+        <input matInput placeholder="Email Address" [(ngModel)]="this.dataModel.emailAddress" [formControl]="fcEmail">
+        <mat-error *ngIf="fcEmail.hasError('email')">Please supply a valid email address</mat-error>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="5px" class="mb10">
+      <div fxFlex="100">
+        <mat-checkbox [(ngModel)]="this.dataModel.allowLogging">Allow the system to log search results for this user</mat-checkbox>
+      </div>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="5px" class="mt10">
+      <div fxFlex="100">
+        <mat-label>Roles</mat-label>
+        <mat-chip-list #roleList class="mt5 mb5">
+          <mat-chip *ngFor="let r of this.dataModel.roles" color="primary" [removable]="true" (removed)="removeRole(r)">
+            {{ r }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+        <mat-form-field>
+          <input matInput
+                 [matChipInputFor]="roleList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 [matChipInputAddOnBlur]="false"
+                 (matChipInputTokenEnd)="addChip($event)">
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-dialog-actions class="form-buttons mt10">
+      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!this.validateForm()" class="mr5">Save</button>
+      <button *ngIf="this.dataModel._id" mat-raised-button color="warn" (click)="deleteUser()" class="mr5">Delete User</button>
+      <button mat-raised-button color="warn" (click)="generatePassword()" class="mr5">Generate Password</button>
+      <button mat-raised-button color="accent" (click)="cancelChanges()" class="ml5">Cancel</button>
+    </mat-dialog-actions>
+  </mat-dialog-content>
+</div>

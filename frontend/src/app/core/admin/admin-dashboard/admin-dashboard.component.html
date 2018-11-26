@@ -1,0 +1,17 @@
+<mat-drawer-container>
+  <mat-drawer mode="side" opened>
+    <button mat-button (click)="this.setView('curation')" matTooltip="View Data Curation">
+      <mat-icon>account_balance</mat-icon>
+    </button>
+    <button mat-button (click)="this.setView('users')" matTooltip="View Users">
+      <mat-icon>people</mat-icon>
+    </button>
+    <!--<button mat-button (click)="this.setView('stories')" matTooltip="View My Stories">
+      <mat-icon>bookmarks</mat-icon>
+    </button>-->
+  </mat-drawer>
+  <mat-drawer-content>
+    <app-curation *ngIf="this.showCuration"></app-curation>
+    <app-user-list *ngIf="this.showUsers"></app-user-list>
+  </mat-drawer-content>
+</mat-drawer-container>

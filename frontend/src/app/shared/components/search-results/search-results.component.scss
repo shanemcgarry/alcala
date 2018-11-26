@@ -1,0 +1,58 @@
+.result-detail {
+  font-family: Roboto, "Helvetica Neue", sans-serif !important;
+  .matches-detail {
+    color: darkgreen;
+    font-size: .75em;
+    margin-top: -20px;
+    margin-bottom: 10px;
+  }
+}
+
+.tile-card {
+  margin-bottom: 2%;
+  width: 20%;
+  img {
+    max-height: 200px;
+  }
+  .mat-card-actions {
+    margin-left: 3% !important;
+  }
+
+  mat-card-content {
+    ul {
+      list-style-type: none;
+      margin-left: -15%;
+
+      li {
+        float: left;
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+.search-results {
+  padding-top: 1%;
+}
+
+table {
+  width: 100%;
+}
+
+.words-column {
+  width: 50%;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.w10 {
+  width: 10%
+}
+
+.w20 {
+  width: 20%
+}
+
+.w5 {
+  width: 5%;
+}

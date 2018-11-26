@@ -41,6 +41,23 @@ export interface CustomStoryInfo {
   charts: CustomChartInfo[];
 }
 
+export enum BoundaryObjectType {
+  SearchResult = 'keyword',
+  Chart = 'visualisation',
+  Page = 'page'
+}
+
+export interface BoundaryObject {
+  _id: string;
+  userID: string;
+  type: BoundaryObjectType;
+  title: string;
+  description: string;
+  params: SearchParams;
+  features: SearchFeatures;
+  pageID: string;
+}
+
 export interface CustomDashboardInfo {
   _id: string;
   userID: string;

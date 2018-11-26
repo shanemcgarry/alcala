@@ -67,8 +67,8 @@ import { ChartComponent } from './shared/components/chart/chart.component';
 import { TagCloudModule } from 'angular-tag-cloud-module';
 import { SiteService } from './shared/services/site.service';
 import { LocalStorageService } from 'ngx-store';
-import { CurationComponent } from './core/curation/curation.component';
-import { EditComponent } from './core/curation/edit/edit.component';
+import { CurationComponent } from './core/admin/curation/curation.component';
+import { EditComponent } from './core/admin/curation/edit/edit.component';
 import { VizsearchComponent } from './core/vizsearch/vizsearch.component';
 import { TestComponent } from './shared/components/test/test.component';
 import { DashboardSampleComponent } from './shared/components/dashboard-sample/dashboard-sample.component';
@@ -77,6 +77,10 @@ import { StoriesComponent } from './shared/components/stories/stories.component'
 import { InfoboxDialogComponent } from './shared/components/dashboard-dialogs/infobox-dialog/infobox-dialog.component';
 import { ChartDialogComponent } from './shared/components/dashboard-dialogs/chart-dialog/chart-dialog.component';
 import { TestLinksComponent } from './core/test-links/test-links.component';
+import { AdminDashboardComponent } from './core/admin/admin-dashboard/admin-dashboard.component';
+import { UserListComponent } from './core/admin/user-list/user-list.component';
+import { AddEditComponent } from './core/admin/user-list/add-edit/add-edit.component';
+import { SearchResultsComponent } from './shared/components/search-results/search-results.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -109,7 +113,11 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StoriesComponent,
     InfoboxDialogComponent,
     ChartDialogComponent,
-    TestLinksComponent
+    TestLinksComponent,
+    AdminDashboardComponent,
+    UserListComponent,
+    AddEditComponent,
+    SearchResultsComponent
   ],
   imports: [
     routing,
@@ -153,7 +161,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     FlexLayoutModule,
     HttpClientModule
   ],
-  entryComponents: [ EditComponent, InfoboxDialogComponent, ChartDialogComponent ],
+  entryComponents: [ EditComponent, InfoboxDialogComponent, ChartDialogComponent, AddEditComponent ],
   providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, SpinnerService, UserService, AuthGuard, SiteService, LocalStorageService, { provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG }],
   bootstrap: [AppComponent]
 })
