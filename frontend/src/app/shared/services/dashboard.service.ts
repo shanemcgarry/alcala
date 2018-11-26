@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { HandleError, HttpErrorHandler } from './http-error-handler.service';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { CustomDashboardInfo, CustomStoryInfo, CustomChartInfo, CustomInfoBox } from '../models/custom-dashboard.model';
+import {CustomDashboardInfo, CustomStoryInfo, CustomChartInfo, CustomInfoBox, BoundaryObject} from '../models/custom-dashboard.model';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -28,6 +28,27 @@ export class DashboardService {
     return this.httpClient.post<CustomDashboardInfo>(`${this.serviceUrl}`, dashboardInfo, {responseType: 'json'})
       .pipe(
         catchError(this.handleError('saveUserDashboard', null))
+      );
+  }
+
+  getBoundaryObjects(userID: string): Observable<BoundaryObject[]> {
+    return this.httpClient.get<BoundaryObject[]>(`${this.serviceUrl}boundaryObject/${userID}`)
+      .pipe(
+        catchError(this.handleError('getBoundaryObjects', null))
+      );
+  }
+
+  saveBoundaryObject(boundaryObject: BoundaryObject): Observable<BoundaryObject> {
+    return this.httpClient.post<BoundaryObject>(`${this.serviceUrl}boundaryObject`, boundaryObject, {responseType: 'json'})
+      .pipe(
+        catchError(this.handleError('saveBoundaryObject', null))
+      );
+  }
+
+  deleteBoundaryObject(boundaryObject: BoundaryObject): Observable<any> {
+    return this.httpClient.post<any>(`${this.serviceUrl}boundaryObject/delete`, boundaryObject, {responseType: 'json'})
+      .pipe(
+        catchError(this.handleError('deleteBoundaryObject', null))
       );
   }
 

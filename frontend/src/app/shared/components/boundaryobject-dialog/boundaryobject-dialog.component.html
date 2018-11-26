@@ -1,0 +1,96 @@
+<div class="edit-container">
+  <span class="error-message" *ngIf="this.showError">An unexpected error occurred. Unable to save your boundary object.</span>
+  <div class="spinner" *ngIf="this.showSpinner">
+    <mat-spinner color="primary"></mat-spinner>
+  </div>
+  <h3 mat-dialog-title>{{ this.getDialogTitle() }}</h3>
+  <mat-dialog-content>
+    <div fxLayout="row">
+      <mat-form-field fxFlex="100">
+        <input matInput placeholder="Title" [(ngModel)]="this.dataModel.title" [formControl]="this.titleFC">
+        <mat-error *ngIf="this.titleFC.hasError('required')"><strong>Title</strong> is required.</mat-error>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row">
+      <mat-form-field fxFlex="100">
+        <input matInput placeholder="Description" type="text" [(ngModel)]="this.dataModel.description">
+      </mat-form-field>
+    </div>
+    <div *ngIf="this.dataModel.type !== this.boundaryObjectType.Page" fxLayout="row">
+      <mat-accordion fxFlex="100">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Search Information</mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div fxLayout="row" fxLayoutGap="10px">
+            <mat-card fxFlex="48">
+              <mat-card-title>Filters Used:</mat-card-title>
+              <mat-card-content>
+                <div *ngIf="this.dataModel.params.groupBy">
+                  <span class="label">Grouped By: </span><span>{{ this.dataModel.params.groupBy }}</span>
+                </div>
+                <div *ngIf="this.dataModel.params.keywords">
+                  <span class="label">Keywords Used: </span><span>{{ this.dataModel.params.keywords }}</span>
+                </div>
+                <div *ngIf="this.dataModel.params.year">
+                  <span class="label">Selected Year: </span><span>{{ this.dataModel.params.year }}</span>
+                </div>
+                <div *ngIf="this.dataModel.params.topWords">
+                  <span>Include the top </span><span class="label">{{ this.dataModel.params.topWords}} </span><span>words.</span>
+                </div>
+                <div *ngIf="this.dataModel.params.bottomWords">
+                  <span>Include words appearing less than </span><span class="label">{{ this.dataModel.params.bottomWords}} </span><span>times.</span>
+                </div>
+                <div *ngIf="this.dataModel.params.filteredCategories && this.dataModel.params.filteredCategories.length > 0">
+                  <span class="label">Selected Categories: </span><span>{{ this.dataModel.params.filteredCategories.join(', ')}}</span>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            <mat-card fxFlex="48">
+              <mat-card-title>Additional Information</mat-card-title>
+              <mat-card-content>
+                <div *ngIf="this.dataModel.type === this.boundaryObjectType.Chart">
+                  <div>
+                    <span class="label">Type of Chart: </span><span>{{ this.chartInfo ? this.chartInfo.label : this.dataModel.features.chartType }}</span>
+                  </div>
+                  <div>
+                    <span class="label">X Axis: </span><span>{{ this.dataModel.features.xField }}</span>
+                  </div>
+                  <div>
+                    <span class="label">Y Axis: </span><span>{{ this.dataModel.features.yField }}</span>
+                  </div>
+                  <div>
+                    <span class="label">Total Transactions: </span><span>{{ this.dataModel.totalItems }}</span>
+                  </div>
+                </div>
+                <div *ngIf="this.dataModel.type === this.boundaryObjectType.SearchResult">
+                  <div>
+                    <span class="label">Total Results: </span><span>{{ this.dataModel.totalItems}}</span>
+                  </div>
+                  <div>
+                    <span class="label">Number of Items in this Object: </span><span>{{ this.dataModel.features.pageLimit }}</span>
+                  </div>
+                  <div>
+                    <span>Page </span><span class="label">{{ this.dataModel.features.pageIndex }} </span><span>of </span>
+                    <span class="label"></span>{{ this.calculatePageTotal() }}<span>pages</span>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <app-chart *ngIf="this.dataModel.type === this.boundaryObjectType.Chart && this.chartData" [chartType]="this.dataModel.features.chartType"
+              [data]="this.chartData" [xField]="this.dataModel.features.xField" [yField]="this.dataModel.features.yField"
+              [height]="300" [width]="500"></app-chart>
+    <app-search-results *ngIf="this.dataModel.type === this.boundaryObjectType.SearchResult && this.searchData"
+                        [dataModel]="this.searchData" [viewMode]="'list'"></app-search-results>
+    <mat-dialog-actions>
+      <button mat-raised-button color="primary" [disabled]="this.hasErrors()" (click)="saveChanges()" class="mr5">Save</button>
+      <button *ngIf="this.dataModel._id" mat-raised-button color="warn" (click)="deleteObject()" class="mr5">Delete</button>
+      <button mat-raised-button color="accent" (click)="cancelChanges()" class="ml5">Cancel</button>
+    </mat-dialog-actions>
+  </mat-dialog-content>
+</div>

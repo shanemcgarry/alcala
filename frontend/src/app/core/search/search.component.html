@@ -93,6 +93,11 @@
 <div *ngIf="this.dataModel" class="search-results container page-content">
   <div class="full-width">
     <mat-button-toggle-group value="false">
+      <button mat-raised-button color="primary" class="two-column action-button"
+              (click)="this.createBoundaryObject()">
+        <span fxFlex="70">Save Search</span>
+        <mat-icon color="white" fxFlex="30">image_search</mat-icon>
+      </button>
       <mat-button-toggle selected="true" value="false" (change)="this.isTile = false;" matTooltip="View List">
         <mat-icon>view_list</mat-icon>
       </mat-button-toggle>

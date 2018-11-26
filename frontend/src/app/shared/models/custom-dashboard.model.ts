@@ -53,9 +53,11 @@ export interface BoundaryObject {
   type: BoundaryObjectType;
   title: string;
   description: string;
+  totalItems: number;
   params: SearchParams;
   features: SearchFeatures;
   pageID: string;
+  dateCreated: Date;
 }
 
 export interface CustomDashboardInfo {

@@ -30,7 +30,12 @@
         <button mat-raised-button color="primary" class="two-column action-button"
                 (click)="this.saveChartToImage()">
           <span fxFlex="70">Download</span>
-          <mat-icon color="white" fxFlex="30">save_alt</mat-icon>
+          <mat-icon class="button-icon" color="white" fxFlex="30">save_alt</mat-icon>
+        </button>
+        <button mat-raised-button color="primary" class="two-column action-button"
+                (click)="this.createBoundaryObject()">
+          <span fxFlex="70">Save Chart</span>
+          <mat-icon color="white" fxFlex="30">assessment</mat-icon>
         </button>
       </mat-card-content>
     </mat-card>

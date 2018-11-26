@@ -214,7 +214,7 @@ def save_boundary_object():
     mdb = MongoData()
     json_data = request.get_json()
     boInfo = BoundaryObject(**json_data)
-    if Tools.check_for_empty_value(boInfo._id):
+    if not hasattr(boInfo, '_id') or Tools.check_for_empty_value(boInfo._id):
         boInfo._id = mdb.insert_boundary_object(boInfo)
     else:
         boInfo = mdb.update_boundary_object(boInfo)

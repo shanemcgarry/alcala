@@ -7,6 +7,9 @@ import {SearchLogEntry, SearchParams, SearchFeatures} from '../../shared/models/
 import {SearchService} from '../../shared/services/search.service';
 import { cloneDeep } from 'lodash';
 import {SiteUser} from '../../shared/models/site-user.model';
+import {MatDialog} from '@angular/material';
+import {BoundaryObject, BoundaryObjectType} from '../../shared/models/custom-dashboard.model';
+import {BoundaryobjectDialogComponent} from '../../shared/components/boundaryobject-dialog/boundaryobject-dialog.component';
 
 @Component({
   selector: 'app-search',
@@ -26,7 +29,7 @@ export class SearchComponent implements OnInit {
   searchHistory: SearchLogEntry[];
   showSpinner = false;
 
-  constructor(private route: ActivatedRoute, private searchService: SearchService, private userService: UserService) {
+  constructor(private route: ActivatedRoute, private searchService: SearchService, private userService: UserService, public dialog: MatDialog) {
     this.currentSearchID = undefined;
   }
 
@@ -85,6 +88,33 @@ export class SearchComponent implements OnInit {
     }
 
     return result;
+  }
+
+  createBoundaryObject(): void {
+    const features = new SearchFeatures();
+    features.pageIndex = this.currentIndex;
+    features.pageLimit = 20;
+
+    const boundaryObject: BoundaryObject = {
+      _id: null,
+      userID: this.currentUser._id,
+      title: null,
+      description: null,
+      type: BoundaryObjectType.SearchResult,
+      features: features,
+      params: this.searchParams,
+      totalItems: this.dataModel.totalHits,
+      pageID: null,
+      dateCreated: new Date()
+    };
+    const dialogRef = this.dialog.open(BoundaryobjectDialogComponent, { data: boundaryObject});
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Boundary Object created: ' + result._id);
+      } else {
+        console.log('Boundary Object canceled');
+      }
+    });
   }
 
   onHistoryClick(searchID: string): void {

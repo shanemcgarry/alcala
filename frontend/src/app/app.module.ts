@@ -81,6 +81,7 @@ import { AdminDashboardComponent } from './core/admin/admin-dashboard/admin-dash
 import { UserListComponent } from './core/admin/user-list/user-list.component';
 import { AddEditComponent } from './core/admin/user-list/add-edit/add-edit.component';
 import { SearchResultsComponent } from './shared/components/search-results/search-results.component';
+import { BoundaryobjectDialogComponent } from './shared/components/boundaryobject-dialog/boundaryobject-dialog.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -117,7 +118,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     AdminDashboardComponent,
     UserListComponent,
     AddEditComponent,
-    SearchResultsComponent
+    SearchResultsComponent,
+    BoundaryobjectDialogComponent
   ],
   imports: [
     routing,
@@ -161,7 +163,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     FlexLayoutModule,
     HttpClientModule
   ],
-  entryComponents: [ EditComponent, InfoboxDialogComponent, ChartDialogComponent, AddEditComponent ],
+  entryComponents: [ EditComponent, InfoboxDialogComponent, ChartDialogComponent, AddEditComponent, BoundaryobjectDialogComponent ],
   providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, SpinnerService, UserService, AuthGuard, SiteService, LocalStorageService, { provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG }],
   bootstrap: [AppComponent]
 })

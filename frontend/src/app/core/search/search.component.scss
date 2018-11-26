@@ -9,6 +9,17 @@ h1,h2,h3,h4 {
   width: 98%;
 }
 
+.action-button {
+  border: 1px solid $base-red;
+  padding-left: -16px !important;
+  width: 150px;
+  mat-icon {
+    align-content: center;
+    vertical-align: middle;
+    margin-top: 4%;
+  }
+}
+
 .search-results {
   padding-top: 1%;
 }

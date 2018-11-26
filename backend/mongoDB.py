@@ -246,6 +246,7 @@ class MongoData:
                 'type': boInfo.type,
                 'title': boInfo.title,
                 'description': boInfo.description,
+                'totalItems': boInfo.totalItems,
                 'params': boInfo.params,
                 'features': boInfo.features,
                 'pageID': boInfo.pageID

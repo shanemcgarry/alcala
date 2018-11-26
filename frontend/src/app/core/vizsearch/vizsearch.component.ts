@@ -1,17 +1,27 @@
-import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { SearchParams, SearchFeatures } from '../../shared/models/search.model';
-import { VisualisationService } from '../service/visualisation.service';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {environment} from '../../../environments/environment';
+import {SearchFeatures, SearchParams} from '../../shared/models/search.model';
+import {VisualisationService} from '../service/visualisation.service';
 import {CategoryData} from '../../shared/models/pivot-data.model';
-import { MatCheckboxChange, MatPaginator, MatRadioChange, MatSelectChange, MatTableDataSource, MatTabGroup } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
-import { UserService } from '../../shared/services/user.service';
-import { ChartComponent } from '../../shared/components/chart/chart.component';
-import { AnalysisItem, DataSummaryPackage } from '../../shared/models/analysis-result';
-import { ChartFactory } from '../../shared/components/chart/chart.factory';
-import { LabelValue, VisFilter} from '../../shared/models/visualisation.models';
+import {
+  MatCheckboxChange,
+  MatDialog,
+  MatPaginator,
+  MatRadioChange,
+  MatSelectChange,
+  MatTabGroup,
+  MatTableDataSource
+} from '@angular/material';
+import {ActivatedRoute} from '@angular/router';
+import {UserService} from '../../shared/services/user.service';
+import {ChartComponent} from '../../shared/components/chart/chart.component';
+import {AnalysisItem, DataSummaryPackage} from '../../shared/models/analysis-result';
+import {ChartFactory} from '../../shared/components/chart/chart.factory';
+import {LabelValue, VisFilter} from '../../shared/models/visualisation.models';
 import canvg from 'canvg';
 import {SearchService} from '../../shared/services/search.service';
+import {BoundaryobjectDialogComponent} from '../../shared/components/boundaryobject-dialog/boundaryobject-dialog.component';
+import {BoundaryObject, BoundaryObjectType} from '../../shared/models/custom-dashboard.model';
 
 
 @Component({
@@ -45,7 +55,8 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   enableSizeField = false;
   validYears = [1774, 1775, 1776, 1777, 1778, 1779, 1781];
 
-  constructor(private visService: VisualisationService, private userService: UserService, private searchService: SearchService, private route: ActivatedRoute) {
+  constructor(private visService: VisualisationService, private userService: UserService, private searchService: SearchService,
+              private route: ActivatedRoute, public dialog: MatDialog) {
     this.supportedFields.push(new LabelValue('Total Spent', 'totalAmount'));
     this.supportedFields.push(new LabelValue('# of Occurrences', 'transactionCount'));
     this.supportedFields.push(new LabelValue('Year', 'year'));
@@ -156,6 +167,29 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       }
     }
     return results;
+  }
+
+  createBoundaryObject(): void {
+    const boundaryObject: BoundaryObject = {
+      _id: null,
+      userID: this.userID,
+      title: null,
+      description: null,
+      type: BoundaryObjectType.Chart,
+      features: this.features,
+      params: this.searchParams,
+      totalItems: this.detailData.data.length,
+      pageID: null,
+      dateCreated: new Date()
+    };
+    const dialogRef = this.dialog.open(BoundaryobjectDialogComponent, { data: boundaryObject});
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Boundary Object created: ' + result._id);
+      } else {
+        console.log('Boundary Object canceled');
+      }
+    });
   }
 
   getLabelValueItem(fieldName: string): LabelValue {
