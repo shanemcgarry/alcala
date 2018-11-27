@@ -1,0 +1,40 @@
+<div class="edit-container" *ngIf="this.data" (click)="toggleFlip()" [@flipState]="flip">
+  <app-spinner [show]="this.showSpinner"></app-spinner>
+  <!--<mat-card [class]="!this.expandedView ? 'small-view' : 'full-view'">-->
+  <mat-card class="front">
+    <mat-card-title>
+      <div fxLayout="row" fxLayoutAlign="end end">
+        <h5 fxFlex="95">{{ this.data.title }}</h5>
+        <div class="action-buttons" *ngIf="this.showActions">
+          <button mat-icon-button color="primary" (click)="editBoundaryObject()">
+            <mat-icon color="white">edit</mat-icon>
+          </button>
+ <!--         <button mat-icon-button color="primary" routerLink="{{ '/boundary/' + this.data._id }}">
+            <mat-icon color="white">fullscreen</mat-icon>
+          </button>-->
+        </div>
+      </div>
+    </mat-card-title>
+    <!--<mat-card-subtitle>
+      {{ this.data.description }}
+    </mat-card-subtitle>-->
+    <mat-card-content class="small-view">
+      <mat-divider></mat-divider>
+      <app-search-results *ngIf="this.data.type === this.boundaryObjectType.SearchResult"
+                          [viewMode]="'list'" [dataModel]="this.searchResults"></app-search-results>
+      <app-chart *ngIf="this.data.type === this.boundaryObjectType.Chart" [chartType]="this.data.features.chartType"
+                 [data]="this.chartData" [xField]="this.data.features.xField" [yField]="this.data.features.yField"
+                 [width]="700" [height]="300"></app-chart>
+      <app-page *ngIf="this.data.type === this.boundaryObjectType.Page" [pageid]="this.data.pageID"
+                [hideActions]="true"></app-page>
+    </mat-card-content>
+    <!--<mat-card-footer>
+      {{ this.data.description }}
+    </mat-card-footer>-->
+  </mat-card>
+  <mat-card class="back">
+    <mat-card-content>
+      {{ this.data.description }}
+    </mat-card-content>
+  </mat-card>
+</div>

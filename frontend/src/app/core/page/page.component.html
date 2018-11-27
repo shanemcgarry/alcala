@@ -1,3 +1,4 @@
+<app-spinner [show]="this.showSpinner"></app-spinner>
 <div *ngIf="dataModel" class="container, page-content" fxLayout="row" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="left">
   <div fxFlex="60%">
     <mat-tab-group>
@@ -14,6 +15,11 @@
     </mat-tab-group>
   </div>
   <div #imageViewerParent class="image-viewer" fxFlex="40%">
+    <button *ngIf="!this.hideActions" mat-raised-button color="primary" class="two-column action-button"
+            (click)="this.createBoundaryObject()">
+      <span fxFlex="70">Save Page</span>
+      <mat-icon color="white" fxFlex="30">save</mat-icon>
+    </button>
     <ngx-imageviewer #imageViewer [src]="this.imageUrl" [width]="this.viewerWidth"></ngx-imageviewer>
   </div>
 </div>

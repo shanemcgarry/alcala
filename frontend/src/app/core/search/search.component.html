@@ -24,7 +24,7 @@
             <div>
               <span class="bold">Total Results: </span> {{ h.totalHits }}
             </div>
-            <button mat-raised-button color="primary" (click)="this.showSpinner = true; onHistoryClick(h._id)">View</button>
+            <button mat-raised-button color="primary" (click)="onHistoryClick(h._id)">View</button>
           </mat-card-content>
         </mat-card>
       </mat-grid-tile>
@@ -49,7 +49,7 @@
       <div class="mt20">
         <mat-form-field appearance="outline" disabled="false" fxFlex="100%" fxFill>
           <mat-label>Keyword(s)</mat-label>
-          <input matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchParams.keywords" (keyup.enter)="this.showSpinner = true; onSearchClick()">
+          <input matInput type="search" placeholder="Search Phrase" [(ngModel)]="this.searchParams.keywords" (keyup.enter)="onSearchClick()">
           <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="this.searchParams.keywords=''">
             <mat-icon>close</mat-icon>
           </button>
@@ -77,17 +77,10 @@
       </span>
     </mat-tab>
   </mat-tab-group>
-  <button mat-raised-button color="primary" (click)="this.showSpinner = true; onSearchClick()">Search</button>
+  <button mat-raised-button color="primary" (click)="onSearchClick()">Search</button>
 </div>
 <!--<mat-divider></mat-divider>-->
-<div *ngIf="showSpinner">
-  <!--<mat-card>
-    <mat-card-content>
-      <mat-progress-spinner color="primary" mode="indeterminate" [value]="50"></mat-progress-spinner>
-    </mat-card-content>
-  </mat-card>-->
-  <mat-progress-spinner color="primary" mode="indeterminate" [value]="50"></mat-progress-spinner>
-</div>
+<app-spinner [show]="this.showSpinner"></app-spinner>
 <mat-divider></mat-divider>
 <div class="clear"></div>
 <div *ngIf="this.dataModel" class="search-results container page-content">

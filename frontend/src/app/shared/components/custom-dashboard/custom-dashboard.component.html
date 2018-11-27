@@ -4,7 +4,7 @@
   <button mat-raised-button color="primary" *ngIf="this.canCustomise" (click)="toggleCustomise(false)">Save</button>-->
 </div>
 
-<mat-grid-list [cols]="4" rowHeight="140px;" *ngIf="this.dataModel" class="card-section">
+<mat-grid-list [cols]="4" rowHeight="140px;" *ngIf="this.infoBoxes && this.boxData" class="card-section">
   <mat-grid-tile *ngFor="let ib of this.infoBoxes" [colspan]="1">
     <app-info-box [bgClass]="ib.colour" [icon]="ib.icon"
                   [label]="ib.label" [count]="this.getInfoBoxData('count', ib.type)"
@@ -19,7 +19,13 @@
   </mat-grid-tile>
 </mat-grid-list>
 
-<mat-grid-list [cols]="4" rowHeight="320" *ngIf="this.charts" class="card-section mt10">
+<mat-grid-list [cols]="2" rowHeight="360" *ngIf="this.boundaryObjects" class="card-section mt10 mb10">
+  <mat-grid-tile *ngFor="let b of this.boundaryObjects" [colspan]="1">
+    <app-boundary-object [expandedView]="false" [data]="b"></app-boundary-object>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<!--<mat-grid-list [cols]="4" rowHeight="320" *ngIf="this.charts" class="card-section mt10">
   <mat-grid-tile *ngFor="let c of this.charts" [colspan]="2">
     <mat-card class="chart-card full-width ml0 mr10" (click)="this.onEditChart(c)">
       <mat-card-title>
@@ -37,7 +43,7 @@
       <button mat-button (click)="addChart()">Add New Chart</button>
     </div>
   </mat-grid-tile>
-</mat-grid-list>
+</mat-grid-list>-->
 
 <!--<mat-grid-list [cols]="4" rowHeight="320" *ngIf="this.dataModel" class="card-section mt10">
   <mat-grid-tile *ngFor="let s of this.dataModel.stories" [colspan]="4">

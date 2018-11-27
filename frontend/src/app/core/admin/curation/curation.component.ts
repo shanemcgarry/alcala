@@ -4,7 +4,6 @@ import { UserService } from '../../../shared/services/user.service';
 import { AdminService } from '../../../shared/services/admin.service';
 import { SiteUser } from '../../../shared/models/site-user.model';
 import {MatTableDataSource, MatPaginator, MatDialog} from '@angular/material';
-import { SpinnerService } from '../../../shared/services/spinner.service';
 import {EditComponent} from './edit/edit.component';
 import { cloneDeep } from 'lodash';
 
@@ -18,24 +17,28 @@ export class CurationComponent implements OnInit {
   currUser: SiteUser;
   pageSizeOptions: number[] = [10, 25, 50, 100];
   displayColumns: string[] = ['pageid', 'month', 'words', 'reales', 'maravedises', 'categories', 'actions'];
+  showSpinner: boolean;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private userService: UserService, private adminService: AdminService, private spinnerService: SpinnerService, private dialog: MatDialog) { }
+  constructor(private userService: UserService, private adminService: AdminService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.spinnerService.show('curationSpinner');
+    this.showSpinner = true;
     this.currUser = this.userService.getLoggedInUser();
     this.adminService.getTrainingData(this.currUser._id)
       .subscribe(
         data => {
           this.dataModel.data = data;
           this.dataModel.paginator = this.paginator;
+          this.showSpinner = false;
         },
-        err => console.log(err),
+        err => {
+          console.log(err);
+          this.showSpinner = false;
+        },
         () => {
           console.log('Data Model loaded');
-          this.spinnerService.hide('curationSpinner');
         }
       );
   }

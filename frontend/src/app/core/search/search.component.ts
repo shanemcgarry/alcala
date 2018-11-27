@@ -67,11 +67,18 @@ export class SearchComponent implements OnInit {
   }
 
   onNavClick(index: number) {
+    this.showSpinner = true;
     this.currentIndex = index;
     this.searchService.keywordSearch(this.searchParams, index, 20, this.currentUser._id, this.currentSearchID)
       .subscribe(
-        data => this.dataModel = data,
-        error => console.log(error),
+        data => {
+          this.dataModel = data;
+          this.showSpinner = false;
+          },
+        error => {
+          console.log(error);
+          this.showSpinner = false;
+        }
       );
   }
 
@@ -118,6 +125,7 @@ export class SearchComponent implements OnInit {
   }
 
   onHistoryClick(searchID: string): void {
+    this.showSpinner = true;
     this.currentSearchID = searchID;
     const histObj = this.searchHistory.find(x => x._id === searchID);
     this.currentIndex = 1;

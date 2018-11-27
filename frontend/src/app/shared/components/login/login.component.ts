@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
   userName: string;
   password: string;
   siteUser: SiteUser;
+  showSpinner = false;
   reqValid = new FormControl('', [Validators.required]);
 
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) { }
@@ -23,11 +24,13 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
   login(): void {
+    this.showSpinner = true;
     let navigation = this.route.snapshot.queryParams['returnUrl'];
     this.userService.login(this.userName, this.password)
       .subscribe(
         data => {
           this.siteUser = data;
+          this.showSpinner = false;
           if (this.siteUser.loginToken) {
             if (!navigation) {
               navigation = '/experiment';
@@ -35,7 +38,10 @@ export class LoginComponent implements OnInit {
             this.router.navigate([navigation]);
           }
         },
-            error => console.log(error)
+        error => {
+          console.log(error);
+          this.showSpinner = false;
+        }
       );
   }
   getValidatorMessages(): string {

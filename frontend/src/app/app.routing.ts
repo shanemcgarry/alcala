@@ -8,13 +8,14 @@ import { SearchComponent } from './core/search/search.component';
 import { PageComponent } from './core/page/page.component';
 import { DashboardComponent } from './core/dashboard/dashboard.component';
 import {VizsearchComponent} from './core/vizsearch/vizsearch.component';
-import {TestComponent} from './shared/components/test/test.component';
 import {TestLinksComponent} from './core/test-links/test-links.component';
 import {AdminDashboardComponent} from './core/admin/admin-dashboard/admin-dashboard.component';
+import {BoundaryObjectComponent} from './shared/components/boundary-object/boundary-object.component';
 
 
 const appRoutes: Routes = [
-  { path: 'page/:id', component: PageComponent },
+  { path: 'page/:id', component: PageComponent, canActivate: [AuthGuard] },
+  { path: 'boundary/:id', component: BoundaryObjectComponent, canActivate: [AuthGuard] },
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'visualise/dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'visualise/search/:graph', component: VizsearchComponent, canActivate: [AuthGuard] },
@@ -22,7 +23,6 @@ const appRoutes: Routes = [
   { path: 'logout', component: LogoutComponent },
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard] },
   { path: 'experiment', component: TestLinksComponent, canActivate: [AuthGuard] },
-  { path: 'test', component: TestComponent },
   { path: '', component: HomeComponent }
 ];
 

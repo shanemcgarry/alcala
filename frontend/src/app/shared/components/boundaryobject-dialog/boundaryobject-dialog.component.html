@@ -1,8 +1,6 @@
 <div class="edit-container">
   <span class="error-message" *ngIf="this.showError">An unexpected error occurred. Unable to save your boundary object.</span>
-  <div class="spinner" *ngIf="this.showSpinner">
-    <mat-spinner color="primary"></mat-spinner>
-  </div>
+  <app-spinner [show]="this.showSpinner"></app-spinner>
   <h3 mat-dialog-title>{{ this.getDialogTitle() }}</h3>
   <mat-dialog-content>
     <div fxLayout="row">
@@ -13,7 +11,7 @@
     </div>
     <div fxLayout="row">
       <mat-form-field fxFlex="100">
-        <input matInput placeholder="Description" type="text" [(ngModel)]="this.dataModel.description">
+        <textarea matInput placeholder="Description" type="text" [(ngModel)]="this.dataModel.description"></textarea>
       </mat-form-field>
     </div>
     <div *ngIf="this.dataModel.type !== this.boundaryObjectType.Page" fxLayout="row">
@@ -84,9 +82,10 @@
     </div>
     <app-chart *ngIf="this.dataModel.type === this.boundaryObjectType.Chart && this.chartData" [chartType]="this.dataModel.features.chartType"
               [data]="this.chartData" [xField]="this.dataModel.features.xField" [yField]="this.dataModel.features.yField"
-              [height]="300" [width]="500"></app-chart>
+              [height]="300" [width]="800"></app-chart>
     <app-search-results *ngIf="this.dataModel.type === this.boundaryObjectType.SearchResult && this.searchData"
                         [dataModel]="this.searchData" [viewMode]="'list'"></app-search-results>
+    <app-page *ngIf="this.dataModel.type === this.boundaryObjectType.Page" [hideActions]="true" [pageid]="this.dataModel.pageID"></app-page>
     <mat-dialog-actions>
       <button mat-raised-button color="primary" [disabled]="this.hasErrors()" (click)="saveChanges()" class="mr5">Save</button>
       <button *ngIf="this.dataModel._id" mat-raised-button color="warn" (click)="deleteObject()" class="mr5">Delete</button>

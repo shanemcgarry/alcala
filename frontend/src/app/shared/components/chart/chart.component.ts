@@ -30,7 +30,9 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.setChartInfo(this.chartType);
+    if (this.data) {
+      this.setChartInfo(this.chartType);
+    }
   }
 
   setChartInfo(chartType: string): void {

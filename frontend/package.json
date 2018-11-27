@@ -46,6 +46,7 @@
     "ngx-swiper-wrapper": "^6.4.0",
     "ngx-youtube-player": "^6.0.0",
     "npm": "^6.4.1",
+    "rfs": "^7.1.8",
     "rxjs": "^6.3.3",
     "stream": "0.0.2",
     "strongly-typed-events": "^1.4.6",

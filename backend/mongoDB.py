@@ -236,6 +236,10 @@ class MongoData:
         })
         return True # this means we didn't raise an exception
 
+    def get_boundary_object_by_id(self, id):
+        json_doc = self.db.boundary_objects.find({'_id': ObjectId(id)})
+        return BoundaryObject(**json_doc[0])
+
     def insert_boundary_object(self, boInfo):
         bo_id = self.db.boundary_objects.insert_one(boInfo.get_properties())
         return str(bo_id.inserted_id)

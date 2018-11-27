@@ -1,4 +1,4 @@
-<div *ngIf="this.viewMode === 'list'" class="result-detail">
+<div *ngIf="this.viewMode === 'list' && this.dataModel" class="result-detail">
   <table mat-table [dataSource]="this.dataModel.pages">
     <ng-container matColumnDef="title" class="w10">
       <th mat-header-cell *matHeaderCellDef>Page Title</th>
@@ -18,7 +18,7 @@
       <td mat-cell *matCellDef="let p" [innerHTML]="formatTextSnippet(p.textSnippet)"></td>
     </ng-container>
     <ng-container matColumnDef="id" class="w5">
-      <th mat-header-cell *matHeaderCellDef><mat-icon color="primary">remove_red_eye</mat-icon></th>
+      <th mat-header-cell *matHeaderCellDef>View Page</th>
       <td mat-cell *matCellDef="let p">
         <a [href]="'/page/' + p.id.trim()">
           <!--<mat-icon color="primary">find_in_page</mat-icon>-->

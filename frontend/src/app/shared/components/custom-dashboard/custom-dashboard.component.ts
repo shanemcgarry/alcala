@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {CustomChartInfo, CustomDashboardInfo, CustomInfoBox, CustomStoryInfo, InfoBoxTypes} from '../../models/custom-dashboard.model';
+import {
+  BoundaryObject, BoundaryObjectType,
+  CustomChartInfo,
+  CustomDashboardInfo,
+  CustomInfoBox,
+  CustomStoryInfo,
+  InfoBoxTypes
+} from '../../models/custom-dashboard.model';
 import {DashboardService} from '../../services/dashboard.service';
 import {UserService} from '../../services/user.service';
 import {SiteUser} from '../../models/site-user.model';
@@ -25,8 +32,10 @@ export class CustomDashboardComponent implements OnInit {
   dataModel: CustomDashboardInfo;
   infoBoxes: CustomInfoBox[];
   charts: CustomChartInfo[];
+  boundaryObjects: BoundaryObject[];
   userInfo: SiteUser;
   boxData: AnalysisSummary;
+  boundaryObjectType = BoundaryObjectType;
 
   constructor(private dashboardService: DashboardService, private userService: UserService, private searchService: SearchService,
               private visualisationService: VisualisationService, public dialog: MatDialog) {
@@ -66,6 +75,12 @@ export class CustomDashboardComponent implements OnInit {
     this.dashboardService.getUserCharts(this.userInfo._id)
       .subscribe(
         data => this.charts = data,
+        err => console.log(err),
+        () => console.log('charts loaded')
+      );
+    this.dashboardService.getBoundaryObjects(this.userInfo._id)
+      .subscribe(
+        data => this.boundaryObjects = data,
         err => console.log(err),
         () => console.log('charts loaded')
       );

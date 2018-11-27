@@ -9,14 +9,14 @@ NLP_CONFIG = {
 }
 
 MONGODB_CONFIG = {
-    'server': 'localhost',
-    # 'server': 'jkeatingsrv.cs.nuim.ie',
+    #'server': 'localhost',
+    'server': 'jkeatingsrv.cs.nuim.ie',
     'port': 27017,
     'database': 'alcala',
-    # 'ssh': {
-    #     'user': 'smcgarry',
-    #     'password': '@sam1416',
-    #     'localhost': '127.0.0.1',
-    #     'localport': 27017
-    # }
+    'ssh': {
+        'user': 'smcgarry',
+        'password': '@sam1416',
+        'localhost': '127.0.0.1',
+        'localport': 27017
+    }
 }

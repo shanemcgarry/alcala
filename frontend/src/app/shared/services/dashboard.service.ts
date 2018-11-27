@@ -31,6 +31,13 @@ export class DashboardService {
       );
   }
 
+  getBoundaryObjectByID(id: string): Observable<BoundaryObject> {
+    return this.httpClient.get<BoundaryObject>(`${this.serviceUrl}boundaryObject/getByID/${id}`)
+      .pipe(
+        catchError(this.handleError('getBoundaryObjectByID', null))
+      );
+  }
+
   getBoundaryObjects(userID: string): Observable<BoundaryObject[]> {
     return this.httpClient.get<BoundaryObject[]>(`${this.serviceUrl}boundaryObject/${userID}`)
       .pipe(

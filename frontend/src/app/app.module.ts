@@ -48,7 +48,6 @@ import { HomeComponent } from './shared/components/home/home.component';
 
 import { PageService } from './core/service/page.service';
 import { VisualisationService } from './core/service/visualisation.service';
-import { SpinnerService } from './shared/services/spinner.service';
 import { HttpErrorHandler } from './shared/services/http-error-handler.service';
 import { MessageService } from './core/service/message.service';
 import { ExpenseComponent } from './core/expense/expense.component';
@@ -82,6 +81,7 @@ import { UserListComponent } from './core/admin/user-list/user-list.component';
 import { AddEditComponent } from './core/admin/user-list/add-edit/add-edit.component';
 import { SearchResultsComponent } from './shared/components/search-results/search-results.component';
 import { BoundaryobjectDialogComponent } from './shared/components/boundaryobject-dialog/boundaryobject-dialog.component';
+import { BoundaryObjectComponent } from './shared/components/boundary-object/boundary-object.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -119,7 +119,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     UserListComponent,
     AddEditComponent,
     SearchResultsComponent,
-    BoundaryobjectDialogComponent
+    BoundaryobjectDialogComponent,
+    BoundaryObjectComponent
   ],
   imports: [
     routing,
@@ -164,7 +165,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     HttpClientModule
   ],
   entryComponents: [ EditComponent, InfoboxDialogComponent, ChartDialogComponent, AddEditComponent, BoundaryobjectDialogComponent ],
-  providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, SpinnerService, UserService, AuthGuard, SiteService, LocalStorageService, { provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG }],
+  providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, UserService, AuthGuard, SiteService, LocalStorageService, { provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

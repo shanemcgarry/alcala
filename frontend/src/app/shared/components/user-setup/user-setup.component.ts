@@ -15,17 +15,7 @@ export class UserSetupComponent implements OnInit {
   ngOnInit() {
   }
   setSelection(useDashboard: boolean): void {
-    this.userService.setPreferences(this.userService.getLoggedInUser()._id, useDashboard)
-      .subscribe(
-        data => {
-          let destination = '/visualise/dashboard';
-          if (!useDashboard) {
-            destination = '/search';
-          }
-          this.router.navigate([destination]);
-        },
-        err => console.log(err)
-      );
+
   }
 
 }

@@ -54,6 +54,7 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   features: SearchFeatures = new SearchFeatures();
   enableSizeField = false;
   validYears = [1774, 1775, 1776, 1777, 1778, 1779, 1781];
+  showSpinner: boolean;
 
   constructor(private visService: VisualisationService, private userService: UserService, private searchService: SearchService,
               private route: ActivatedRoute, public dialog: MatDialog) {
@@ -282,14 +283,19 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
   }
 
   onSearch(): void {
+    this.showSpinner = true;
     this.searchService.visualiseSearch(this.searchParams, this.userID)
       .subscribe(
         data => {
             this.graphData = data;
             this.setChartDetailData(data.rawData);
             this.logSearchFeatures();
+            this.showSpinner = false;
           },
-        err => console.log(err),
+        err => {
+          console.log(err);
+          this.showSpinner = false;
+        },
         () => {
           this.resetFeatures();
         }

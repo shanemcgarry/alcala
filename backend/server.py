@@ -209,6 +209,18 @@ def get_boundary_objects(userID):
     return response
 
 
+@app.route("/dashboard/boundaryObject/getByID/<id>")
+def get_boundary_object_by_id(id):
+    mdb = MongoData()
+    result = mdb.get_boundary_object_by_id(id)
+    response = app.response_class(
+        response=result.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
 @app.route("/dashboard/boundaryObject", methods=['POST'])
 def save_boundary_object():
     mdb = MongoData()
