@@ -1,0 +1,5 @@
+<mat-grid-list [cols]="2" rowHeight="360" *ngIf="this.boundaryObjects" class="card-section mt10 mb10">
+  <mat-grid-tile *ngFor="let b of this.boundaryObjects" [colspan]="1">
+    <app-boundary-object [expandedView]="false" [data]="b"></app-boundary-object>
+  </mat-grid-tile>
+</mat-grid-list>

@@ -82,6 +82,10 @@ import { AddEditComponent } from './core/admin/user-list/add-edit/add-edit.compo
 import { SearchResultsComponent } from './shared/components/search-results/search-results.component';
 import { BoundaryobjectDialogComponent } from './shared/components/boundaryobject-dialog/boundaryobject-dialog.component';
 import { BoundaryObjectComponent } from './shared/components/boundary-object/boundary-object.component';
+import { DashboardNotesComponent } from './shared/components/dashboard-notes/dashboard-notes.component';
+import { DashboardPostersComponent } from './shared/components/dashboard-posters/dashboard-posters.component';
+import { PosterDialogComponent } from './shared/components/dashboard-dialogs/poster-dialog/poster-dialog.component';
+import { PosterSectionComponent } from './shared/components/dashboard-dialogs/poster-dialog/poster-section/poster-section.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -120,7 +124,11 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     AddEditComponent,
     SearchResultsComponent,
     BoundaryobjectDialogComponent,
-    BoundaryObjectComponent
+    BoundaryObjectComponent,
+    DashboardNotesComponent,
+    DashboardPostersComponent,
+    PosterDialogComponent,
+    PosterSectionComponent
   ],
   imports: [
     routing,
@@ -164,7 +172,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     FlexLayoutModule,
     HttpClientModule
   ],
-  entryComponents: [ EditComponent, InfoboxDialogComponent, ChartDialogComponent, AddEditComponent, BoundaryobjectDialogComponent ],
+  entryComponents: [ EditComponent, InfoboxDialogComponent, ChartDialogComponent, AddEditComponent, BoundaryobjectDialogComponent, PosterDialogComponent ],
   providers: [PageService, HttpErrorHandler, MessageService, VisualisationService, UserService, AuthGuard, SiteService, LocalStorageService, { provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG }],
   bootstrap: [AppComponent]
 })

@@ -1,4 +1,5 @@
-<div class="edit-container" *ngIf="this.data" (click)="toggleFlip()" [@flipState]="flip">
+<!--<div class="edit-container" *ngIf="this.data" (click)="toggleFlip()" [@flipState]="flip">-->
+<div class="edit-container" *ngIf="this.data">
   <app-spinner [show]="this.showSpinner"></app-spinner>
   <!--<mat-card [class]="!this.expandedView ? 'small-view' : 'full-view'">-->
   <mat-card class="front">
@@ -6,8 +7,8 @@
       <div fxLayout="row" fxLayoutAlign="end end">
         <h5 fxFlex="95">{{ this.data.title }}</h5>
         <div class="action-buttons" *ngIf="this.showActions">
-          <button mat-icon-button color="primary" (click)="editBoundaryObject()">
-            <mat-icon color="white">edit</mat-icon>
+          <button mat-icon-button color="white" (click)="editBoundaryObject()">
+            <mat-icon>edit</mat-icon>
           </button>
  <!--         <button mat-icon-button color="primary" routerLink="{{ '/boundary/' + this.data._id }}">
             <mat-icon color="white">fullscreen</mat-icon>
@@ -19,7 +20,7 @@
       {{ this.data.description }}
     </mat-card-subtitle>-->
     <mat-card-content class="small-view">
-      <mat-divider></mat-divider>
+      <!--<mat-divider></mat-divider>-->
       <app-search-results *ngIf="this.data.type === this.boundaryObjectType.SearchResult"
                           [viewMode]="'list'" [dataModel]="this.searchResults"></app-search-results>
       <app-chart *ngIf="this.data.type === this.boundaryObjectType.Chart" [chartType]="this.data.features.chartType"
@@ -28,13 +29,13 @@
       <app-page *ngIf="this.data.type === this.boundaryObjectType.Page" [pageid]="this.data.pageID"
                 [hideActions]="true"></app-page>
     </mat-card-content>
-    <!--<mat-card-footer>
+    <mat-card-footer>
       {{ this.data.description }}
-    </mat-card-footer>-->
+    </mat-card-footer>
   </mat-card>
-  <mat-card class="back">
+  <!--<mat-card class="back">
     <mat-card-content>
       {{ this.data.description }}
     </mat-card-content>
-  </mat-card>
+  </mat-card>-->
 </div>

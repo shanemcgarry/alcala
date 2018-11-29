@@ -5,7 +5,7 @@ from flask_cors import CORS
 import datetime
 from models.analysisItem import AnalysisItem, AnalysisResultList, AnalysisSummary
 from models.search import SearchParameters, SearchFeatures, PageSearch
-from models.dashboard import CustomDashboardInfo, CustomStoryInfo, CustomInfoBox, CustomChartInfo, BoundaryObject
+from models.dashboard import CustomDashboardInfo, CustomPosterInfo, CustomInfoBox, CustomChartInfo, BoundaryObject
 from analysis.frequency import FrequencyDistribution
 from models.users import SiteUser
 from models.flaskErrors import ApplicationError
@@ -253,10 +253,10 @@ def delete_boundary_object():
     return response
 
 
-@app.route("/dashboard/story/<userID>")
-def get_user_stories(userID):
+@app.route("/dashboard/poster/<userID>")
+def get_user_posters(userID):
     mdb = MongoData()
-    results = mdb.get_custom_stories(userID=userID)
+    results = mdb.get_custom_posters(userID=userID)
     response = app.response_class(
         response=Tools.serialise_list(results),
         status=200,
@@ -265,30 +265,42 @@ def get_user_stories(userID):
     return response
 
 
-@app.route("/dashboard/story", methods=['POST'])
-def save_user_story():
+@app.route("/dashboard/poster/getByID/<id>")
+def get_user_poster_by_id(id):
     mdb = MongoData()
-    json_data = request.get_json()
-    storyObj = CustomStoryInfo(**json_data)
-    if Tools.check_for_empty_value(storyObj._id):
-        storyObj._id = mdb.insert_custom_story(storyObj)
-    else:
-        storyObj = mdb.update_custom_story(storyObj)
-
+    result = mdb.get_custom_poster_by_id(id)
     response = app.response_class(
-        response=storyObj.toJson(),
+        response=result.toJson(),
         status=200,
         mimetype='application/json'
     )
     return response
 
 
-@app.route("/dashboard/story/delete", methods=['POST'])
-def delete_user_story():
+@app.route("/dashboard/poster", methods=['POST'])
+def save_user_poster():
     mdb = MongoData()
     json_data = request.get_json()
-    storyObj = CustomStoryInfo(**json_data)
-    mdb.delete_custom_story(storyObj._id)
+    posterObj = CustomPosterInfo(**json_data)
+    if not hasattr(posterObj, '_id') or Tools.check_for_empty_value(posterObj._id):
+        posterObj._id = mdb.insert_custom_poster(posterObj)
+    else:
+        posterObj = mdb.update_custom_poster(posterObj)
+
+    response = app.response_class(
+        response=posterObj.toJson(),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
+
+@app.route("/dashboard/poster/delete", methods=['POST'])
+def delete_user_poster():
+    mdb = MongoData()
+    json_data = request.get_json()
+    posterObj = CustomPosterInfo(**json_data)
+    mdb.delete_custom_poster(posterObj._id)
     response = app.response_class(
         response=json.dumps('{}'),
         status=200,

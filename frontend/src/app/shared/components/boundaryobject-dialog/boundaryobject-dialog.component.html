@@ -11,7 +11,7 @@
     </div>
     <div fxLayout="row">
       <mat-form-field fxFlex="100">
-        <textarea matInput placeholder="Description" type="text" [(ngModel)]="this.dataModel.description"></textarea>
+        <textarea matInput placeholder="Notes" type="text" [(ngModel)]="this.dataModel.description"></textarea>
       </mat-form-field>
     </div>
     <div *ngIf="this.dataModel.type !== this.boundaryObjectType.Page" fxLayout="row">

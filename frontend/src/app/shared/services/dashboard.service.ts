@@ -3,8 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { HandleError, HttpErrorHandler } from './http-error-handler.service';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import {CustomDashboardInfo, CustomStoryInfo, CustomChartInfo, CustomInfoBox, BoundaryObject} from '../models/custom-dashboard.model';
+import {CustomDashboardInfo, CustomChartInfo, CustomInfoBox, BoundaryObject} from '../models/custom-dashboard.model';
 import { catchError } from 'rxjs/operators';
+import {PosterModel} from '../models/poster-model';
 
 @Injectable({
   providedIn: 'root'
@@ -101,24 +102,31 @@ export class DashboardService {
       );
   }
 
-  getUserStories(userID: string): Observable<CustomStoryInfo[]> {
-    return this.httpClient.get<CustomStoryInfo[]>(`${this.serviceUrl}story/${userID}`)
+  getUserPosterByID(id: string): Observable<PosterModel> {
+    return this.httpClient.get<PosterModel>(`${this.serviceUrl}poster/getByID/${id}`)
       .pipe(
-        catchError(this.handleError('getUserStories', null))
+        catchError(this.handleError('getUserPosterByID', null))
       );
   }
 
-  saveUserStory(storyInfo: CustomStoryInfo): Observable<CustomStoryInfo> {
-    return this.httpClient.post<CustomStoryInfo>(`${this.serviceUrl}story`, storyInfo, {responseType: 'json'})
+  getUserPosters(userID: string): Observable<PosterModel[]> {
+    return this.httpClient.get<PosterModel[]>(`${this.serviceUrl}poster/${userID}`)
       .pipe(
-        catchError(this.handleError('saveUserStory', null))
+        catchError(this.handleError('getUserPosters', null))
       );
   }
 
-  deleteUserStory(storyInfo: CustomStoryInfo): Observable<any> {
-    return this.httpClient.post<any>(`${this.serviceUrl}story/delete`, storyInfo, {responseType: 'json'})
+  saveUserPoster(posterInfo: PosterModel): Observable<PosterModel> {
+    return this.httpClient.post<PosterModel>(`${this.serviceUrl}poster`, posterInfo, {responseType: 'json'})
       .pipe(
-        catchError(this.handleError('deleteUserStory', null))
+        catchError(this.handleError('saveUserPoster', null))
+      );
+  }
+
+  deleteUserPoster(posterInfo: PosterModel): Observable<any> {
+    return this.httpClient.post<any>(`${this.serviceUrl}poster/delete`, posterInfo, {responseType: 'json'})
+      .pipe(
+        catchError(this.handleError('deleteUserPoster', null))
       );
   }
 }

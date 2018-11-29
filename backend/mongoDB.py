@@ -6,7 +6,7 @@ from bson.code import Code
 from models.analysisItem import AnalysisItem, CategoryData, AnalysisUserItem, TimeSeriesData, KeyTimePivotData, \
     TimeSummary, DataPackage
 from models.search import SearchLogEntry
-from models.dashboard import CustomStoryInfo, CustomDashboardInfo, CustomChartInfo, CustomInfoBox, BoundaryObject
+from models.dashboard import CustomPosterInfo, CustomPosterSection, CustomDashboardInfo, CustomChartInfo, CustomInfoBox, BoundaryObject
 from models.pivotData import CategoryMonthPivotItem, CategoryYearPivotItem, MonthYearPivotItem, AllPointsPivotItem, \
     WordFreqPivotItem, CategoryPivotItem, YearPivotItem, WordFreqMonthPivotItem, WordFreqYearPivotItem
 from models.users import SiteUser
@@ -124,16 +124,16 @@ class MongoData:
 
         return results
 
-    def get_custom_stories(self, userID=None):
+    def get_custom_posters(self, userID=None):
         """Gets a list of all custom stories (associated with userID if supplied)"""
         results = []
         if userID is not None:
-            json_doc = self.db.user_stories.find({'userID': userID})
+            json_doc = self.db.user_posters.find({'userID': userID})
         else:
-            json_doc = self.db.user_stories.find()
+            json_doc = self.db.user_posters.find()
 
         for j in json_doc:
-            results.append(CustomStoryInfo(**j))
+            results.append(CustomPosterInfo(**j))
 
         if len(results) == 0:
             results = None
@@ -210,30 +210,38 @@ class MongoData:
         })
         return True # this means we didn't raise an exception
 
-    def insert_custom_story(self, storyObj):
+    def get_custom_poster_by_id(self, id):
+        json_doc = self.db.user_posters.find({'_id': ObjectId(id)})
+        return CustomPosterInfo(**json_doc[0])
+
+    def insert_custom_poster(self, posterObj):
         """Inserts a customised user story into the database"""
-        story_id = self.db.user_stories.insert_one(storyObj.get_properties())
-        return str(story_id.inserted_id)
+        poster_id = self.db.user_posters.insert_one(posterObj.get_properties())
+        return str(poster_id.inserted_id)
 
-    def update_custom_story(self, storyInfo):
-        query = self.db.user_stories.find({'_id': ObjectId(storyInfo._id)})
-        db_story = CustomStoryInfo(**query[0])
-        removed_charts = [x for x in db_story.charts if x not in storyInfo.charts]
-        self.db.user_stories.update({'_id': ObjectId(storyInfo._id)}, {
-            '$set': {'title': storyInfo.title, 'description': storyInfo.description},
-            '$addToSet': {'charts': {'$each': storyInfo.charts}}
-        })
-        self.db.user_stories.update({'_id': ObjectId(storyInfo._id)}, {
-            '$pull': {'charts': {'$in': removed_charts}}
-        })
-        json_doc = self.db.user_stories.find({'_id': ObjectId(storyInfo._id)})
-        return CustomStoryInfo(**json_doc[0])
+    def update_custom_poster(self, posterInfo):
+        query = self.db.user_posters.find({'_id': ObjectId(posterInfo._id)})
+        db_poster = CustomPosterInfo(**query[0])
+        removed_sections = [x for x in db_poster.sections if x not in posterInfo.section]
+        removed_objects = []
+        for d, p in zip(db_poster.sections, posterInfo.section):
+            removed_objects.append(o for o in d.boundaryObjects if o not in p.boundaryObjects)
 
-    def delete_custom_story(self, story_id):
-        delete_result = self.db.user_stories.remove({'_id': ObjectId(story_id)}, {'justOne': True})
-        self.db.user_dashboard.update({}, {
-            '$pull': {'stories': {'$in': [story_id]}}
+        self.db.user_stories.update({'_id': ObjectId(posterInfo._id)}, {
+            '$set': {'title': posterInfo.title, 'description': posterInfo.description},
+            '$addToSet': {'sections': {'$each': posterInfo.sections}}
         })
+        self.db.user_stories.update({'_id': ObjectId(posterInfo._id)}, {
+            '$pull': {'sections': {'$in': removed_sections}}
+        })
+        self.db.user_stories.update({'_id': ObjectId(posterInfo._id)}, {
+            '$pull': {'sections.boundaryObjects': {'$in': removed_objects}}
+        })
+        json_doc = self.db.user_stories.find({'_id': ObjectId(posterInfo._id)})
+        return CustomPosterInfo(**json_doc[0])
+
+    def delete_custom_poster(self, poster_id):
+        delete_result = self.db.user_posters.remove({'_id': ObjectId(poster_id)}, {'justOne': True})
         return True # this means we didn't raise an exception
 
     def get_boundary_object_by_id(self, id):
@@ -263,6 +271,9 @@ class MongoData:
         delete_result = self.db.boundary_objects.remove({'_id': ObjectId(bo_id)}, {'justOne': True})
         self.db.user_dashboard.update({}, {
             '$pull': {'boundaryObjects': {'$in': [bo_id]}}
+        })
+        self.db.user_posters.update({}, {
+            '$pull': {'sections.boundaryObjects': {'$in': [bo_id]}}
         })
         return True # This means we didn't throw an exception
 

@@ -1,4 +1,4 @@
-<mat-drawer-container>
+<!--<mat-drawer-container>
   <mat-drawer mode="side" opened>
     <button mat-button (click)="this.setView('samples')" matTooltip="View Sample Dashboard">
       <mat-icon>folder_special</mat-icon>
@@ -6,15 +6,22 @@
     <button mat-button (click)="this.setView('custom')" matTooltip="View My Dashboard">
       <mat-icon>dashboard</mat-icon>
     </button>
-    <!--<button mat-button (click)="this.setView('stories')" matTooltip="View My Stories">
+    &lt;!&ndash;<button mat-button (click)="this.setView('stories')" matTooltip="View My Stories">
       <mat-icon>bookmarks</mat-icon>
-    </button>-->
+    </button>&ndash;&gt;
   </mat-drawer>
   <mat-drawer-content>
     <app-dashboard-sample *ngIf="this.showSamples"></app-dashboard-sample>
     <app-custom-dashboard *ngIf="this.showCustomDash"></app-custom-dashboard>
     <app-stories *ngIf="this.showStories"></app-stories>
   </mat-drawer-content>
-</mat-drawer-container>
+</mat-drawer-container>-->
 
-
+<mat-tab-group>
+  <mat-tab label="Saved Notes">
+    <app-dashboard-notes></app-dashboard-notes>
+  </mat-tab>
+  <mat-tab label="Posters">
+    <app-dashboard-posters></app-dashboard-posters>
+  </mat-tab>
+</mat-tab-group>

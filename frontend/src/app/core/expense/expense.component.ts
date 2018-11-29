@@ -19,7 +19,6 @@ export class ExpenseComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.dataModel)
     this.tableEntries = this.getTableData(this.currentLang);
   }
 

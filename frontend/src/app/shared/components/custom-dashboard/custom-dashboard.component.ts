@@ -4,21 +4,18 @@ import {
   CustomChartInfo,
   CustomDashboardInfo,
   CustomInfoBox,
-  CustomStoryInfo,
   InfoBoxTypes
 } from '../../models/custom-dashboard.model';
 import {DashboardService} from '../../services/dashboard.service';
 import {UserService} from '../../services/user.service';
 import {SiteUser} from '../../models/site-user.model';
 import {SearchService} from '../../services/search.service';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {MatDialog} from '@angular/material';
 import {InfoboxDialogComponent} from '../dashboard-dialogs/infobox-dialog/infobox-dialog.component';
-import {DashboardComponent} from '../../../core/dashboard/dashboard.component';
-import {AnalysisSummary, DataSummaryPackage} from '../../models/analysis-result';
+import {AnalysisSummary} from '../../models/analysis-result';
 import {VisualisationService} from '../../../core/service/visualisation.service';
 import {CategoryPivotItem, MonthYearPivotItem, YearPivotItem} from '../../models/pivot-data.model';
 import {ChartDialogComponent} from '../dashboard-dialogs/chart-dialog/chart-dialog.component';
-import {SearchParams} from '../../models/search.model';
 
 @Component({
   selector: 'app-custom-dashboard',
@@ -28,7 +25,6 @@ import {SearchParams} from '../../models/search.model';
 export class CustomDashboardComponent implements OnInit {
   maxInfoBoxes = 4;
   maxCharts = 4;
-  maxStories = 1;
   dataModel: CustomDashboardInfo;
   infoBoxes: CustomInfoBox[];
   charts: CustomChartInfo[];
@@ -75,12 +71,6 @@ export class CustomDashboardComponent implements OnInit {
     this.dashboardService.getUserCharts(this.userInfo._id)
       .subscribe(
         data => this.charts = data,
-        err => console.log(err),
-        () => console.log('charts loaded')
-      );
-    this.dashboardService.getBoundaryObjects(this.userInfo._id)
-      .subscribe(
-        data => this.boundaryObjects = data,
         err => console.log(err),
         () => console.log('charts loaded')
       );
@@ -280,19 +270,6 @@ export class CustomDashboardComponent implements OnInit {
     return `${s.charAt(0).toUpperCase()}${s.substr(1)}`;
   }
 
-  getEmptyStories() {
-    let result = new Array(0);
-    if (this.dataModel.stories) {
-      if (this.dataModel.stories.length <= this.maxStories ) {
-        result = new Array( this.maxStories - this.dataModel.stories.length);
-      }
-    } else {
-      result = new Array(this.maxStories);
-    }
-
-    return result;
-  }
-
   getEmptyCharts() {
     let result = new Array(0);
     if (this.dataModel.charts) {
@@ -303,10 +280,6 @@ export class CustomDashboardComponent implements OnInit {
       result = new Array(this.maxCharts);
     }
     return result;
-  }
-
-  addStory(): void {
-    // TODO: implement me
   }
 
   getEmptyInfoBoxes() {
@@ -358,12 +331,5 @@ export class CustomDashboardComponent implements OnInit {
       }
       }
     );
-  }
-
-
-
-  getChartWidth(): number {
-    const chartCards = document.querySelector('div.chart-card');
-    return chartCards ? chartCards[0].offsetWidth : 700;
   }
 }

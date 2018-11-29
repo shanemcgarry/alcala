@@ -33,14 +33,6 @@ export interface CustomChartInfo {
   data: DataSummaryPackage;
 }
 
-export interface CustomStoryInfo {
-  _id: string;
-  userID: string;
-  title: string;
-  description: string;
-  charts: CustomChartInfo[];
-}
-
 export enum BoundaryObjectType {
   SearchResult = 'keyword',
   Chart = 'visualisation',
