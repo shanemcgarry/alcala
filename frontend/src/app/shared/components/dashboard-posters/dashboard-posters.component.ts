@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {PosterModel} from '../../models/poster-model';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatTableDataSource} from '@angular/material';
 import {DashboardService} from '../../services/dashboard.service';
 import {UserService} from '../../services/user.service';
 import {SiteUser} from '../../models/site-user.model';
@@ -12,19 +12,30 @@ import {PosterDialogComponent} from '../dashboard-dialogs/poster-dialog/poster-d
   styleUrls: ['./dashboard-posters.component.scss']
 })
 export class DashboardPostersComponent implements OnInit {
-  dataModel: PosterModel[];
+  dataModel: MatTableDataSource<PosterModel>;
+  posterData: PosterModel[];
   displayedColumns = ['title', 'description', 'actions'];
   currentUser: SiteUser;
+  showSpinner: boolean;
 
-  constructor(private dialog: MatDialog, private dashboardService: DashboardService, private userService: UserService) {
+  constructor(private dialog: MatDialog, private dashboardService: DashboardService, private userService: UserService,
+              private changeDetect: ChangeDetectorRef) {
     this.currentUser = this.userService.getLoggedInUser();
   }
 
   ngOnInit() {
+    this.showSpinner = true;
     this.dashboardService.getUserPosters(this.currentUser._id)
       .subscribe(
-        data => this.dataModel = data,
-        err => console.log(err)
+        data => {
+          this.posterData = data;
+          this.dataModel = new MatTableDataSource<PosterModel>(this.posterData);
+          this.showSpinner = false;
+        },
+        err => {
+          console.log(err);
+          this.showSpinner = false;
+        }
       );
   }
 
@@ -40,7 +51,9 @@ export class DashboardPostersComponent implements OnInit {
     const dialogRef = this.dialog.open(PosterDialogComponent, { data: poster });
     dialogRef.afterClosed().subscribe(result => {
       if (result && result._id) {
-        this.dataModel.push(result);
+        this.posterData.push(result);
+        this.dataModel.data = this.posterData;
+        this.changeDetect.detectChanges();
       }
     });
   }
@@ -52,8 +65,11 @@ export class DashboardPostersComponent implements OnInit {
       if (result) {
         if (result._id) {
           poster = result;
+          this.changeDetect.detectChanges();
         } else {
-          this.dataModel.splice(this.dataModel.findIndex(x => x._id === poster_id), 1);
+          this.posterData.splice(this.posterData.findIndex(x => x._id === poster_id), 1);
+          this.dataModel.data = this.posterData;
+          this.changeDetect.detectChanges();
         }
       }
     });

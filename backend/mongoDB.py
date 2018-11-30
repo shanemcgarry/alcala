@@ -220,24 +220,17 @@ class MongoData:
         return str(poster_id.inserted_id)
 
     def update_custom_poster(self, posterInfo):
-        query = self.db.user_posters.find({'_id': ObjectId(posterInfo._id)})
-        db_poster = CustomPosterInfo(**query[0])
-        removed_sections = [x for x in db_poster.sections if x not in posterInfo.section]
-        removed_objects = []
-        for d, p in zip(db_poster.sections, posterInfo.section):
-            removed_objects.append(o for o in d.boundaryObjects if o not in p.boundaryObjects)
+        """Updates a custom poster object"""
+        self.db.user_posters.update({'_id': ObjectId(posterInfo._id)}, {
+            '$unset': {'sections': ''}
+        })
 
-        self.db.user_stories.update({'_id': ObjectId(posterInfo._id)}, {
+        self.db.user_posters.update({'_id': ObjectId(posterInfo._id)}, {
             '$set': {'title': posterInfo.title, 'description': posterInfo.description},
             '$addToSet': {'sections': {'$each': posterInfo.sections}}
         })
-        self.db.user_stories.update({'_id': ObjectId(posterInfo._id)}, {
-            '$pull': {'sections': {'$in': removed_sections}}
-        })
-        self.db.user_stories.update({'_id': ObjectId(posterInfo._id)}, {
-            '$pull': {'sections.boundaryObjects': {'$in': removed_objects}}
-        })
-        json_doc = self.db.user_stories.find({'_id': ObjectId(posterInfo._id)})
+
+        json_doc = self.db.user_posters.find({'_id': ObjectId(posterInfo._id)})
         return CustomPosterInfo(**json_doc[0])
 
     def delete_custom_poster(self, poster_id):
@@ -273,7 +266,7 @@ class MongoData:
             '$pull': {'boundaryObjects': {'$in': [bo_id]}}
         })
         self.db.user_posters.update({}, {
-            '$pull': {'sections.boundaryObjects': {'$in': [bo_id]}}
+            '$pull': {'sections.$[].boundaryObjects': {'$in': [bo_id]}}
         })
         return True # This means we didn't throw an exception
 

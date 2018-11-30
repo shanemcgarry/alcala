@@ -1,0 +1,50 @@
+<app-spinner *ngIf="this.showSpinner"></app-spinner>
+<div class="edit-container">
+  <div class="table-actions">
+    <button mat-icon-button color="primary" (click)="printPoster()">
+      <mat-icon>print</mat-icon>
+    </button>
+  </div>
+  <div #posterContent *ngIf="this.dataModel && this.boundaryObjects">
+    <div fxLayout="row">
+      <h2 fxFlex="100">{{ this.dataModel.title }}</h2>
+    </div>
+    <div fxLayout="row">
+      <span fxFlex="100" class="poster-description">
+        {{ this.dataModel.description }}
+      </span>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="2%">
+      <div fxFlex="48">
+        <div *ngFor="let s of this.getLeftColumnItems()">
+          <h3>{{ s.title }}</h3>
+          <span class="section-description">
+            {{ s.description }}
+          </span>
+          <div fxLayout="row" *ngFor="let bo of s.boundaryObjects" class="boundary-objects">
+            <app-boundary-object [data]="this.getBoundaryObject(bo)"
+                                 [expandedView]="true"
+                                 [showActions]="false"
+                                 fxFlex="100">
+            </app-boundary-object>
+          </div>
+        </div>
+      </div>
+      <div fxFlex="48">
+        <div *ngFor="let s of this.getRightColumnItems()">
+          <h3>{{ s.title }}</h3>
+          <span class="section-description">
+            {{ s.description }}
+          </span>
+          <div fxLayout="row" *ngFor="let bo of s.boundaryObjects" class="boundary-objects">
+            <app-boundary-object [data]="this.getBoundaryObject(bo)"
+                                 [expandedView]="true"
+                                 [showActions]="false"
+                                 fxFlex="100">
+            </app-boundary-object>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

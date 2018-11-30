@@ -181,7 +181,8 @@ export class VizsearchComponent implements OnInit, AfterViewInit {
       params: this.searchParams,
       totalItems: this.detailData.data.length,
       pageID: null,
-      dateCreated: new Date()
+      dateCreated: new Date(),
+      isSelected: false
     };
     const dialogRef = this.dialog.open(BoundaryobjectDialogComponent, { data: boundaryObject});
     dialogRef.afterClosed().subscribe(result => {

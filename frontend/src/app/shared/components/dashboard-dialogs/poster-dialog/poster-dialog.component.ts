@@ -1,10 +1,11 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatCheckboxChange, MatDialogRef} from '@angular/material';
+import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatCheckboxChange, MatDialogRef, MatTableDataSource} from '@angular/material';
 import {PosterModel, PosterSection} from '../../../models/poster-model';
 import {DashboardService} from '../../../services/dashboard.service';
 import {BoundaryObject, BoundaryObjectType} from '../../../models/custom-dashboard.model';
 import {FormControl, Validators} from '@angular/forms';
-import {SelectionModel} from '@angular/cdk/collections';
+// @ts-ignore
+import * as cloneDeep from 'lodash/cloneDeep';
 
 @Component({
   selector: 'app-poster-dialog',
@@ -19,11 +20,13 @@ export class PosterDialogComponent implements OnInit {
   sectionColumns = ['title', 'description', 'notecards', 'actions'];
   boColumns = ['check', 'type', 'title', 'description'];
   currentSection: PosterSection;
-  selection = new SelectionModel<BoundaryObject>(true, []);
+  sectionsDS: MatTableDataSource<PosterSection>;
+  isEditSection: boolean;
 
   constructor(public dialogRef: MatDialogRef<PosterDialogComponent>, @Inject(MAT_DIALOG_DATA) public dataModel: PosterModel,
-              private dashboardService: DashboardService) {
+              private dashboardService: DashboardService, private changeDetect: ChangeDetectorRef) {
     this.clearSection();
+    this.sectionsDS = new MatTableDataSource<PosterSection>(dataModel.sections);
   }
 
   ngOnInit() {
@@ -80,6 +83,7 @@ export class PosterDialogComponent implements OnInit {
 
   addSection(): void {
     this.clearSection();
+    this.isEditSection = false;
   }
 
   cancelSection(): void {
@@ -87,8 +91,12 @@ export class PosterDialogComponent implements OnInit {
   }
 
   saveSection(): void {
-    this.dataModel.sections.push(this.currentSection);
+    if (!this.isEditSection) {
+      this.dataModel.sections.push(cloneDeep(this.currentSection));
+    }
     this.clearSection();
+    this.sectionsDS.data = this.dataModel.sections;
+    this.changeDetect.detectChanges();
   }
 
   sectionValid(): boolean {
@@ -108,39 +116,48 @@ export class PosterDialogComponent implements OnInit {
       description: null,
       boundaryObjects: []
     };
+
+    if (this.boundaryObjects) {
+      this.boundaryObjects.forEach(x => {
+        x.isSelected = false;
+      });
+    }
   }
 
   editSection(section: PosterSection): void {
+    this.isEditSection = true;
     this.currentSection = section;
-    this.selection = new SelectionModel<BoundaryObject>(true, this.getSelectedBoundaryObjects());
+    this.boundaryObjects.forEach(x => {
+      x.isSelected = this.currentSection.boundaryObjects.indexOf(x._id) !== -1;
+    });
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.currentSection.boundaryObjects.length;
-    return numSelected === numRows;
+    return this.boundaryObjects.length === this.currentSection.boundaryObjects.length;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.boundaryObjects.forEach(row => this.selection.select(row));
-  }
-
-  getSelectedBoundaryObjects(): BoundaryObject[] {
-    const result: BoundaryObject[] = [];
-    this.boundaryObjects.forEach(x => {
-      if (this.currentSection.boundaryObjects.indexOf(x._id) !== -1) {
-        result.push(x);
-      }
-    });
-    return result;
+  addAllObjects(e: MatCheckboxChange) {
+    if (e.checked) {
+      this.boundaryObjects.forEach(x => {
+        if (this.currentSection.boundaryObjects.indexOf(x._id) === -1) {
+          this.currentSection.boundaryObjects.push(x._id);
+          x.isSelected = true;
+        }
+      });
+    } else {
+      this.currentSection.boundaryObjects = [];
+      this.boundaryObjects.forEach(x => {
+        x.isSelected = false;
+      });
+    }
   }
 
   deleteSection(section: PosterSection): void {
     this.dataModel.sections.splice(this.dataModel.sections.findIndex(x => x === section), 1);
+    this.sectionsDS.data = this.dataModel.sections;
+    this.changeDetect.detectChanges();
   }
 
   hasErrors(): boolean {

@@ -5,7 +5,7 @@
     <a mat-button href="/">Home</a>
     <a mat-button href="/search">Search</a>
     <a mat-button href="/visualise/search/multiBar">Visual Search</a>
-    <a mat-button href="/visualise/dashboard">Dashboard</a>
+    <a mat-button href="/dashboard">Dashboard</a>
     <a mat-button href="/experiment">Experiment Information</a>
     <a *ngIf="this.isAdminUser()" mat-button href="/admin/dashboard">Tools</a>
     <a *ngIf="this.userService.getLoggedInUser()" mat-icon-button href="/logout">

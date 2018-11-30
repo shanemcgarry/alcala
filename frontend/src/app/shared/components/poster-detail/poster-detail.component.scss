@@ -1,0 +1,34 @@
+.edit-container {
+  height: 100%;
+  margin: 1%;
+}
+
+h2 {
+  font-style: italic;
+  text-align: center;
+}
+
+h3 {
+  width: 100%;
+  left: 0;
+}
+
+mat-grid-list {
+  width: 100%;
+  height: 100%;
+}
+
+mat-grid-tile {
+  margin-top: -7% !important;
+}
+
+.boundary-objects {
+  margin-top: 1%;
+}
+
+canvas {
+  overflow: hidden !important;
+}
+
+
+

@@ -50,6 +50,7 @@ export interface BoundaryObject {
   features: SearchFeatures;
   pageID: string;
   dateCreated: Date;
+  isSelected: boolean;
 }
 
 export interface CustomDashboardInfo {

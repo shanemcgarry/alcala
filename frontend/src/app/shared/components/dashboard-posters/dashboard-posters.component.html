@@ -2,23 +2,23 @@
   <table mat-table [dataSource]="this.dataModel">
     <ng-container matColumnDef="title">
       <th mat-header-cell *matHeaderCellDef class="w30">Title</th>
-      <tr mat-cell *matCellDef="let poster" class="w30">{{ poster.title }}</tr>
+      <td mat-cell *matCellDef="let poster" class="w30">{{ poster.title }}</td>
     </ng-container>
     <ng-container matColumnDef="description">
       <th mat-header-cell *matHeaderCellDef class="w60">Research Question</th>
-      <tr mat-cell *matCellDef="let poster"class="w60">{{ poster.description }}</tr>
+      <td mat-cell *matCellDef="let poster"class="w60">{{ poster.description }}</td>
     </ng-container>
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef class="w10">
         <button mat-icon-button color="primary" (click)="addPoster()"><mat-icon>add_circle</mat-icon></button>
       </th>
-      <tr mat-cell *matCellDef="let poster" class="w10">
+      <td mat-cell *matCellDef="let poster" class="w10">
         <button mat-icon-button color="primary" (click)="editPoster(poster)"><mat-icon>edit</mat-icon></button>
-        <button mat-icon-button color="primary" routerLink="{{ 'dashboard/poster/' + poster._id }}"><mat-icon>remove_red_eye</mat-icon></button>
-      </tr>
+        <button mat-icon-button color="primary" routerLink="{{ '/poster/' + poster._id }}"><mat-icon>remove_red_eye</mat-icon></button>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="this.displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns";></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 </div>

@@ -6,7 +6,7 @@ from analysis.frequency import FrequencyDistribution
 from analysis.utilities import Utilities
 from models.analysisItem import AnalysisItem, AnalysisSummary
 from models.search import SearchParameters, SearchFeatures
-from models.dashboard import CustomChartInfo, CustomStoryInfo, CustomDashboardInfo, CustomInfoBox
+from models.dashboard import CustomChartInfo, CustomPosterInfo, CustomDashboardInfo, CustomInfoBox
 from eulxml import xmlmap
 import json
 import re
@@ -81,11 +81,7 @@ mdb = MongoData()
 
 # newUser = SiteUser(username='u180364',password='&XsdZs4r', firstname='Sean', surname='Comerford', roles=['tester'])
 
-tom = SiteUser(username='toconnor', password='@lCala2018!', firstname='Tom', surname='OConnor', roles=['super'])
-
-
-tom._id = mdb.insert_user(tom)
-
-
-del mdb
-
+json_doc = json.loads('{"_id": "5c012bf4b3cad418387f1016", "dateCreated": "2018-11-30T12:23:12.154Z", "description": "Look at me doing all the research! I\'m so awesome!", "sections": [{"boundaryObjects": ["5c012b37b3cad418387f1001", "5c012b67b3cad418387f1008"], "description": "Adding all the objects!!", "title": "Testing Add All"}, {"boundaryObjects": ["5c012b37b3cad418387f1001", "5c012b4bb3cad418387f1003"], "description": "Gonna do me some edits", "title": "Edit Test"}], "title": "My First Poster", "userID": "5bf57a06b3cad4466ccce7e0"}')
+poster = CustomPosterInfo(**json_doc)
+poster = mdb.update_custom_poster(poster)
+print(poster.toJson())

@@ -85,7 +85,8 @@ import { BoundaryObjectComponent } from './shared/components/boundary-object/bou
 import { DashboardNotesComponent } from './shared/components/dashboard-notes/dashboard-notes.component';
 import { DashboardPostersComponent } from './shared/components/dashboard-posters/dashboard-posters.component';
 import { PosterDialogComponent } from './shared/components/dashboard-dialogs/poster-dialog/poster-dialog.component';
-import { PosterSectionComponent } from './shared/components/dashboard-dialogs/poster-dialog/poster-section/poster-section.component';
+import { PosterDetailComponent } from './shared/components/poster-detail/poster-detail.component';
+import { PosterSectionComponent } from './shared/components/poster-section/poster-section.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -128,6 +129,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DashboardNotesComponent,
     DashboardPostersComponent,
     PosterDialogComponent,
+    PosterDetailComponent,
     PosterSectionComponent
   ],
   imports: [

@@ -62,7 +62,8 @@ export class PageComponent implements OnInit, AfterContentChecked {
       params: null,
       totalItems: 1,
       pageID: this.pageid,
-      dateCreated: new Date()
+      dateCreated: new Date(),
+      isSelected: false
     };
     const dialogRef = this.dialog.open(BoundaryobjectDialogComponent, { data: boundaryObject});
     dialogRef.afterClosed().subscribe(result => {

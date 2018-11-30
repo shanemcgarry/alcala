@@ -12,6 +12,13 @@ class CustomChartInfo(BaseMongoObject):
         self.data = None
 
 
+class CustomPosterSection(JsonSerializable):
+    def __init__(self, title=None, description=None, boundaryObjects=None, *args, **kwargs):
+        self.title = title
+        self.description = description
+        self.boundaryObjects = boundaryObjects
+
+
 class CustomPosterInfo(BaseMongoObject):
     def __init__(self, _id=None, userID=None, title=None, description=None, sections=None, dateCreated=None, *args, **kwargs):
         super().__init__(_id, *args, **kwargs)
@@ -20,13 +27,6 @@ class CustomPosterInfo(BaseMongoObject):
         self.description = description
         self.sections = sections
         self.dateCreated = dateCreated
-
-
-class CustomPosterSection(JsonSerializable):
-    def __init__(self, title=None, description=None, boundaryObjects=None, *args, **kwargs):
-        self.title = title
-        self.description = description
-        self.boundaryObjects = boundaryObjects
 
 
 class CustomDashboardInfo(BaseMongoObject):

@@ -33,13 +33,13 @@ export class BoundaryObjectComponent implements OnInit {
   searchResults: PageResult;
   showSpinner: boolean;
   boundaryObjectType = BoundaryObjectType;
-  showActions = true;
+  @Input() showActions = true;
   @Input() expandedView: boolean;
   flip = 'inactive';
 
   constructor(private searchService: SearchService, private dialog: MatDialog,
               private dashboardService: DashboardService, private route: ActivatedRoute) {
-    if (this.route && this.route.params) {
+    /*if (this.route && this.route.params) {
       this.route.params.subscribe(params => {
         this.objectID = params['id'];
       });
@@ -48,7 +48,7 @@ export class BoundaryObjectComponent implements OnInit {
     if (this.objectID) {
       this.showActions = false;
       this.expandedView = true;
-    }
+    }*/
   }
 
   ngOnInit() {

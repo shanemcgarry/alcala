@@ -11,13 +11,15 @@ import {VizsearchComponent} from './core/vizsearch/vizsearch.component';
 import {TestLinksComponent} from './core/test-links/test-links.component';
 import {AdminDashboardComponent} from './core/admin/admin-dashboard/admin-dashboard.component';
 import {BoundaryObjectComponent} from './shared/components/boundary-object/boundary-object.component';
+import {PosterDetailComponent} from './shared/components/poster-detail/poster-detail.component';
 
 
 const appRoutes: Routes = [
   { path: 'page/:id', component: PageComponent, canActivate: [AuthGuard] },
+  { path: 'poster/:id', component: PosterDetailComponent, canActivate: [AuthGuard] },
   { path: 'boundary/:id', component: BoundaryObjectComponent, canActivate: [AuthGuard] },
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
-  { path: 'visualise/dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'visualise/search/:graph', component: VizsearchComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },

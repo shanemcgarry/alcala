@@ -1,41 +1,41 @@
 <div class="edit-container">
   <h3 mat-dialog-title>{{ this.getDialogTitle() }}</h3>
   <mat-dialog-content>
-    <div fxLayout="row">
-      <mat-form-field fxFlex="100">
-        <input matInput placeholder="Poster Title" [(ngModel)]="this.dataModel.title" [formControl]="titleFC">
-        <mat-error *ngIf="titleFC.hasError('required')"><strong>Title</strong> is a required field.</mat-error>
-      </mat-form-field>
-    </div>
-    <div fxLayout="row">
-      <mat-form-field fxFlex="100">
-        <textarea matInput placeholder="Research Description" [(ngModel)]="this.dataModel.description"></textarea>
-      </mat-form-field>
-    </div>
     <mat-horizontal-stepper>
       <mat-step>
+        <div fxLayout="row">
+          <mat-form-field fxFlex="100">
+            <input matInput placeholder="Poster Title" [(ngModel)]="this.dataModel.title" [formControl]="titleFC">
+            <mat-error *ngIf="titleFC.hasError('required')"><strong>Title</strong> is a required field.</mat-error>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row">
+          <mat-form-field fxFlex="100">
+            <textarea matInput placeholder="Research Description" [(ngModel)]="this.dataModel.description"></textarea>
+          </mat-form-field>
+        </div>
         <div fxLayout="row">
           <h3>Defined Sections</h3>
         </div>
         <div fxLayout="row">
-          <table mat-table [dataSource]="this.dataModel.sections" class="sections-table">
+          <table mat-table [dataSource]="this.sectionsDS" class="sections-table">
             <ng-container matColumnDef="title">
               <th mat-header-cell *matHeaderCellDef class="w30">Title</th>
               <td mat-cell *matCellDef="let section" class="w30">{{ section.title }}</td>
             </ng-container>
             <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef class="w50">Description</th>
-              <td mat-cell *matCellDef="let section" class="w50">{{ section.description }}</td>
+              <th mat-header-cell *matHeaderCellDef class="w45">Description</th>
+              <td mat-cell *matCellDef="let section" class="w45">{{ section.description }}</td>
             </ng-container>
             <ng-container matColumnDef="notecards">
-              <th mat-header-cell *matHeaderCellDef class="w10">No. of Notes</th>
-              <td mat-cell *matCellDef="let section" class="w10">{{ section.boundaryObjects.length }}</td>
+              <th mat-header-cell *matHeaderCellDef class="w5">No. of Notes</th>
+              <td mat-cell *matCellDef="let section" class="w5">{{ section.boundaryObjects.length }}</td>
             </ng-container>
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef class="w10 table-actions">
+              <th mat-header-cell *matHeaderCellDef class="w15 table-actions">
                 <button mat-icon-button color="primary" matStepperNext (click)="addSection()"><mat-icon>add_circle</mat-icon></button>
               </th>
-              <td mat-cell *matCellDef="let section" class="w10 table-actions">
+              <td mat-cell *matCellDef="let section" class="w15 table-actions">
                 <button mat-icon-button color="primary" matStepperNext (click)="editSection(section)"><mat-icon>edit</mat-icon></button>
                 <button mat-icon-button color="primary" (click)="deleteSection(section)"><mat-icon>delete</mat-icon></button>
               </td>
@@ -72,16 +72,16 @@
           <table mat-table [dataSource]="this.boundaryObjects" class="boundary-table">
             <ng-container matColumnDef="check">
               <th mat-header-cell *matHeaderCellDef class="w5">
-                <mat-checkbox (change)="$event ? masterToggle() : null"
-                              [checked]="selection.hasValue() && isAllSelected()"
-                              [indeterminate]="selection.hasValue() && !isAllSelected">
+                <mat-checkbox (change)="$event ? addAllObjects($event) : null"
+                              [checked]="isAllSelected()">
 
                 </mat-checkbox>
               </th>
               <td mat-cell *matCellDef="let bo" class="w5">
                 <mat-checkbox (click)="$event.stopPropagation()"
-                              (change)="$event ? selection.toggle(bo): null"
-                              [checked]="selection.isSelected(bo)">
+                              (change)="$event ? onCheckedChanged($event, bo): null"
+                              [(ngModel)]="bo.isSelected"
+                              [checked]="isBoundaryObjectInSection(bo)">
                 </mat-checkbox>
               </td>
             </ng-container>
