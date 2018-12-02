@@ -5,7 +5,7 @@ from analysis.classification import DocumentClassifier
 from analysis.frequency import FrequencyDistribution
 from analysis.utilities import Utilities
 from models.analysisItem import AnalysisItem, AnalysisSummary
-from models.search import SearchParameters, SearchFeatures
+from models.search import SearchParameters, SearchFeatures, PageSearch
 from models.dashboard import CustomChartInfo, CustomPosterInfo, CustomDashboardInfo, CustomInfoBox
 from eulxml import xmlmap
 import json
@@ -81,7 +81,70 @@ mdb = MongoData()
 
 # newUser = SiteUser(username='u180364',password='&XsdZs4r', firstname='Sean', surname='Comerford', roles=['tester'])
 
-json_doc = json.loads('{"_id": "5c012bf4b3cad418387f1016", "dateCreated": "2018-11-30T12:23:12.154Z", "description": "Look at me doing all the research! I\'m so awesome!", "sections": [{"boundaryObjects": ["5c012b37b3cad418387f1001", "5c012b67b3cad418387f1008"], "description": "Adding all the objects!!", "title": "Testing Add All"}, {"boundaryObjects": ["5c012b37b3cad418387f1001", "5c012b4bb3cad418387f1003"], "description": "Gonna do me some edits", "title": "Edit Test"}], "title": "My First Poster", "userID": "5bf57a06b3cad4466ccce7e0"}')
-poster = CustomPosterInfo(**json_doc)
-poster = mdb.update_custom_poster(poster)
-print(poster.toJson())
+json_doc = json.loads('{"pageIndex": 1, "params": {"filteredCategories": []}, "resultLimit": 5, "userID": "5bf57a06b3cad4466ccce7e0"}')
+page_search = PageSearch(**json_doc)
+results = edb.get_pages_by_keyword("wine", year=None, pageIndex=5, limit=25)
+print(len(results.pages))
+#
+# query="""
+# import module namespace kwic="http://exist-db.org/xquery/kwic";
+#                 let $hits :=
+#                     for $hit in doc("alcala/books/ledger.xml")//pages/page
+#                     where $hit//textContent[ft:query(.,"wine")]
+#                     order by ft:score($hit) descending
+#                     return
+#                         $hit
+#                 let $total-hits := count($hits)
+#                 let $results-to-show := subsequence($hits, 6, 10)
+#                 for $hit in $results-to-show
+#                 return
+#                     <result>
+#                         {$hit}
+#                         <matches>
+#                             {kwic:summarize($hit, <config width="40"/>)}
+#                         </matches>
+#                     </result>
+# """
+
+# query = """
+# xquery version "3.1";
+# import module namespace kwic="http://exist-db.org/xquery/kwic";
+# let $hits : =
+#     for $x in doc("shakespeare/plays/hamlet.xml")//PLAY/ACT/SCENE
+#     where $x//SPEECH[ft:query(.,"speak")]
+#     order by ft:score($x) descending
+#     return $x
+# let $results := subsequence($hits, 6, 20)
+# for $hit in $results
+# return
+#     <page>
+#     <data>{$hit}</data>
+#     <match>
+#     {kwic:summarize($hit, <config width="40"/>)}
+#     </match>
+#     </page>
+# """
+#
+# fields = {
+#     '_query': query,
+#     '_start': 2,
+#     '_howmany': 10
+# }
+# url = "http://localhost:8080/exist/rest/db/"
+#
+#
+# import requests
+# session = requests.Session()
+# session.auth = ("admin", "")
+# session.headers.update({
+#             'Content-Type': 'application/xml'
+#         })
+# response = session.get(url, params=fields, verify=False)
+#
+# from lxml import etree
+# from io import StringIO
+#
+# xml = etree.parse(StringIO(response.text))
+# count = sum(1 for _ in xml.findall(".//page"))
+# print(count)
+

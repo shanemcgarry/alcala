@@ -139,18 +139,25 @@ class ExistData:
         query_string = '$hit//textContent[ft:query(.,"%s")]' % keyword
         if year is not None:
             query_string += ' where $hit/content[@yearID = %d]' % year
-        # if year is not None:
-        #     query_string += ' and $x/content[@yearID=%s]' % year
-        # xquery = 'for $x in doc("alcala/books/ledger.xml")//pages/page where %s return util:expand($x)' % query_string
-        # xquery = """import module namespace kwic="http://exist-db.org/xquery/kwic";
-        #             for $x in doc("alcala/books/ledger.xml")//pages/page
+        # xquery = """
+        #         import module namespace kwic="http://exist-db.org/xquery/kwic";
+        #         let $hits :=
+        #             for $hit in doc("alcala/books/ledger.xml")//pages/page
         #             where %s
-        #             order by ft:score($x) descending
+        #             order by ft:score($hit) descending
         #             return
-        #                 <result>
-        #                 {$x}
-        #                 <matches>{kwic:summarize($x, <config width="50"/>)}</matches>
-        #                 </result>""" % query_string
+        #                 $hit
+        #         let $total-hits := count($hits)
+        #         let $results-to-show := subsequence($hits, %d, %d)
+        #         for $hit in $results-to-show
+        #         return
+        #             <result>
+        #                 {$hit}
+        #                 <matches>
+        #                     {kwic:summarize($hit, <config width="40"/>)}
+        #                 </matches>
+        #             </result>
+        #         """ % (query_string, ((pageIndex * limit) - limit + 1), limit + 1)
         xquery = """
                 import module namespace kwic="http://exist-db.org/xquery/kwic";
                 let $hits := 
@@ -160,8 +167,7 @@ class ExistData:
                     return
                         $hit
                 let $total-hits := count($hits)
-                let $results-to-show := subsequence($hits, %d, %d)
-                for $hit in $results-to-show
+                for $hit in $hits
                 return
                     <result>
                         {$hit}
@@ -169,26 +175,24 @@ class ExistData:
                             {kwic:summarize($hit, <config width="40"/>)}
                         </matches>
                     </result>
-                """ % (query_string, ((pageIndex * limit) - limit + 1), limit)
-        query_hits = """
-                    for $hit in doc("alcala/books/ledger.xml")//pages/page
-                    where %s 
-                    order by ft:score($hit) descending
-                    return
-                        $hit
-                    """ % query_string
+                """ % query_string
+        # query_hits = """
+        #             for $hit in doc("alcala/books/ledger.xml")//pages/page
+        #             where %s
+        #             order by ft:score($hit) descending
+        #             return
+        #                 $hit
+        #             """ % query_string
+        #
+        # qrh = self.db.query(query_hits, start=pageIndex, how_many=limit)
+        qr = self.db.query(xquery, start=pageIndex, how_many=limit + 1)
 
-        qrh = self.db.query(query_hits, pageIndex, limit)
-        qr = self.db.query(xquery, pageIndex, limit)
-        result = PageResultList(total_hits=qrh.hits, current_index=pageIndex, result_limit=limit)
+        result = PageResultList(total_hits=qr.hits, current_index=pageIndex, result_limit=limit)
         for i in range(0, qr.count - 1):
-            #print(tostring(qr.results[i]))
             xml = etree.XML(tostring(qr.results[i]))
             page = AlcalaPage(xml)
-            # result_page = PageResult(page, match_xml=None)
             match_xml = xml.find('.//matches')
             result_page = PageResult(page, match_xml)
-            #print(match_xml)
             result.add_page(result_page)
 
         return result

@@ -61,6 +61,7 @@ def get_page_by_keyword():
     origParams = SearchParameters(**json_req['params'])
     logSearch = json_req['logSearch']
     searchParams = Utilities.process_search_params(SearchParameters(**json_req['params']))
+
     edb = ExistData()
     query_result = edb.get_pages_by_keyword(searchParams.keywords, year=searchParams.year, pageIndex=page_search.pageIndex,
                                             limit=page_search.resultLimit)

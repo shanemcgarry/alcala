@@ -98,15 +98,22 @@
         <mat-icon>view_comfy</mat-icon>
       </mat-button-toggle>
     </mat-button-toggle-group>
+    <mat-form-field class="page-limit">
+      <mat-select placeholder="Number of Results" [(ngModel)]="this.pageSize" (selectionChange)="onPageSizeChanged($event)">
+        <mat-option *ngFor="let p of this.pageOptions" [value]="p">{{ p }}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
   <span class="query-info">Showing {{ getBeginHits() }} - {{ getEndHits() }} of {{ this.dataModel.totalHits }} results </span>
   <app-search-results [dataModel]="this.dataModel" [viewMode]="this.isTile ? 'tile' : 'list'"></app-search-results>
+  <!--<mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="this.pageSize"
+                 [length]="this.dataModel.totalHits" (page)="onPageChanged($event)"></mat-paginator>-->
   <div class="align-center" fxLayout="row" fxLayoutAlign="center center">
     <button mat-icon-button [disabled]="this.currentIndex == 1" (click)="onNavClick(this.currentIndex - 1)" >
       <mat-icon aria-label="Previous">navigate_before</mat-icon>
     </button>
     <ng-container *ngFor="let item of this.getPageArray(); let i = index;">
-      <button mat-mini-fab color="primary" (click)="onNavClick(i + 1)">{{ i + 1 }}</button>
+      <button mat-mini-fab [color]="this.currentIndex === i + 1 ? 'accent' : 'primary'" (click)="onNavClick(i + 1)">{{ i + 1 }}</button>
     </ng-container>
     <button mat-icon-button [disabled]="this.currentIndex == this.dataModel.totalPageResults" (click)="onNavClick(this.currentIndex + 1)">
       <mat-icon aria-label="Next">navigate_next</mat-icon>
