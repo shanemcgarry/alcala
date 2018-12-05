@@ -3,11 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 import { Observable } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 import { HttpErrorHandler, HandleError } from './http-error-handler.service';
 import { SiteUser } from '../models/site-user.model';
-import {CustomInfoBox} from '../models/custom-dashboard.model';
 
 @Injectable()
 export class UserService {

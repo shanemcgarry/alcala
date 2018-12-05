@@ -86,7 +86,7 @@ import { DashboardNotesComponent } from './shared/components/dashboard-notes/das
 import { DashboardPostersComponent } from './shared/components/dashboard-posters/dashboard-posters.component';
 import { PosterDialogComponent } from './shared/components/dashboard-dialogs/poster-dialog/poster-dialog.component';
 import { PosterDetailComponent } from './shared/components/poster-detail/poster-detail.component';
-import { PosterSectionComponent } from './shared/components/poster-section/poster-section.component';
+import { ProjectInfoComponent } from './core/project-info/project-info.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -130,7 +130,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DashboardPostersComponent,
     PosterDialogComponent,
     PosterDetailComponent,
-    PosterSectionComponent
+    ProjectInfoComponent
   ],
   imports: [
     routing,

@@ -12,6 +12,7 @@ import {TestLinksComponent} from './core/test-links/test-links.component';
 import {AdminDashboardComponent} from './core/admin/admin-dashboard/admin-dashboard.component';
 import {BoundaryObjectComponent} from './shared/components/boundary-object/boundary-object.component';
 import {PosterDetailComponent} from './shared/components/poster-detail/poster-detail.component';
+import {ProjectInfoComponent} from './core/project-info/project-info.component';
 
 
 const appRoutes: Routes = [
@@ -25,6 +26,7 @@ const appRoutes: Routes = [
   { path: 'logout', component: LogoutComponent },
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard] },
   { path: 'experiment', component: TestLinksComponent, canActivate: [AuthGuard] },
+  { path: 'about', component: ProjectInfoComponent},
   { path: '', component: HomeComponent }
 ];
 
