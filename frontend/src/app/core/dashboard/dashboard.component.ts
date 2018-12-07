@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {SiteUser} from '../../shared/models/site-user.model';
+import {UserService} from '../../shared/services/user.service';
 
 
 @Component({
@@ -10,9 +12,16 @@ export class DashboardComponent implements OnInit {
   showSamples = false;
   showCustomDash = true;
   showStories = false;
-  constructor() {}
+  currentUser: SiteUser;
+  constructor(private userService: UserService) {
+    this.currentUser = this.userService.getLoggedInUser();
+  }
   ngOnInit() {
 
+  }
+
+  isAdmin(): boolean {
+    return this.currentUser.roles.indexOf('admin') !== -1;
   }
 
   setView(view: string) {

@@ -31,28 +31,28 @@ mdb = MongoData()
 # mdb.insert_multiple_transactions(transaction_list=training_random100, use_training=True)
 #
 # # Get a list of clean transactions & a combined list of all training data
-transactions = Utilities.get_clean_transactions();
-training_data = mdb.get_transactions(use_training=True)
+# transactions = Utilities.get_clean_transactions();
+# training_data = mdb.get_transactions(use_training=True)
 
 # Make sure all of the categories are lower case
-for td in training_data:
-    new_categories = []
-    for c in td.categories:
-        new_categories.append(c.lower())
-    td.categories = new_categories
+# for td in training_data:
+#     new_categories = []
+#     for c in td.categories:
+#         new_categories.append(c.lower())
+#     td.categories = new_categories
 
 #
 # # Get a list of predicted labels
-classifier = DocumentClassifier()
+# classifier = DocumentClassifier()
 #
 # # Loop through and update the transactions with the predicted category
-predicted_categories = classifier.classify(data_train=training_data, data=transactions)
-for t, c in zip(transactions, predicted_categories):
-    t.categories = c
+# predicted_categories = classifier.classify(data_train=training_data, data=transactions)
+# for t, c in zip(transactions, predicted_categories):
+#     t.categories = c
 #
 # # Write everything to mongo
-mdb.update_multiple_transactions(transaction_list=transactions)
-print('Prediction complete')
+# mdb.update_multiple_transactions(transaction_list=transactions)
+# print('Prediction complete')
 
 # year = None
 # results = mdb.get_transactions(year=year)

@@ -25,41 +25,4 @@
   </mat-grid-tile>
 </mat-grid-list>
 
-<!--<mat-grid-list [cols]="4" rowHeight="320" *ngIf="this.charts" class="card-section mt10">
-  <mat-grid-tile *ngFor="let c of this.charts" [colspan]="2">
-    <mat-card class="chart-card full-width ml0 mr10" (click)="this.onEditChart(c)">
-      <mat-card-title>
-        {{ c.title }}
-      </mat-card-title>
-      <mat-card-content>
-        <app-chart [data]="c.data" [chartType]="c.features.chartType" [height]="250"
-                   [xField]="c.features.xField" [yField]="c.features.yField"
-                   [sizeField]="c.features.sizeField" [width]="this.getChartWidth()"></app-chart>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile *ngFor="let eb of this.getEmptyCharts()" [colspan]="2">
-    <div class="empty-box chart">
-      <button mat-button (click)="addChart()">Add New Chart</button>
-    </div>
-  </mat-grid-tile>
-</mat-grid-list>-->
 
-<!--<mat-grid-list [cols]="4" rowHeight="320" *ngIf="this.dataModel" class="card-section mt10">
-  <mat-grid-tile *ngFor="let s of this.dataModel.stories" [colspan]="4">
-    <mat-card class="full-width ml0 mr10">
-      <mat-card-header>
-        <mat-card-title>{{ s.title }}</mat-card-title>
-        <mat-card-subtitle>{{ s.description }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        TODO: I NEED A COMPONENT
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile *ngFor="let es of this.getEmptyStories()" [colspan]="4">
-    <div class="empty-box story">
-      <button mat-button (click)="addStory()">Add New Story</button>
-    </div>
-  </mat-grid-tile>
-</mat-grid-list>-->

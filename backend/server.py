@@ -257,6 +257,10 @@ def delete_boundary_object():
 @app.route("/dashboard/poster/<userID>")
 def get_user_posters(userID):
     mdb = MongoData()
+
+    if Tools.check_for_empty_value(userID):
+        userID = None
+
     results = mdb.get_custom_posters(userID=userID)
     response = app.response_class(
         response=Tools.serialise_list(results),

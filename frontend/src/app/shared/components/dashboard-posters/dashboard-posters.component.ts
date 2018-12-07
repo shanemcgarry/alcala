@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Input, Component, OnInit} from '@angular/core';
 import {PosterModel} from '../../models/poster-model';
 import {MatDialog, MatTableDataSource} from '@angular/material';
 import {DashboardService} from '../../services/dashboard.service';
@@ -17,6 +17,9 @@ export class DashboardPostersComponent implements OnInit {
   displayedColumns = ['title', 'description', 'actions'];
   currentUser: SiteUser;
   showSpinner: boolean;
+  userList: SiteUser[];
+  @Input() userID: string;
+  @Input() showUserColumn = false;
 
   constructor(private dialog: MatDialog, private dashboardService: DashboardService, private userService: UserService,
               private changeDetect: ChangeDetectorRef) {
@@ -24,8 +27,18 @@ export class DashboardPostersComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.showUserColumn) {
+      this.displayedColumns = ['user', 'title', 'description', 'actions'];
+    }
     this.showSpinner = true;
-    this.dashboardService.getUserPosters(this.currentUser._id)
+    if (this.showUserColumn) {
+      this.userService.getUserList()
+        .subscribe(
+          data => this.userList = data,
+          err => console.log(err)
+        );
+    }
+    this.dashboardService.getUserPosters(this.userID)
       .subscribe(
         data => {
           this.posterData = data;
@@ -37,6 +50,7 @@ export class DashboardPostersComponent implements OnInit {
           this.showSpinner = false;
         }
       );
+
   }
 
   addPoster(): void {
@@ -73,6 +87,16 @@ export class DashboardPostersComponent implements OnInit {
         }
       }
     });
+  }
+
+  getUserName(id: string): string {
+    let result = id;
+    const user = this.userList.find(x => x._id === id);
+    if (user) {
+      result = `${user.firstname} ${user.surname}`;
+    }
+
+    return result;
   }
 
 }

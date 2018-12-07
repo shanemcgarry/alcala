@@ -1,3 +1,9 @@
+@import '../../../styles/_variables';
+
 .edit-container {
   margin: 1%;
+}
+
+a {
+  color: $base-red !important;
 }
