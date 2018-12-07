@@ -29,7 +29,7 @@ export class UserService {
         if (user && user.loginToken) {
           sessionStorage.setItem('currentUser', JSON.stringify(user));
         }
-
+        console.log('returning user');
         return user;
       }),
         catchError(this.handleError('login', username))

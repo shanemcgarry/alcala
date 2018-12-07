@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./test-links.component.scss']
 })
 export class TestLinksComponent implements OnInit {
-  isUndergrad = true;
+  isUndergrad = false;
   constructor() { }
 
   ngOnInit() {

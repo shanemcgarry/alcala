@@ -41,12 +41,16 @@
         each participants level of comfort and familiarity with technology. You would have already completed this as part
         of the workshop registration process.
       </li>
-      <li>
+      <li *ngIf="this.isUndergrad">
         <a href="https://goo.gl/8EHQFa" target="_blank">Task Worksheet</a> &mdash; the task worksheet contains the list of tasks to
         complete while working your way through the experiment.
       </li>
-      <li>
+      <li *ngIf="this.isUndergrad">
         <a href="https://goo.gl/WBQjp7" target="_blank">Post-test Questionnaire</a> &mdash; the post-test questionnaire is used to
+        gather each participant's feedback after an search session.
+      </li>
+      <li *ngIf="!this.isUndergrad">
+        <a href="https://tinyurl.com/ycj9w3yf" target="_blank">Post-test Questionnaire</a> &mdash; the post-test questionnaire is used to
         gather each participant's feedback after an search session.
       </li>
       <li *ngIf="this.isUndergrad">

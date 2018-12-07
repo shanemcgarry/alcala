@@ -136,28 +136,10 @@ class ExistData:
 
     def get_pages_by_keyword(self, keyword, year=None, pageIndex=1, limit=50):
         """Conducts a keyword search against the entire eXist-db instance and returns a list of PageResult objects"""
-        query_string = '$hit//textContent[ft:query(.,"%s")]' % keyword
+        query_string = '$hit//textContent[ft:query(.,"%s*")]' % keyword
         if year is not None:
             query_string += ' where $hit/content[@yearID = %d]' % year
-        # xquery = """
-        #         import module namespace kwic="http://exist-db.org/xquery/kwic";
-        #         let $hits :=
-        #             for $hit in doc("alcala/books/ledger.xml")//pages/page
-        #             where %s
-        #             order by ft:score($hit) descending
-        #             return
-        #                 $hit
-        #         let $total-hits := count($hits)
-        #         let $results-to-show := subsequence($hits, %d, %d)
-        #         for $hit in $results-to-show
-        #         return
-        #             <result>
-        #                 {$hit}
-        #                 <matches>
-        #                     {kwic:summarize($hit, <config width="40"/>)}
-        #                 </matches>
-        #             </result>
-        #         """ % (query_string, ((pageIndex * limit) - limit + 1), limit + 1)
+
         xquery = """
                 import module namespace kwic="http://exist-db.org/xquery/kwic";
                 let $hits := 
@@ -176,20 +158,11 @@ class ExistData:
                         </matches>
                     </result>
                 """ % query_string
-        # query_hits = """
-        #             for $hit in doc("alcala/books/ledger.xml")//pages/page
-        #             where %s
-        #             order by ft:score($hit) descending
-        #             return
-        #                 $hit
-        #             """ % query_string
-        #
-        # qrh = self.db.query(query_hits, start=pageIndex, how_many=limit)
         qr = self.db.query(xquery, start=pageIndex, how_many=limit + 1)
 
         result = PageResultList(total_hits=qr.hits, current_index=pageIndex, result_limit=limit)
-        for i in range(0, qr.count - 1):
-            xml = etree.XML(tostring(qr.results[i]))
+        for i in range(0, qr.count):
+            xml = etree.XML(tostring(qr.results[i - 1]))
             page = AlcalaPage(xml)
             match_xml = xml.find('.//matches')
             result_page = PageResult(page, match_xml)

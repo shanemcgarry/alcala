@@ -491,7 +491,6 @@ def save_user():
     else:
         db_user = mdb.update_user(db_user)
 
-    print(db_user)
     return db_user.toJson(), 200
 
 
