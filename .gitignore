@@ -14,3 +14,4 @@ images
 deploy/
 
 frontend/dist/
+.DS_Store
